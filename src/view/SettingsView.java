@@ -2,14 +2,30 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class SettingsView {
-    public static JPanel create(){
+    private JToggleButton screenButton;
+    private JSlider volumeSlider;
+    private JCheckBox darkModeCheck;
+
+    public JPanel create(){
         JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-        // settingsPanel.pack(); // Causes this window to be sized to fit preferred size in gamepanel
-        // settingsPanel.setLocationRelativeTo(null); // Puts it at the center
+        int buttonWidth = 250;
+        int buttonHeight = 60;
+
+        settingsPanel.add(new JLabel("Fullscreen"));
+
+        screenButton = new JToggleButton("On/Off", false);
+        settingsPanel.add(screenButton);
+        volumeSlider = new JSlider();
+        settingsPanel.add(new JLabel("Volume"));
+        settingsPanel.add(volumeSlider);
+        darkModeCheck = new JCheckBox();
+        settingsPanel.add(new JLabel("Dark Mode"));
+        settingsPanel.add(darkModeCheck);
         return settingsPanel;
     }
 
@@ -18,16 +34,3 @@ public class SettingsView {
 // Full Screen / Windowed
 // Sound Volume / Toggled
 // Brightness? / Dark mode?
-
-        // Initialize window
-       // window.setResizable(false);
-       // window.setUndecorated(false); // For Fullscreen mode, make 'true'
-
-
-        // Show menuView
-      //  GameMenuView menuView = new GameMenuView();
-      //  MenuController menuController = new MenuController(menuView);
-      //  window.add(menuView);
-
-
-
