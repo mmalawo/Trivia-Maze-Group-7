@@ -1,3 +1,5 @@
+package model;
+
 public class Door {
     private boolean isLocked;
     private String question;

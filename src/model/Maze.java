@@ -1,3 +1,5 @@
+package model;
+
 public class Maze {
     private Room[][] rooms;
     private int rows;
