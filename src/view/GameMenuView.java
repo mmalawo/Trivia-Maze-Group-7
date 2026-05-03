@@ -14,7 +14,10 @@ public class GameMenuView extends JPanel {
     double screenWidth = screenSize.getWidth();
     double screenHeight = screenSize.getHeight();
 
-    private JButton exitButton;
+    // Button Initialization --------------------------------
+    private final JButton exitButton;
+    private final JButton settingsButton;
+    // ------------------------------------------------------
 
     public GameMenuView() {
         this.setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
@@ -23,15 +26,32 @@ public class GameMenuView extends JPanel {
 
         this.setLayout(null);
 
+// BUTTONS ----------------------------------------------
+
+        // Button sizes:
+        int buttonWidth = 250;
+        int buttonHeight = 60;
+
         // Exit button
         exitButton = new JButton();
         exitButton.setText("Exit Game");
-        exitButton.setBounds((int)screenWidth/2 - 75, (int)screenHeight/2 - 15, 150, 30); // Adjust size later, this puts the button in the middle of screen
+        exitButton.setBounds((int)screenWidth/2 - 75, (int)screenHeight/2 + 100, buttonWidth, buttonHeight);
         this.add(exitButton);
+
+        // Settings button
+        settingsButton = new JButton();
+        settingsButton.setText("Settings");
+        settingsButton.setBounds((int)screenWidth/2 - 75, (int)screenHeight/2, buttonWidth, buttonHeight);
+        this.add(settingsButton);
+        // -------------------------------------------------------
+
     }
 
     public void addExitListener(ActionListener theListener) {
         exitButton.addActionListener(theListener);
+    }
+    public void addSettingsListener(ActionListener theListener) {
+        settingsButton.addActionListener(theListener);
     }
 
 }
