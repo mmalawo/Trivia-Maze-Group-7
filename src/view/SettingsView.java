@@ -1,17 +1,15 @@
 package view;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class SettingsView {
     public SettingsView(){
         JPanel settingsPanel = new JPanel();
-        panel.setLayout
-        settingsPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        settingsPanel.setTitle("Trivia Maze - Settings");
+        settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-
-        settingsPanel.pack(); // Causes this window to be sized to fit preferred size in gamepanel
-        settingsPanel.setLocationRelativeTo(null); // Puts it at the center
+        // settingsPanel.pack(); // Causes this window to be sized to fit preferred size in gamepanel
+        // settingsPanel.setLocationRelativeTo(null); // Puts it at the center
         settingsPanel.setVisible(true);
     }
 
