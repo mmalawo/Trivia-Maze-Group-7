@@ -13,17 +13,16 @@ public class MainGUI {
 
     public static void main(String args[]) {
         System.out.println("Starting application...");
-
         startApplication();
     }
-
+    public static JFrame window;
     public static void startApplication() {
 
         // Initialize window
-        JFrame window = new JFrame();
+        window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setUndecorated(false); // For Fullscreen mode
+        //window.setUndecorated(false); // For Fullscreen mode
 
         window.setTitle("Trivia Maze - Main Menu");
 
@@ -35,7 +34,6 @@ public class MainGUI {
         window.pack(); // Causes this window to be sized to fit preferred size in gamepanel
         window.setLocationRelativeTo(null); // Puts it at the center
         window.setVisible(true);
-
 
 
     }
