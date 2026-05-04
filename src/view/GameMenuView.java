@@ -31,7 +31,7 @@ public class GameMenuView extends JPanel {
         this.setLayout(null);
 
 
-        // BUTTONS ----------------------------------------------
+// BUTTONS ----------------------------------------------
 
         // Button sizes:
         int buttonWidth = 250;
@@ -58,6 +58,8 @@ public class GameMenuView extends JPanel {
 
         addMenubar();
         addTimer();
+        // -------------------------------------------------------
+
     }
 
     public void addExitListener(ActionListener theListener) {

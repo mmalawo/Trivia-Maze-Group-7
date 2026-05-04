@@ -18,6 +18,9 @@ public class MainGUI {
         startApplication();
     }
     public static JFrame window;
+
+    public static JFrame window;
+
     public static void startApplication() {
 
         // Initialize window
@@ -25,6 +28,7 @@ public class MainGUI {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setUndecorated(true); // For Fullscreen mode
+        //window.setUndecorated(false); // For Fullscreen mode
 
         window.setTitle("Trivia Maze - Main Menu");
 
