@@ -19,8 +19,6 @@ public class MainGUI {
     }
     public static JFrame window;
 
-    public static JFrame window;
-
     public static void startApplication() {
 
         // Initialize window

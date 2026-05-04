@@ -129,8 +129,8 @@ public class GameMenuView extends JPanel {
 
         itemSettings.addActionListener(e -> {
             window.getContentPane().removeAll();
-            window.add(SettingsView.create());
-
+            SettingsView settingsView = new SettingsView();
+            window.add(settingsView.create());
             window.revalidate();
             window.repaint();
         });
