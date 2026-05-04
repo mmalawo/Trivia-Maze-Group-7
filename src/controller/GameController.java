@@ -1,7 +1,34 @@
 package controller;
 
+import model.*;
+import view.*;
+
+
 public class GameController {
 
+private GameMenuView menu;
+private Player player;
+
+public GameController(GameMenuView theMenu, Player thePlayer) {
+    this.menu = theMenu;
+    this.player = thePlayer;
+    addListeners();
+}
+
+public void addListeners() {
+    menu.addPlayListener(e -> {
+        System.out.println("Game in progress...");
+        player.startTimer();
+
+        new javax.swing.Timer(1000, evt -> {
+            double time = player.elapsedTime();
+            menu.updateTimer(time);
+
+//            System.out.println("Time: " + player.elapsedTime());
+
+        }).start();
+    });
+}
 
 // +startGame(thePlayerName : String) : void
 

@@ -24,12 +24,12 @@ public class MenuController {// Action Listener and events
             System.exit(0);
         });
         menu.addSettingsListener(e -> {
-        MainGUI.window.getContentPane().removeAll();
-        MainGUI.window.add(SettingsView.create());
-
-        MainGUI.window.revalidate();
-        MainGUI.window.repaint();
+            MainGUI.window.getContentPane().removeAll();
+            MainGUI.window.add(SettingsView.create());
+            MainGUI.window.revalidate();
+            MainGUI.window.repaint();
         });
+
 
 
     }
