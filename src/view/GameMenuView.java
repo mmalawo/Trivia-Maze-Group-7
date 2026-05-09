@@ -32,7 +32,7 @@ public class GameMenuView extends JPanel {
     public GameMenuView() {
         this.setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
 
-        ImageIcon background = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/view/Background1.1.png");
+        ImageIcon background = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/images/Night-Mode.png");
         backgroundMenuImage = background.getImage();
 
         //this.setBackground(Color.WHITE);

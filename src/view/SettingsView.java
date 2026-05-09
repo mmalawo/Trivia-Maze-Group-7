@@ -5,15 +5,32 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class SettingsView {
+public class SettingsView extends JPanel {
     private JPanel settingsPanel;
     private JToggleButton screenButton;
     private JSlider volumeSlider;
     private JCheckBox darkModeCheck;
 
+    private Image background;
+
     public JPanel create(){
-        settingsPanel = new JPanel();
-        settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
+        settingsPanel = new JPanel() {
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                if (background != null) {
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+
+                }
+
+                //g.dispose();
+                //super.paintComponent(g2);
+            }
+        };
+
+        //settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
         settingsPanel.add(new JLabel("Fullscreen"));
 
@@ -25,6 +42,7 @@ public class SettingsView {
         darkModeCheck = new JCheckBox();
         settingsPanel.add(new JLabel("Dark Mode"));
         settingsPanel.add(darkModeCheck);
+        settingsPanel.setOpaque(false);
         return settingsPanel;
     }
 
@@ -53,7 +71,28 @@ public class SettingsView {
     }
 
     public void setDarkMode(boolean darkMode) {
-        Color background = darkMode ? Color.DARK_GRAY : Color.WHITE;
+        if(darkMode) {
+            ImageIcon nightSettingsBackground = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/images/Night-Settings.png");
+            background = nightSettingsBackground.getImage();
+
+        } else {
+            ImageIcon daySettingsBackground = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/images/Day-Mode.png");
+            background = daySettingsBackground.getImage();
+        }
+
+
+        settingsPanel.setBackground(Color.WHITE);
+
+        settingsPanel.setDoubleBuffered(true);
+        settingsPanel.repaint();
+
+
+        //settingsPanel.setLayout(null);
+
+
+
+
+        /*Color background = darkMode ? Color.DARK_GRAY : Color.WHITE;
         Color foreground = darkMode ? Color.WHITE : Color.BLACK;
 
         settingsPanel.setBackground(background);
@@ -61,7 +100,17 @@ public class SettingsView {
         for (Component component : settingsPanel.getComponents()) {
             component.setBackground(background);
             component.setForeground(foreground);
-        }
-        settingsPanel.repaint();
+        } */
+        //settingsPanel.repaint();
     }
+
+
+
+
 }
+/*ImageIcon background = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/view/Background1.1.png");
+backgroundMenuImage = background.getImage();
+
+//this.setBackground(Color.WHITE);
+        this.setDoubleBuffered(true); // helps performance (rendering)
+        this.setLayout(null); */
