@@ -26,15 +26,16 @@ public class MainGUI {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setUndecorated(true); // For Fullscreen mode
-        //window.setUndecorated(false); // For Fullscreen mode
 
         window.setTitle("Trivia Maze - Main Menu");
 
         // Show menuView
         GameMenuView menuView = new GameMenuView();
         Player player = new Player();
+        PlayerSetupView setupView = new PlayerSetupView();
         GameController controller = new GameController(menuView, player);
         MenuController menuController = new MenuController(menuView);
+        PlayerController playerController = new PlayerController(setupView);
 
         window.add(menuView);
 
