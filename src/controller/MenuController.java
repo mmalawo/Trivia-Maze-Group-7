@@ -17,6 +17,18 @@ public class MenuController {// Action Listener and events
     }
 
     private void addListeners() {
+        menu.addPlayListener(e -> {
+            MainGUI.window.getContentPane().removeAll();
+
+            PlayerSetupView setupView = new PlayerSetupView();
+            JPanel playerPanel = setupView.getPlayerPanel();
+            PlayerController playerController = new PlayerController(setupView);
+
+            MainGUI.window.add(playerPanel);
+            MainGUI.window.revalidate();
+            MainGUI.window.repaint();
+        });
+
         menu.addExitListener(e -> {
             System.out.println("Application Closed.");
             System.exit(0);
