@@ -1,15 +1,28 @@
 package view;
 
+import controller.SettingsController;
+
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SettingsView extends JPanel {
+    //private SettingsView settingsView;
     private JPanel settingsPanel;
     private JToggleButton screenButton;
     private JSlider volumeSlider;
     private JCheckBox darkModeCheck;
+    private JButton backToMenu;
+
+    private JLabel nightDayMode;
+
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+    double screenWidth = screenSize.getWidth();
+    double screenHeight = screenSize.getHeight();
 
     private Image background;
 
@@ -25,26 +38,100 @@ public class SettingsView extends JPanel {
 
                 }
 
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setColor(new Color(0, 0, 0, 80));
+                g2.fillRoundRect((int)screenWidth/2 - 520,(int)screenHeight/2 -400, 200, 50, 20,20);
+                g2.fillRoundRect((int)screenWidth/2 - 120,(int)screenHeight/2-290, 300 , 50, 20,20);
+                g2.fillRoundRect((int)screenWidth/2 - 120,(int)screenHeight/2-160, 300 , 50, 20,20);
+                g2.fillRoundRect((int)screenWidth/2-120, (int)screenHeight/2-45, 300, 50, 20, 20);
+
+                // More buttons:
+                //g2.fillRoundRect((int)screenWidth/2 - 250,(int)screenHeight/2, buttonWidth, buttonHeight, 20,20);
+                //g2.fillRoundRect((int)screenWidth/2 - 250,(int)screenHeight/2 - 100, buttonWidth, buttonHeight, 20,20);
+
                 //g.dispose();
                 //super.paintComponent(g2);
             }
         };
 
-        //settingsPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-        settingsPanel.add(new JLabel("Fullscreen"));
+        ImageIcon nightSettingsBackground = new ImageIcon("src/images/Night-Settings.png");
+        background = nightSettingsBackground.getImage();
 
+        settingsPanel.setLayout(null);
+
+        //settingsPanel.add(new JLabel("Fullscreen"));
         screenButton = new JToggleButton("On/Off", false);
+        screenButton.setBounds((int)screenWidth/2-120, (int)screenHeight/2-290, 300, 50);
+        screenButton.setForeground(Color.WHITE);
+        screenButton.setFocusPainted(false);
+        screenButton.setBorderPainted(true);
+        screenButton.setContentAreaFilled(false);
+        screenButton.setOpaque(false);
         settingsPanel.add(screenButton);
+
+        //settingsPanel.add(new JLabel("Volume"));
         volumeSlider = new JSlider();
-        settingsPanel.add(new JLabel("Volume"));
+        volumeSlider.setBounds((int)screenWidth/2-120, (int)screenHeight/2-160, 300, 50);
+        volumeSlider.setForeground(Color.WHITE);
+        volumeSlider.setOpaque(false);
         settingsPanel.add(volumeSlider);
+
         darkModeCheck = new JCheckBox();
-        settingsPanel.add(new JLabel("Dark Mode"));
+        darkModeCheck.setBounds((int)screenWidth/2-100, (int)screenHeight/2-35, 30, 30);
+        darkModeCheck.setForeground(Color.WHITE);
+        darkModeCheck.setFocusPainted(false);
+        darkModeCheck.setBorderPainted(false);
+        darkModeCheck.setContentAreaFilled(false);
+        darkModeCheck.setOpaque(false);
+        //settingsPanel.add(new JLabel("Dark Mode"));
         settingsPanel.add(darkModeCheck);
+
+        nightDayMode = new JLabel("Day/Night Mode");
+        nightDayMode.setBounds((int)screenWidth/2-70, (int)screenHeight/2-35, 150, 30);
+        nightDayMode.setForeground(Color.WHITE);
+        nightDayMode.setFont(new Font("Arial", Font.BOLD, 12));
+        settingsPanel.add(nightDayMode);
+
+
+
+        backToMenu = new JButton("<--Back--");
+        backToMenu.setBounds((int)screenWidth/2-520, (int)screenHeight/2-400, 200, 50);
+        backToMenu.setForeground(Color.WHITE);
+        backToMenu.setFocusPainted(false);
+        backToMenu.setBorderPainted(true);
+        backToMenu.setContentAreaFilled(false);
+        backToMenu.setOpaque(false);
+        settingsPanel.add(backToMenu);
+
+
         settingsPanel.setOpaque(false);
+
+        // TESTING PURPOSES
+        // THIS CODE PRINTS THE COORDINATES THAT YOU CLICK ON THE SCREEN
+        settingsPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int x = e.getX();  // X coordinate of click
+                int y = e.getY();  // Y coordinate of click
+                System.out.println("Clicked at: (" + x + ", " + y + ")");
+            }
+        });
+
+
+
+
+
         return settingsPanel;
     }
+
+
+
+
+    public void addBackListener(ActionListener theListener) {
+        backToMenu.addActionListener(theListener);
+    }
+
 
     public void addFullscreenListener(ActionListener theListener) {
         screenButton.addActionListener(theListener);
@@ -72,16 +159,16 @@ public class SettingsView extends JPanel {
 
     public void setDarkMode(boolean darkMode) {
         if(darkMode) {
-            ImageIcon nightSettingsBackground = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/images/Night-Settings.png");
+            ImageIcon nightSettingsBackground = new ImageIcon("src/images/Night-Settings.png");
             background = nightSettingsBackground.getImage();
 
         } else {
-            ImageIcon daySettingsBackground = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/images/Day-Mode.png");
+            ImageIcon daySettingsBackground = new ImageIcon("src/images/Day-Mode.png");
             background = daySettingsBackground.getImage();
         }
 
 
-        settingsPanel.setBackground(Color.WHITE);
+        //settingsPanel.setBackground(Color.WHITE);
 
         settingsPanel.setDoubleBuffered(true);
         settingsPanel.repaint();
@@ -108,9 +195,3 @@ public class SettingsView extends JPanel {
 
 
 }
-/*ImageIcon background = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/view/Background1.1.png");
-backgroundMenuImage = background.getImage();
-
-//this.setBackground(Color.WHITE);
-        this.setDoubleBuffered(true); // helps performance (rendering)
-        this.setLayout(null); */

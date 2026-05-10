@@ -19,6 +19,16 @@ public class MainGUI {
     }
     public static JFrame window;
 
+    public static GameMenuView menuView;
+    public static SettingsView settingsView;
+
+    public static JPanel settingsPanel;
+    public static Player player;
+
+    public static PlayerSetupView setupView;
+
+    public static JMenuBar menuBar;
+
     public static void startApplication() {
 
         // Initialize window
@@ -30,12 +40,18 @@ public class MainGUI {
         window.setTitle("Trivia Maze - Main Menu");
 
         // Show menuView
-        GameMenuView menuView = new GameMenuView();
-        Player player = new Player();
-        PlayerSetupView setupView = new PlayerSetupView();
-        GameController controller = new GameController(menuView, player);
-        MenuController menuController = new MenuController(menuView);
-        PlayerController playerController = new PlayerController(setupView);
+        menuView = new GameMenuView();
+        player = new Player();
+        settingsView = new SettingsView();
+        settingsPanel = settingsView.create();
+        setupView = new PlayerSetupView();
+        menuBar = menuView.createMenuBar();
+        window.setJMenuBar(menuBar);
+
+        new GameController(menuView, player);
+        new MenuController(menuView, settingsView, settingsPanel);
+        new PlayerController(setupView);
+        new SettingsController(settingsView);
 
         window.add(menuView);
 

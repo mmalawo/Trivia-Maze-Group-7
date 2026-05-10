@@ -1,5 +1,7 @@
 package view;
 
+import com.sun.tools.javac.Main;
+
 import java.util.*;
 import java.io.*;
 import javax.swing.*;   // for JFrame
@@ -32,7 +34,7 @@ public class GameMenuView extends JPanel {
     public GameMenuView() {
         this.setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
 
-        ImageIcon background = new ImageIcon("C:/Users/Angie/Desktop/GitHub/Official GitHub Project/Trivia-Maze-Group-7/src/images/Night-Mode.png");
+        ImageIcon background = new ImageIcon("src/images/Night-Mode.png");
         backgroundMenuImage = background.getImage();
 
         //this.setBackground(Color.WHITE);
@@ -79,7 +81,7 @@ public class GameMenuView extends JPanel {
         this.add(playButton);
         // -------------------------------------------------------
 
-        addMenubar();
+
         addTimer();
         // -------------------------------------------------------
 
@@ -121,11 +123,8 @@ public class GameMenuView extends JPanel {
     // ----------------------------------------------------------------------
 
 
-    public static JMenuItem itemRestartGame;
-    public static JMenuItem itemSettings;
-    public static JMenuItem itemExitGame;
 
-    public static void addMenubar() {
+    public JMenuBar createMenuBar() {
 
         // The actual bar at the top
         JMenuBar menuBar = new JMenuBar();
@@ -136,14 +135,14 @@ public class GameMenuView extends JPanel {
         // _____________________________________________________
         // Options you can click in the dropdown menu of Game.
         // _____________________________________________________
-        itemRestartGame = new JMenuItem("Restart Game");
+        JMenuItem itemRestartGame = new JMenuItem("Restart Game");
         // Shortcut to restart game with keyboard
         itemRestartGame.setAccelerator(KeyStroke.getKeyStroke("control R"));
 
-        itemExitGame = new JMenuItem("Exit");
+        JMenuItem itemExitGame = new JMenuItem("Exit");
         itemExitGame.setAccelerator(KeyStroke.getKeyStroke("control E"));
 
-        itemSettings = new JMenuItem("Settings");
+        JMenuItem itemSettings = new JMenuItem("Settings");
         // CAN ADD A SHORTCUT TO SETTINGS HERE IF WE WANT
 
         gameMenu.add(itemRestartGame);
@@ -155,11 +154,11 @@ public class GameMenuView extends JPanel {
         menuBar.add(gameMenu);
 
         // CHANGE THIS TO BE THE FRAME OR PANEL OF THE GAME VIEW
-        window.setJMenuBar(menuBar);
+        //window.setJMenuBar(menuBar);
 
         itemExitGame.addActionListener(e -> {
             if(JOptionPane.showConfirmDialog(null,
-                    "Are you sure you want to exit?", "Error",
+                    "Are you sure you want to exit?", "Exit",
                     JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
                 System.exit(0);
             }
@@ -167,14 +166,15 @@ public class GameMenuView extends JPanel {
 
 
         itemSettings.addActionListener(e -> {
-            window.getContentPane().removeAll();
-            SettingsView settingsView = new SettingsView();
-            window.add(settingsView.create());
-            window.revalidate();
-            window.repaint();
+            MainGUI.window.getContentPane().removeAll();
+            MainGUI.window.add(MainGUI.settingsPanel);
+            MainGUI.window.setJMenuBar(MainGUI.menuBar);
+            MainGUI.window.revalidate();;
+            MainGUI.window.repaint();
+
         });
 
-
+        return menuBar;
 
     }
 
