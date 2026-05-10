@@ -24,12 +24,12 @@ public class MenuController {// Action Listener and events
     private void addListeners() {
         menu.addPlayListener(e -> {
             MainGUI.window.getContentPane().removeAll();
+            MainGUI.window.add(MainGUI.setupView);
 
-            PlayerSetupView setupView = new PlayerSetupView();
-            JPanel playerPanel = setupView.getPlayerPanel();
+
+           // MainGUI.window.setContentPane(MainGUI.setupView);
             //PlayerController playerController = new PlayerController(setupView);
 
-            MainGUI.window.add(playerPanel);
             MainGUI.window.revalidate();
             MainGUI.window.repaint();
         });
