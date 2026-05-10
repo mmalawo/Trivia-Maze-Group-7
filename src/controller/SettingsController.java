@@ -5,6 +5,8 @@ import java.io.*;
 import javax.swing.*;   // for JFrame
 import java.awt.*;
 import java.awt.event.*;
+
+import com.sun.tools.javac.Main;
 import view.*;
 
 public class SettingsController {
@@ -47,6 +49,18 @@ public class SettingsController {
             int volume = settingsMenu.getVolumeValue();
             System.out.println("Volume: " + volume);
         });
+
+        settingsMenu.addBackListener(e -> {
+            JFrame frame = MainGUI.window;
+            frame.getContentPane().removeAll();
+
+            frame.getContentPane().add(MainGUI.menuView);
+
+            frame.revalidate();
+            frame.repaint();
+        });
+
+
     }
 }
 
