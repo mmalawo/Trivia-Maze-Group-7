@@ -20,12 +20,14 @@ public class MainGUI {
     public static JFrame window;
 
     public static GameMenuView menuView;
+    public static SoundManager soundManager;
     public static SettingsView settingsView;
 
     public static JPanel settingsPanel;
     public static Player player;
 
     public static PlayerSetupView setupView;
+
 
     public static JMenuBar menuBar;
 
@@ -39,6 +41,10 @@ public class MainGUI {
 
         window.setTitle("Trivia Maze - Main Menu");
 
+        soundManager = new SoundManager();
+        soundManager.loadSound("src/sounds/HELL IN HEAVEN 4.wav");
+        soundManager.playLoop();
+
         // Show menuView
         menuView = new GameMenuView();
         player = new Player();
@@ -51,7 +57,9 @@ public class MainGUI {
         new GameController(menuView, player);
         new MenuController(menuView, settingsView, settingsPanel);
         new PlayerController(setupView);
-        new SettingsController(settingsView);
+        new SettingsController(settingsView, soundManager);
+
+
 
         window.add(menuView);
 

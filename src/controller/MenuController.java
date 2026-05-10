@@ -5,6 +5,8 @@ import java.io.*;
 import javax.swing.*;   // for JFrame
 import java.awt.*;
 import java.awt.event.*;
+
+import model.SoundManager;
 import view.*;
 
 public class MenuController {// Action Listener and events
@@ -26,10 +28,10 @@ public class MenuController {// Action Listener and events
             MainGUI.window.getContentPane().removeAll();
             MainGUI.window.add(MainGUI.setupView);
 
-
-           // MainGUI.window.setContentPane(MainGUI.setupView);
+            // MainGUI.window.setContentPane(MainGUI.setupView);
             //PlayerController playerController = new PlayerController(setupView);
 
+            // MainGUI.window.add(playerPanel);
             MainGUI.window.revalidate();
             MainGUI.window.repaint();
         });
@@ -42,11 +44,11 @@ public class MenuController {// Action Listener and events
         menu.addSettingsListener(e -> {
             MainGUI.window.getContentPane().removeAll();
 
-//            SettingsView settingsView = new SettingsView();
-//            JPanel settingsPanel = settingsView.create();
-            //SettingsController settingsController = new SettingsController(settingsView);
+            // SettingsView settingsView = new SettingsView();
+            // JPanel settingsPanel = settingsView.create();
+            // SettingsController settingsController = new SettingsController(settingsView, soundManager);
 
-            MainGUI.window.add(MainGUI.settingsPanel);
+            MainGUI.window.add(settingsPanel);
             MainGUI.window.revalidate();
             MainGUI.window.repaint();
         });

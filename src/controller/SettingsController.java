@@ -8,17 +8,20 @@ import java.awt.event.*;
 
 import com.sun.tools.javac.Main;
 import view.*;
+import model.*;
 
 public class SettingsController {
 
     private SettingsView settingsMenu;
+    private SoundManager soundManager;
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     double screenWidth = screenSize.getWidth();
     double screenHeight = screenSize.getHeight();
 
-    public SettingsController(SettingsView theSettingsMenu) {
+    public SettingsController(SettingsView theSettingsMenu, SoundManager theSoundManager) {
         this.settingsMenu = theSettingsMenu;
+        this.soundManager = theSoundManager;
         addListeners();
     }
 
@@ -47,6 +50,7 @@ public class SettingsController {
 
         settingsMenu.addVolumeListener(e -> {
             int volume = settingsMenu.getVolumeValue();
+            soundManager.setVolume(volume);
             System.out.println("Volume: " + volume);
         });
 
