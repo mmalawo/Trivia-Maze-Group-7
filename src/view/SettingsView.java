@@ -71,7 +71,7 @@ public class SettingsView extends JPanel {
         settingsPanel.add(screenButton);
 
         //settingsPanel.add(new JLabel("Volume"));
-        volumeSlider = new JSlider();
+        volumeSlider = new JSlider(0, 100, 50);
         volumeSlider.setBounds((int)screenWidth/2-120, (int)screenHeight/2-160, 300, 50);
         volumeSlider.setForeground(Color.WHITE);
         volumeSlider.setOpaque(false);

@@ -42,8 +42,14 @@ public class MainGUI {
         window.setTitle("Trivia Maze - Main Menu");
 
         soundManager = new SoundManager();
-        soundManager.loadSound("src/sounds/HELL IN HEAVEN 4.wav");
-        soundManager.playLoop();
+        String[] songs = {
+                "src/sounds/Boing.wav",
+                "src/sounds/HELL IN HEAVEN.wav",
+                "src/sounds/Knock.wav",
+                "src/sounds/we makin it outta unova with this one.wav"
+        };
+
+        soundManager.loadPlaylist(songs);
 
         // Show menuView
         menuView = new GameMenuView();
