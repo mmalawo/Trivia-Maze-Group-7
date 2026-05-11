@@ -51,6 +51,17 @@ public class MenuController {// Action Listener and events
             MainGUI.window.add(settingsPanel);
             MainGUI.window.revalidate();
             MainGUI.window.repaint();
+
+        });
+
+        menu.addPlayListener(e -> {
+            MainGUI.window.getContentPane().removeAll();
+            MainGUI.window.add(MainGUI.setupView);
+
+            MainGUI.window.revalidate();
+            MainGUI.window.repaint();
+
+            MainGUI.setupView.requestFocusInWindow();
         });
 
     }
