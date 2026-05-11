@@ -8,6 +8,9 @@ Makani Malawo
 Tifanie Ngo
 -----------------------
 
+Link to Repo: https://github.com/mmalawo/Trivia-Maze-Group-7/tree/main
+
+-----------------------
 **Iteration One:**
 * One issue we encountered was adding a timer that starts when the Play button gets pressed. It was confusing where to add the logic and information, but we ended up putting most of it in GameController and Player.
 * An issue we're still trying to figure out is how to add sound to the game, because we want it to be as immersive as our skill levels can get, with the deadline to keep in mind as well.
