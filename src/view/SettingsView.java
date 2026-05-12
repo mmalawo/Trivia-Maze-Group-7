@@ -55,7 +55,7 @@ public class SettingsView extends JPanel {
         };
 
 
-        ImageIcon nightSettingsBackground = new ImageIcon("src/images/Night-Settings.png");
+        ImageIcon nightSettingsBackground = new ImageIcon("src/images/Day-Settings.png");
         background = nightSettingsBackground.getImage();
 
         settingsPanel.setLayout(null);
@@ -158,13 +158,22 @@ public class SettingsView extends JPanel {
     }
 
     public void setDarkMode(boolean darkMode) {
+        // Settings Screen Background
         if(darkMode) {
             ImageIcon nightSettingsBackground = new ImageIcon("src/images/Night-Settings.png");
             background = nightSettingsBackground.getImage();
-
         } else {
-            ImageIcon daySettingsBackground = new ImageIcon("src/images/Day-Mode.png");
+            ImageIcon daySettingsBackground = new ImageIcon("src/images/Day-Settings.png");
             background = daySettingsBackground.getImage();
+        }
+
+        // Game Menu Background
+        if(darkMode) {
+            ImageIcon nightMenuBackground = new ImageIcon("src/images/Night-Mode1.2.png");
+            GameMenuView.backgroundMenuImage = nightMenuBackground.getImage();
+        } else {
+            ImageIcon dayMenuBackground = new ImageIcon("src/images/Day-Mode1.2.png");
+            GameMenuView.backgroundMenuImage = dayMenuBackground.getImage();
         }
 
 

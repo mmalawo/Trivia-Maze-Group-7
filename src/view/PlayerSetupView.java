@@ -9,6 +9,12 @@ import java.awt.event.*;
 public class PlayerSetupView extends JPanel{
     private final JPanel playerPanel;
     private final Image setupViewBackground;
+    //private final JButton backToMenu;
+
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+    double screenWidth = screenSize.getWidth();
+    double screenHeight = screenSize.getHeight();
 
     public PlayerSetupView() {
         setLayout(null);
@@ -19,6 +25,16 @@ public class PlayerSetupView extends JPanel{
         setupViewBackground = background.getImage();
 
         playerPanel = new JPanel();
+
+        /*backToMenu = new JButton("<--Back--");
+        backToMenu.setBounds((int)screenWidth/2-520, (int)screenHeight/2-400, 200, 50);
+        backToMenu.setForeground(Color.WHITE);
+        backToMenu.setFocusPainted(false);
+        backToMenu.setBorderPainted(true);
+        backToMenu.setContentAreaFilled(false);
+        backToMenu.setOpaque(false);
+        playerPanel.add(backToMenu); */
+
         //playerPanel.setPreferredSize(new Dimension(50, 50));
         playerPanel.setOpaque(false);
         add(playerPanel);

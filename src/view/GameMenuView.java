@@ -8,6 +8,7 @@ import javax.swing.*;   // for JFrame
 import java.awt.*;
 import java.awt.event.*;  // Action Listener and events
 
+import static view.MainGUI.settingsView;
 import static view.MainGUI.window;
 
 
@@ -20,7 +21,7 @@ public class GameMenuView extends JPanel {
     double screenHeight = screenSize.getHeight();
 
     // Background Image
-    private final Image backgroundMenuImage;
+    public static Image backgroundMenuImage;
 
     // Button Initialization --------------------------------
     private final JButton exitButton;
@@ -34,7 +35,7 @@ public class GameMenuView extends JPanel {
     public GameMenuView() {
         this.setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
 
-        ImageIcon background = new ImageIcon("src/images/Night-Mode.png");
+        ImageIcon background = new ImageIcon("src/images/Day-Mode1.2.png");
         backgroundMenuImage = background.getImage();
 
         //this.setBackground(Color.WHITE);
