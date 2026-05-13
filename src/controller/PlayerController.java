@@ -11,14 +11,28 @@ public class PlayerController {
 
     public PlayerController(PlayerSetupView theSetupView) {
         this.setupView = theSetupView;
-        //addListeners();
+        addListeners();
     }
 
-    /*private void addListeners() {
-        setupView.addSomethingListener(e -> {
-            // Code
-        }); */
+    private void addListeners() {
+        setupView.addBackListener(e -> {
+            JFrame frame = MainGUI.window;
+            frame.getContentPane().removeAll();
 
+            frame.getContentPane().add(MainGUI.menuView);
 
+            frame.revalidate();
+            frame.repaint();
+        });
+
+        setupView.addNextListener(e -> {
+            PlayerSetupView.setSlide(PlayerSetupView.getSlide() + 1);
+            setupView.updateCharacter();
+        });
+        setupView.addPrevListener(e -> {
+            PlayerSetupView.setSlide(PlayerSetupView.getSlide() - 1);
+            setupView.updateCharacter();
+        });
+    }
 
 }
