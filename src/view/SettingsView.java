@@ -176,6 +176,15 @@ public class SettingsView extends JPanel {
             GameMenuView.backgroundMenuImage = dayMenuBackground.getImage();
         }
 
+        // Player Setup Background
+        if(darkMode) {
+            ImageIcon nightPlayerSetup = new ImageIcon("src/images/Night-PlayerSetup.png");
+            PlayerSetupView.setupViewBackground = nightPlayerSetup.getImage();
+        } else {
+            ImageIcon dayPlayerSetup = new ImageIcon("src/images/Day-PlayerSetup.png");
+            PlayerSetupView.setupViewBackground = dayPlayerSetup.getImage();
+        }
+
 
         //settingsPanel.setBackground(Color.WHITE);
 

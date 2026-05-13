@@ -44,7 +44,7 @@ public class MainGUI {
         soundManager = new SoundManager();
         String[] songs = {
                 //"src/sounds/Boing.wav",
-                //"src/sounds/HELL IN HEAVEN.wav",
+                "src/sounds/HELL IN HEAVEN.wav",
                 //"src/sounds/Knock.wav",
                 "src/sounds/we makin it outta unova with this one.wav"
         };
