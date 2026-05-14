@@ -40,10 +40,10 @@ public class SettingsView extends JPanel {
 
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setColor(new Color(0, 0, 0, 80));
-                g2.fillRoundRect((int)screenWidth/2 - 520,(int)screenHeight/2 -400, 200, 50, 20,20);
-                g2.fillRoundRect((int)screenWidth/2 - 120,(int)screenHeight/2-290, 300 , 50, 20,20);
-                g2.fillRoundRect((int)screenWidth/2 - 120,(int)screenHeight/2-160, 300 , 50, 20,20);
-                g2.fillRoundRect((int)screenWidth/2-120, (int)screenHeight/2-45, 300, 50, 20, 20);
+                g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/3.69)),(int)(screenHeight/2 - (screenHeight/2.7)), 200, 50, 20,20);
+                g2.fillRoundRect((int)screenWidth/2-(int)screenWidth/16, (int)(screenHeight/2-screenHeight/(3.72)), 300 , 50, 20,20);
+                g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/16)),(int)(screenHeight/2 - (screenHeight/6.75)), 300 , 50, 20,20);
+                g2.fillRoundRect((int)(screenWidth/2-(screenWidth/16)), (int)(screenHeight/2-(screenHeight/24)), 300, 50, 20, 20);
 
                 // More buttons:
                 //g2.fillRoundRect((int)screenWidth/2 - 250,(int)screenHeight/2, buttonWidth, buttonHeight, 20,20);
@@ -62,7 +62,7 @@ public class SettingsView extends JPanel {
 
         //settingsPanel.add(new JLabel("Fullscreen"));
         screenButton = new JToggleButton("On/Off", false);
-        screenButton.setBounds((int)screenWidth/2-120, (int)screenHeight/2-290, 300, 50);
+        screenButton.setBounds((int)screenWidth/2-(int)screenWidth/16, (int)(screenHeight/2-screenHeight/(3.72)), 300, 50);
         screenButton.setForeground(Color.WHITE);
         screenButton.setFocusPainted(false);
         screenButton.setBorderPainted(true);
@@ -72,13 +72,13 @@ public class SettingsView extends JPanel {
 
         //settingsPanel.add(new JLabel("Volume"));
         volumeSlider = new JSlider(0, 100, 50);
-        volumeSlider.setBounds((int)screenWidth/2-120, (int)screenHeight/2-160, 300, 50);
+        volumeSlider.setBounds((int)(screenWidth/2 - (screenWidth/16)),(int)(screenHeight/2 - (screenHeight/6.75)), 300, 50);
         volumeSlider.setForeground(Color.WHITE);
         volumeSlider.setOpaque(false);
         settingsPanel.add(volumeSlider);
 
         darkModeCheck = new JCheckBox();
-        darkModeCheck.setBounds((int)screenWidth/2-100, (int)screenHeight/2-35, 30, 30);
+        darkModeCheck.setBounds((int)(screenWidth/2-(screenWidth/19.2)), (int)(screenHeight/2-(screenHeight/30.857)), 30, 30);
         darkModeCheck.setForeground(Color.WHITE);
         darkModeCheck.setFocusPainted(false);
         darkModeCheck.setBorderPainted(false);
@@ -88,7 +88,7 @@ public class SettingsView extends JPanel {
         settingsPanel.add(darkModeCheck);
 
         nightDayMode = new JLabel("Day/Night Mode");
-        nightDayMode.setBounds((int)screenWidth/2-70, (int)screenHeight/2-35, 150, 30);
+        nightDayMode.setBounds((int)(screenWidth/2-(screenWidth/27.43)), (int)(screenHeight/2-(screenHeight/30.857)), 150, 30);
         nightDayMode.setForeground(Color.WHITE);
         nightDayMode.setFont(new Font("Arial", Font.BOLD, 12));
         settingsPanel.add(nightDayMode);
@@ -96,7 +96,7 @@ public class SettingsView extends JPanel {
 
 
         backToMenu = new JButton("<--Back--");
-        backToMenu.setBounds((int)screenWidth/2-520, (int)screenHeight/2-400, 200, 50);
+        backToMenu.setBounds((int)(screenWidth/2 - (screenWidth/3.69)),(int)(screenHeight/2 - (screenHeight/2.7)), 200, 50);
         backToMenu.setForeground(Color.WHITE);
         backToMenu.setFocusPainted(false);
         backToMenu.setBorderPainted(true);

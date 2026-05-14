@@ -42,7 +42,7 @@ public class PlayerSetupView extends JPanel{
         playerPanel = new JPanel();
 
         backToMenu = new JButton("<--Back--");
-        backToMenu.setBounds((int)screenWidth/2-851, (int)screenHeight/2-460, 200, 50);
+        backToMenu.setBounds((int)(screenWidth/2-screenWidth/(2.25)), (int)(screenHeight/2-screenHeight/(2.35)), 200, 50);
         backToMenu.setForeground(Color.WHITE);
         backToMenu.setFocusPainted(false);
         backToMenu.setBorderPainted(true);
@@ -52,13 +52,13 @@ public class PlayerSetupView extends JPanel{
 
 
         nameLabel = new JLabel("Type player's name:");
-        nameLabel.setBounds((int)screenWidth/2-100, (int)screenHeight/2+160, 200, 30);
+        nameLabel.setBounds((int)(screenWidth/2-(screenWidth/19.2)), (int)(screenHeight/2+(screenHeight/6.75)), 200, 30);
         //nameLabel.setForeground(Color.WHITE);
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         add(nameLabel);
 
         namePrompt = new JTextField();
-        namePrompt.setBounds((int)screenWidth/2-75, (int)screenHeight/2+200, 150, 30);
+        namePrompt.setBounds((int)(screenWidth/2-(screenWidth/25.6)), (int)(screenHeight/2+(screenHeight/5.4)), 150, 30);
         namePrompt.setOpaque(false);
         namePrompt.setBackground(new Color(0, 0, 0, 120));
         namePrompt.setForeground(Color.WHITE);
@@ -74,15 +74,15 @@ public class PlayerSetupView extends JPanel{
         });
 
         nextSlide = new JButton("Next");
-        nextSlide.setBounds((int)screenWidth/2+200, (int)screenHeight/2-300, 70, 40);
+        nextSlide.setBounds((int)(screenWidth/2+(screenWidth/9.6)), (int)(screenHeight/2-(screenHeight/3.6)), 70, 40);
         add(nextSlide);
 
         prevSlide = new JButton("Previous");
-        prevSlide.setBounds((int)screenWidth/2-300, (int)screenHeight/2-300, 70, 40);
+        prevSlide.setBounds((int)(screenWidth/2-(screenWidth/6.4)), (int)(screenHeight/2-(screenHeight/3.6)), 70, 40);
         add(prevSlide);
 
         butterflyIcon = new JLabel(character1);
-        butterflyIcon.setBounds((int)screenWidth/2 - 200,(int)screenHeight/2-400,400,400);
+        butterflyIcon.setBounds((int)(screenWidth/2 - (screenWidth/9.6)),(int)(screenHeight/2-(screenHeight/2.7)),400,400);
 
         add(butterflyIcon);
         updateCharacter();
@@ -154,8 +154,8 @@ public class PlayerSetupView extends JPanel{
 
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setColor(new Color(0, 0, 0, 80));
-        g2.fillRoundRect((int)screenWidth/2 - 851,(int)screenHeight/2 - 460, 200, 50, 20,20);
-        g2.fillRoundRect((int)screenWidth/2 - 100,(int)screenHeight/2 + 190, 200, 50, 20,20);
+        g2.fillRoundRect((int)(screenWidth/2-screenWidth/(2.25)), (int)(screenHeight/2-screenHeight/(2.35)), 200, 50, 20,20);
+        g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/19.2)),(int)(screenHeight/2 + (screenHeight/5.68)), 200, 50, 20,20);
     }
 
     public static int getSlide() {
