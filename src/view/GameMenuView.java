@@ -53,7 +53,7 @@ public class GameMenuView extends JPanel {
 
         // Exit button
         exitButton = new JButton("Exit Game");
-        exitButton.setBounds((int)screenWidth/2 - 250, (int)screenHeight/2 + 100, buttonWidth, buttonHeight);
+        exitButton.setBounds((int)(screenWidth/2 - (screenWidth/7.68)), (int)(screenHeight/2 + (screenHeight/10.8)), buttonWidth, buttonHeight);
         exitButton.setForeground(Color.WHITE);
         exitButton.setFocusPainted(false);
         exitButton.setBorderPainted(true);
@@ -63,7 +63,7 @@ public class GameMenuView extends JPanel {
 
         // Settings button
         settingsButton = new JButton("Settings");
-        settingsButton.setBounds((int)screenWidth/2 - 250, (int)screenHeight/2, buttonWidth, buttonHeight);
+        settingsButton.setBounds((int)(screenWidth/2 - (screenWidth/7.68)), (int)screenHeight/2, buttonWidth, buttonHeight);
         settingsButton.setForeground(Color.WHITE);
         settingsButton.setFocusPainted(false);
         settingsButton.setBorderPainted(true);
@@ -73,7 +73,7 @@ public class GameMenuView extends JPanel {
 
         // Play button
         playButton = new JButton("Play Game");
-        playButton.setBounds((int)screenWidth/2 - 250, (int)screenHeight/2 - 100, buttonWidth, buttonHeight);
+        playButton.setBounds((int)(screenWidth/2 - (screenWidth/7.68)), (int)(screenHeight/2 - (screenHeight/10.8)), buttonWidth, buttonHeight);
         playButton.setForeground(Color.WHITE);
         playButton.setFocusPainted(false);
         playButton.setBorderPainted(true);
@@ -97,9 +97,9 @@ public class GameMenuView extends JPanel {
         // exitButton background
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setColor(new Color(0, 0, 0, 80));
-        g2.fillRoundRect((int)screenWidth/2 - 250,(int)screenHeight/2 + 100, buttonWidth, buttonHeight, 20,20);
-        g2.fillRoundRect((int)screenWidth/2 - 250,(int)screenHeight/2, buttonWidth, buttonHeight, 20,20);
-        g2.fillRoundRect((int)screenWidth/2 - 250,(int)screenHeight/2 - 100, buttonWidth, buttonHeight, 20,20);
+        g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/7.68)), (int)(screenHeight/2 + (screenHeight/10.8)), buttonWidth, buttonHeight, 20,20);
+        g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/7.68)), (int)screenHeight/2, buttonWidth, buttonHeight, 20,20);
+        g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/7.68)), (int)(screenHeight/2 - (screenHeight/10.8)), buttonWidth, buttonHeight, 20,20);
 
         g2.dispose();
         //super.paintComponent(g2);
