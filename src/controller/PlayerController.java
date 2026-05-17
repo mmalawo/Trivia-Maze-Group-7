@@ -24,8 +24,17 @@ public class PlayerController {
             frame.revalidate();
             frame.repaint();
         });
-
         setupView.addNextListener(e -> {
+            MainGUI.window.getContentPane().removeAll();
+
+            MainGUI.window.revalidate();
+            MainGUI.window.repaint();
+        });
+        setupView.addNextAvatarListener(e -> {
+            PlayerSetupView.setSlide(PlayerSetupView.getSlide() + 1);
+            setupView.updateCharacter();
+        });
+        setupView.addNextAvatarListener(e -> {
             PlayerSetupView.setSlide(PlayerSetupView.getSlide() + 1);
             setupView.updateCharacter();
         });

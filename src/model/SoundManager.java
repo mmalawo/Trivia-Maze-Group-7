@@ -24,7 +24,7 @@ public class SoundManager {
 
     private String[] myPlaylist;
     private int myCurrAudio = 0;
-    private int myCurrVolume = 50;
+    private int myCurrVolume = 0;
 
     private final Random random = new Random();
 

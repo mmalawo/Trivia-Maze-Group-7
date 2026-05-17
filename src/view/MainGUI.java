@@ -37,8 +37,11 @@ public class MainGUI {
         window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setUndecorated(true); // For Fullscreen mode
+        // window.setUndecorated(true); // For Fullscreen mode
 
+        window.setUndecorated(false);
+        window.setExtendedState(JFrame.NORMAL);
+        window.setSize(1280, 720);
         window.setTitle("Trivia Maze - Main Menu");
 
         soundManager = new SoundManager();

@@ -12,6 +12,7 @@ public class PlayerSetupView extends JPanel{
     private final JPanel playerPanel;
     public static Image setupViewBackground;
     private final JButton backToMenu;
+    private final JButton nextToGame;
     private final JTextField namePrompt;
     private final JLabel nameLabel;
 
@@ -50,6 +51,19 @@ public class PlayerSetupView extends JPanel{
         backToMenu.setOpaque(false);
         add(backToMenu);
 
+        nextToGame = new JButton("--Next-->");
+        nextToGame.setBounds(
+                (int)(screenWidth - 300),
+                (int)(screenHeight / 2 - screenHeight / 2.35),
+                200,
+                50
+        );
+        nextToGame.setForeground(Color.WHITE);
+        nextToGame.setFocusPainted(false);
+        nextToGame.setBorderPainted(true);
+        nextToGame.setContentAreaFilled(false);
+        nextToGame.setOpaque(false);
+        add(nextToGame);
 
         nameLabel = new JLabel("Type player's name:");
         nameLabel.setBounds((int)(screenWidth/2-(screenWidth/19.2)), (int)(screenHeight/2+(screenHeight/6.75)), 200, 30);
@@ -155,6 +169,8 @@ public class PlayerSetupView extends JPanel{
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setColor(new Color(0, 0, 0, 80));
         g2.fillRoundRect((int)(screenWidth/2-screenWidth/(2.25)), (int)(screenHeight/2-screenHeight/(2.35)), 200, 50, 20,20);
+        // Next button background
+        g2.fillRoundRect((int)(screenWidth - 300), (int)(screenHeight / 2 - screenHeight / 2.35), 200, 50, 20, 20);
         g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/19.2)),(int)(screenHeight/2 + (screenHeight/5.68)), 200, 50, 20,20);
     }
 
@@ -173,6 +189,9 @@ public class PlayerSetupView extends JPanel{
         backToMenu.addActionListener(theListener);
     }
     public void addNextListener(ActionListener theListener) {
+        nextToGame.addActionListener(theListener);
+    }
+    public void addNextAvatarListener(ActionListener theListener) {
         nextSlide.addActionListener(theListener);
     }
 
