@@ -9,6 +9,8 @@ public class Player {
     public int myCorrectScore;
     public int myIncorrectScore;
     private long startTime;
+    private Room myCurrentRoom;
+    private int myRemainingAttempts;
 
     public String getName() {
         return myPlayerName;
@@ -72,5 +74,30 @@ public class Player {
         myIncorrectScore = 0;
         startTime = 0;
         MainGUI.setupView.namePrompt.setText("");
+    }
+
+
+    public Room getCurrentRoom() {
+        return myCurrentRoom;
+    }
+
+    public void setCurrentRoom(Room theRoom) {
+        myCurrentRoom = theRoom;
+    }
+
+    public int getRemainingAttempts() {
+        return myRemainingAttempts;
+    }
+
+    public void setRemainingAttempts(int theAttempts) {
+        myRemainingAttempts = theAttempts;
+    }
+
+    public void decrementAttempts() {
+        myRemainingAttempts--;
+    }
+
+    public boolean isGameOver() {
+        return myRemainingAttempts <= 0;
     }
 }
