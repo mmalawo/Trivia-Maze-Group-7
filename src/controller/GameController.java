@@ -32,6 +32,11 @@ public void addListeners() {
     });
 }
 
+public static void restartGame() {
+    MainGUI.player.reset();
+    System.out.println("Game restarted.");
+}
+
 // +startGame(thePlayerName : String) : void
 
 // +handleMove(theDirection : String) : void

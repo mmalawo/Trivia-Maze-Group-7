@@ -19,14 +19,22 @@ public class MainGUI {
     }
     public static JFrame window;
 
+    public static JPanel currentView;
+    public static JPanel previousView;
+    public static Stack<JPanel> panelHistory = new Stack<>();
+
+    // Views
     public static GameMenuView menuView;
     public static SoundManager soundManager;
     public static SettingsView settingsView;
+    public static MazeView mazeView;
+    public static PlayerSetupView setupView;
 
-    public static JPanel settingsPanel;
+    // Models
     public static Player player;
 
-    public static PlayerSetupView setupView;
+    // Controls
+    public static GameController gameController;
 
 
     public static JMenuBar menuBar;
@@ -60,18 +68,22 @@ public class MainGUI {
         menuView = new GameMenuView();
         player = new Player();
         settingsView = new SettingsView();
-        settingsPanel = settingsView.create();
         setupView = new PlayerSetupView();
-        menuBar = menuView.createMenuBar();
+        //menuBar = menuView.createMenuBar();
+        menuBar = createMenuBar();
         window.setJMenuBar(menuBar);
         instructionsView = new InstructionsView();
+        mazeView = new MazeView();
 
-        new GameController(menuView, player);
-        new MenuController(menuView, settingsView, settingsPanel);
+        currentView = menuView;
+        previousView = menuView;
+
+        gameController = new GameController(menuView, player);
+        new MenuController(menuView, settingsView);
         new PlayerController(setupView);
         new SettingsController(settingsView, soundManager);
 
-        window.add(menuView);
+        switchView(menuView);
 
         window.pack(); // Causes this window to be sized to fit preferred size in gamepanel
         window.setLocationRelativeTo(null); // Puts it at the center
@@ -79,4 +91,99 @@ public class MainGUI {
 
 
     }
+
+    public static void switchView(JPanel panel) {
+        if(currentView != null) {
+            panelHistory.push(currentView);
+        }
+        currentView = panel;
+
+        window.setContentPane(panel);
+//        window.getContentPane().removeAll();
+//        window.getContentPane().add(panel);
+
+        window.revalidate();
+        window.repaint();
+    }
+    public static void goBack() {
+        if(!panelHistory.isEmpty()) {
+            currentView = panelHistory.pop();
+            window.setContentPane(currentView);
+            window.revalidate();
+            window.repaint();
+        }
+    }
+
+
+
+    // ----------------------------------------------------------------------
+    // THIS CODE IS FOR A GAME BAR THAT GOES ON TOP OF THE SCREEN
+    // ----------------------------------------------------------------------
+
+
+
+    public static JMenuBar createMenuBar() {
+
+        // The actual bar at the top
+        JMenuBar menuBar = new JMenuBar();
+
+        // "Game" drop down menu
+        JMenu gameMenu  = new JMenu("Game");
+
+        // _____________________________________________________
+        // Options you can click in the dropdown menu of Game.
+        // _____________________________________________________
+        JMenuItem itemRestartGame = new JMenuItem("Main Menu");
+        // Shortcut to restart game with keyboard
+        itemRestartGame.setAccelerator(KeyStroke.getKeyStroke("control R"));
+
+        JMenuItem itemExitGame = new JMenuItem("Exit");
+        itemExitGame.setAccelerator(KeyStroke.getKeyStroke("control E"));
+
+        JMenuItem itemSettings = new JMenuItem("Settings");
+        // CAN ADD A SHORTCUT TO SETTINGS HERE IF WE WANT
+
+        gameMenu.add(itemRestartGame);
+        gameMenu.addSeparator();
+        gameMenu.add(itemExitGame);
+        gameMenu.addSeparator();
+        gameMenu.add(itemSettings);
+
+        menuBar.add(gameMenu);
+
+        // CHANGE THIS TO BE THE FRAME OR PANEL OF THE GAME VIEW
+        //window.setJMenuBar(menuBar);
+
+        itemExitGame.addActionListener(e -> {
+            if(JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to exit?", "Exit",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        });
+
+
+        itemSettings.addActionListener(e -> {
+            MainGUI.switchView(MainGUI.settingsView);
+
+
+        });
+
+        itemRestartGame.addActionListener(e -> {
+            if(JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to go back? Progress will not save.",
+                    "Main Menu",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
+                System.out.println("Name before: " + MainGUI.player.getName());
+                GameController.restartGame();
+                System.out.println("Name after: " + MainGUI.player.getName());
+                MainGUI.switchView(MainGUI.menuView);
+            }
+
+        });
+
+
+        return menuBar;
+    }
+
 }

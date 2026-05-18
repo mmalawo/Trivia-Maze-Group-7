@@ -119,67 +119,6 @@ public class GameMenuView extends JPanel {
 
 
 
-    // ----------------------------------------------------------------------
-    // THIS CODE IS FOR A GAME BAR THAT GOES ON TOP OF THE SCREEN
-    //
-    // I PUT IT HERE FOR NOW BUT IT'LL BE ON THE ACTUAL MAZE GAME VIEW.
-    // ----------------------------------------------------------------------
-
-
-
-    public JMenuBar createMenuBar() {
-
-        // The actual bar at the top
-        JMenuBar menuBar = new JMenuBar();
-
-        // "Game" drop down menu
-        JMenu gameMenu  = new JMenu("Game");
-
-        // _____________________________________________________
-        // Options you can click in the dropdown menu of Game.
-        // _____________________________________________________
-        JMenuItem itemRestartGame = new JMenuItem("Restart Game");
-        // Shortcut to restart game with keyboard
-        itemRestartGame.setAccelerator(KeyStroke.getKeyStroke("control R"));
-
-        JMenuItem itemExitGame = new JMenuItem("Exit");
-        itemExitGame.setAccelerator(KeyStroke.getKeyStroke("control E"));
-
-        JMenuItem itemSettings = new JMenuItem("Settings");
-        // CAN ADD A SHORTCUT TO SETTINGS HERE IF WE WANT
-
-        gameMenu.add(itemRestartGame);
-        gameMenu.addSeparator();
-        gameMenu.add(itemExitGame);
-        gameMenu.addSeparator();
-        gameMenu.add(itemSettings);
-
-        menuBar.add(gameMenu);
-
-        // CHANGE THIS TO BE THE FRAME OR PANEL OF THE GAME VIEW
-        //window.setJMenuBar(menuBar);
-
-        itemExitGame.addActionListener(e -> {
-            if(JOptionPane.showConfirmDialog(null,
-                    "Are you sure you want to exit?", "Exit",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            }
-        });
-
-
-        itemSettings.addActionListener(e -> {
-            MainGUI.window.getContentPane().removeAll();
-            MainGUI.window.add(MainGUI.settingsPanel);
-            MainGUI.window.setJMenuBar(MainGUI.menuBar);
-            MainGUI.window.revalidate();;
-            MainGUI.window.repaint();
-
-        });
-
-        return menuBar;
-
-    }
 
     public static JLabel timerLabel;
 public void addTimer() {

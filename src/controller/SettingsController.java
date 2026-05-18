@@ -55,13 +55,15 @@ public class SettingsController {
         });
 
         settingsMenu.addBackListener(e -> {
-            JFrame frame = MainGUI.window;
-            frame.getContentPane().removeAll();
-
-            frame.getContentPane().add(MainGUI.menuView);
-
-            frame.revalidate();
-            frame.repaint();
+            MainGUI.goBack();
+            //MainGUI.switchView(MainGUI.previousView);
+//            JFrame frame = MainGUI.window;
+//            frame.getContentPane().removeAll();
+//
+//            frame.getContentPane().add(MainGUI.menuView);
+//
+//            frame.revalidate();
+//            frame.repaint();
         });
 
 
