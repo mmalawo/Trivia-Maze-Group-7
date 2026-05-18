@@ -25,7 +25,12 @@ public class PlayerController {
             frame.repaint();
         });
         setupView.addNextListener(e -> {
+            String playerName = MainGUI.player.getName();
+
+            MainGUI.instructionsView.setPlayerName(playerName);
+
             MainGUI.window.getContentPane().removeAll();
+            MainGUI.window.getContentPane().add(MainGUI.instructionsView);
 
             MainGUI.window.revalidate();
             MainGUI.window.repaint();
@@ -34,9 +39,18 @@ public class PlayerController {
             PlayerSetupView.setSlide(PlayerSetupView.getSlide() + 1);
             setupView.updateCharacter();
         });
-        setupView.addNextAvatarListener(e -> {
-            PlayerSetupView.setSlide(PlayerSetupView.getSlide() + 1);
-            setupView.updateCharacter();
+        MainGUI.instructionsView.addStartGameListener(e -> {
+            System.out.println("Game starting...");
+
+            MainGUI.player.startTimer();
+
+            MainGUI.window.getContentPane().removeAll();
+
+            // Later replace this with actual MazeView
+            MainGUI.window.getContentPane().add(MainGUI.menuView);
+
+            MainGUI.window.revalidate();
+            MainGUI.window.repaint();
         });
         setupView.addPrevListener(e -> {
             PlayerSetupView.setSlide(PlayerSetupView.getSlide() - 1);

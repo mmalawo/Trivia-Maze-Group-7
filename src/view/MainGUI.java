@@ -31,6 +31,8 @@ public class MainGUI {
 
     public static JMenuBar menuBar;
 
+    public static InstructionsView instructionsView;
+
     public static void startApplication() {
 
         // Initialize window
@@ -62,13 +64,12 @@ public class MainGUI {
         setupView = new PlayerSetupView();
         menuBar = menuView.createMenuBar();
         window.setJMenuBar(menuBar);
+        instructionsView = new InstructionsView();
 
         new GameController(menuView, player);
         new MenuController(menuView, settingsView, settingsPanel);
         new PlayerController(setupView);
         new SettingsController(settingsView, soundManager);
-
-
 
         window.add(menuView);
 

@@ -7,6 +7,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class PlayerSetupView extends JPanel{
     private final JPanel playerPanel;
@@ -81,10 +83,29 @@ public class PlayerSetupView extends JPanel{
 
         add(namePrompt);
 
-        namePrompt.addActionListener(e -> {
-            String name = namePrompt.getText();
-            MainGUI.player.setName(name);
-            System.out.println(MainGUI.player.getName());
+        namePrompt.getDocument().addDocumentListener(new DocumentListener() {
+
+            private void updateName() {
+                String name = namePrompt.getText();
+                MainGUI.player.setName(name);
+
+                System.out.println(MainGUI.player.getName());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateName();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateName();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateName();
+            }
         });
 
         nextSlide = new JButton("Next");
