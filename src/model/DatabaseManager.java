@@ -21,7 +21,6 @@ import java.sql.Statement;
  * - Add a new INSERT statement following the same format
  * - Delete the trivia.db file from the project folder
  * - Rerun the game and the database will recreate with your new questions
- * - Short answer questions will be added in iteration 3!
  */
 public class DatabaseManager {
 
@@ -93,10 +92,9 @@ public class DatabaseManager {
      * Table columns:
      * - id: a unique number for each question (auto-increments)
      * - question_text: the actual question being asked
-     * - option_a through option_d: the answer choices (null for true/false)
+     * - option_a through option_d: the answer choices (null for true/false or short answer)
      * - correct_answer: the correct answer
-     * - question_type: "multiple choice" or "true/false"
-     *   (short answer will be added in iteration 3)
+     * - question_type: "multiple choice" or "true/false" or "short answer"
      */
     private void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS questions (" +
@@ -119,15 +117,16 @@ public class DatabaseManager {
 
     /**
      * Inserts trivia questions into the database.
-     * Currently supports:
+     * Currently supports (as of the Third Iteration):
      * - 8 multiple choice questions
-     * - 6 true/false questions
-     * - Short answer questions will be added in iteration 3!
+     * - 8 true/false questions
+     * - 5 Short answer questions
      *
      * HOW TO ADD MORE QUESTIONS:
      * Copy one of the existing INSERT statements below and modify it.
-     * For multiple choice: fill in all 4 options and the correct letter.
+     * For multiple choice: fill in all 4 options and the correct answer.
      * For true/false: option_c and option_d should be NULL.
+     * For short answer: all should be NULL.
      * After adding, delete trivia.db and rerun the game to reset the database.
      */
     private void populateQuestions() {
@@ -192,7 +191,7 @@ public class DatabaseManager {
                         "'C', 'multiple choice')",
 
                 // ------------------------------------------------------------------------
-                // TRUE/FALSE QUESTIONS (6 total)
+                // TRUE/FALSE QUESTIONS (8 total)
                 // Format: question, True, False, NULL, NULL, correct answer, type
                 // To add more: copy a line below and change the values
                 // ------------------------------------------------------------------------
@@ -225,16 +224,59 @@ public class DatabaseManager {
                 "INSERT INTO questions VALUES (NULL, " +
                         "'Martin Scorseses Killers of the Flower Moon is based on a true story about the Osage Nation murders in Oklahoma.', " +
                         "'True', 'False', NULL, NULL, " +
-                        "'True', 'true/false')"
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'TWICE member Jihyo trained at JYP Entertainment for 10 years before making her debut.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'There are two Japanese members in TWICE', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+                // ------------------------------------------------------------------------
+                // SHORT ANSWER QUESTIONS (5 total)
+                // Format: question, NULL, NULL, NULL, NULL, correct answer, type
+                // To add more: copy a line below and change the values
+                // ------------------------------------------------------------------------
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Who played Ken in the 2023 live-action film Barbie?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Ryan Gosling', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Who was the creator of Star Wars?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'George Lucas', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What was the name of the survival show that the K-Pop girl group TWICE formed from?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'SIXTEEN', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What is the name of the song behind the infamous Rickroll meme?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Never Gonna Give You Up', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What venue in Seattle will the FIFA World Cup 2026 be held in?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Lumen Field', 'short answer')"
         };
 
         // Loop through each question and insert it into the database
         try {
             Statement stmt = myConnection.createStatement();
+            int count = 0;
             for (String question : questions) {
+                count++;
                 stmt.execute(question);
             }
-            System.out.println("14 trivia questions added to database successfully!");
+            System.out.println(count + " trivia questions added to database successfully!");
         } catch (SQLException e) {
             System.out.println("Error inserting questions: " + e.getMessage());
         }
