@@ -63,4 +63,14 @@ public class Player {
 
     }
      */
+
+
+    public void reset() {
+        myPlayerName = null;
+        myRecordTime = 0;
+        myCorrectScore = 0;
+        myIncorrectScore = 0;
+        startTime = 0;
+        MainGUI.setupView.namePrompt.setText("");
+    }
 }

@@ -15,7 +15,7 @@ public class PlayerSetupView extends JPanel{
     public static Image setupViewBackground;
     private final JButton backToMenu;
     private final JButton nextToGame;
-    private final JTextField namePrompt;
+    public final JTextField namePrompt;
     private final JLabel nameLabel;
 
     private final JButton nextSlide;
