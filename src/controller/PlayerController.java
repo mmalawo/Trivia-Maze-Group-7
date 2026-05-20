@@ -40,6 +40,8 @@ public class PlayerController {
 
             MainGUI.switchView(MainGUI.mazeView);
 
+
+
         });
         setupView.addPrevListener(e -> {
             PlayerSetupView.setSlide(PlayerSetupView.getSlide() - 1);

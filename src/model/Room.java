@@ -35,4 +35,13 @@ public class Room {
     public boolean canGoLeft() { return hasLeft; }
     public boolean canGoRight() { return hasRight; }
     public boolean canGoCenter() { return hasCenter; }
+
+    @Override
+    public String toString() {
+        return "Room{ north=" + northDoor.isLocked() +
+                ", east=" + eastDoor.isLocked() +
+                ", south=" + southDoor.isLocked() +
+                ", west=" + westDoor.isLocked() +
+                ", visited=" + visited + " }";
+    }
 }

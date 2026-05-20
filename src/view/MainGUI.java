@@ -16,6 +16,7 @@ public class MainGUI {
     public static void main(String args[]) {
         System.out.println("Starting application...");
         startApplication();
+        testMaze();
     }
     public static JFrame window;
 
@@ -29,6 +30,7 @@ public class MainGUI {
     public static SettingsView settingsView;
     public static MazeView mazeView;
     public static PlayerSetupView setupView;
+    public static Maze maze;
 
     // Models
     public static Player player;
@@ -66,13 +68,17 @@ public class MainGUI {
 
         // Show menuView
         menuView = new GameMenuView();
-        player = new Player();
+
         settingsView = new SettingsView();
         setupView = new PlayerSetupView();
         //menuBar = menuView.createMenuBar();
         menuBar = createMenuBar();
         window.setJMenuBar(menuBar);
         instructionsView = new InstructionsView();
+
+        maze = GenerateMaze.generateMaze();
+        player = new Player();
+        player.setCurrentRoom(maze.getEntrance());
         mazeView = new MazeView();
 
         currentView = menuView;
@@ -185,5 +191,25 @@ public class MainGUI {
 
         return menuBar;
     }
+
+    public static void testMaze() {
+        Maze thisMaze = GenerateMaze.generateMaze();
+
+
+        System.out.println("Current Room: " + player.getCurrentRoom());
+        System.out.println("Maze Columns: " + thisMaze.getCols()); // 5
+        System.out.println("Maze Rows: " + thisMaze.getRows()); // 5
+
+       // System.out.println(thisMaze.getEntrance());
+       // System.out.println(thisMaze.getExit());
+
+        for(int r = 0; r < thisMaze.getRows(); r++) {
+            for(int c = 0; c < thisMaze.getCols(); c++) {
+                System.out.println(thisMaze.getRoom(r,c));
+            }
+        }
+        System.out.println();
+    }
+
 
 }

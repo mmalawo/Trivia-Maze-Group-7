@@ -147,3 +147,6 @@ public class MazeView extends JPanel {
 
 
 }
+
+
+

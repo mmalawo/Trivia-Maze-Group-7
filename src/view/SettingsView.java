@@ -178,13 +178,13 @@ public class SettingsView extends JPanel {
 
 
         // Maze View Background
-        if(darkMode) {
+        /*if(darkMode) {
             ImageIcon nightGrass = new ImageIcon("src/images/NightGrass.png");
             MazeView.mazeGrass = nightGrass.getImage();
         } else {
             ImageIcon dayGrass = new ImageIcon("src/images/DayGrass.png");
             MazeView.mazeGrass = dayGrass.getImage();
-        }
+        } */
 
         //settingsPanel.setBackground(Color.WHITE);
 

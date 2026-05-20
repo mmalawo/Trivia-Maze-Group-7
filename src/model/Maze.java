@@ -1,3 +1,5 @@
+package model;
+
 public class Maze {
     private Room[][] rooms;
     private int rows;
@@ -13,6 +15,14 @@ public class Maze {
 
     public Room[][] getRooms() {
         return rooms;
+    }
+
+    public void setRooms(int r, int c, Room room) {
+        rooms[r][c] = room;
+    }
+
+    public Room getRoom(int r, int c) {
+        return rooms[r][c];
     }
 
     public Room getEntrance() {
@@ -37,5 +47,16 @@ public class Maze {
 
     public int getCols() {
         return cols;
+    }
+
+    public int[] findRoom(Room target) {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (rooms[r][c] == target) {
+                    return new int[]{r, c};
+                }
+            }
+        }
+        return null;
     }
 }
