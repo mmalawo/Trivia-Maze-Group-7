@@ -79,7 +79,7 @@ public class MainGUI {
         maze = GenerateMaze.generateMaze();
         player = new Player();
         player.setCurrentRoom(maze.getEntrance());
-        mazeView = new MazeView();
+        mazeView = new MazeView(maze);
 
         currentView = menuView;
         previousView = menuView;
