@@ -47,6 +47,12 @@ public class MazeView extends JPanel {
     // Room info label for dev purposes
     private JLabel coordLabel;
 
+    // Butterfly animation toggle
+    private boolean butterflyToggle = false;
+
+    // Zoom scale
+    private float scale = 1.0f;
+
     public MazeView(Maze maze) {
         this.maze = maze;
 
@@ -68,6 +74,11 @@ public class MazeView extends JPanel {
             repaint();
         }).start();
 
+        // butterfly flap animation timer
+        new Timer(300, e -> {
+            butterflyToggle = !butterflyToggle;
+        }).start();
+
         setLayout(null);
         setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
         setFocusable(true);
@@ -81,7 +92,7 @@ public class MazeView extends JPanel {
 
         // Room info label
         coordLabel = new JLabel(getRoomInfo());
-        coordLabel.setBounds(10, 10, 400, 30);
+        coordLabel.setBounds(10, 10, 600, 30);
         coordLabel.setForeground(Color.WHITE);
         coordLabel.setFont(new Font("Arial", Font.BOLD, 14));
         add(coordLabel);
@@ -94,6 +105,15 @@ public class MazeView extends JPanel {
                 System.out.println("Clicked at: (" + x + ", " + y + ")");
             }
         });
+
+        // Zoom with scroll wheel
+        addMouseWheelListener(e -> {
+            if (e.getWheelRotation() < 0) {
+                scale = Math.min(scale + 0.1f, 2.0f);
+            } else {
+                scale = Math.max(scale - 0.1f, 0.3f);
+            }
+        });
     }
 
     public JPanel getPlayerPanel() {
@@ -103,10 +123,10 @@ public class MazeView extends JPanel {
     private String getRoomInfo() {
         Room r = maze.getRoom(playerRow, playerCol);
         return "(" + playerCol + "," + playerRow + ") | " +
-                "N:" + (r.getNorthDoor().isLocked() ? "X" : "O") + " " +
-                "S:" + (r.getSouthDoor().isLocked() ? "X" : "O") + " " +
-                "E:" + (r.getEastDoor().isLocked() ? "X" : "O") + " " +
-                "W:" + (r.getWestDoor().isLocked() ? "X" : "O");
+                "N:" + (r.getNorthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
+                "S:" + (r.getSouthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
+                "E:" + (r.getEastDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
+                "W:" + (r.getWestDoor().isLocked() ? "LOCKED" : "OPEN");
     }
 
     private float worldCenterX(int col) {
@@ -234,8 +254,8 @@ public class MazeView extends JPanel {
     }
 
     private void updateCamera() {
-        int stepX = 770;
-        int stepY = 500;
+        int stepX = (int)(770 * scale);
+        int stepY = (int)(500 * scale);
 
         if(up) { targetCamY -= stepY; up = false; }
         if(down) { targetCamY += stepY; down = false; }
@@ -255,19 +275,44 @@ public class MazeView extends JPanel {
         int rows = maze.getRows();
         int cols = maze.getCols();
 
+        int roomW = (int)(900 * scale);
+        int roomH = (int)(900 * scale);
+        int stepX = (int)(770 * scale);
+        int stepY = (int)(500 * scale);
+
         for(int r = 1; r <= rows; r++) {
             for(int c = 1; c <= cols; c++) {
                 int centerRow = (rows + 1)/2;
                 int centerCol = (cols + 1)/2;
 
-                int x = 770 * (centerCol - c);
-                int y = 500 * (centerRow - r);
+                int x = stepX * (centerCol - c);
+                int y = stepY * (centerRow - r);
 
-                int screenX = (int)(screenWidth/2 - (450 + x) - camX);
+                int screenX = (int)(screenWidth/2 - (450 * scale + x) - camX);
                 int screenY = (int)(screenHeight/2 - y - camY);
 
-                g.drawImage(hedgeTest.getImage(), screenX, screenY, 900, 900, this);
+                g.drawImage(hedgeTest.getImage(), screenX, screenY, roomW, roomH, this);
             }
+        }
+
+        // Draw butterfly at player's current room
+        int centerRow = (rows + 1) / 2;
+        int centerCol = (cols + 1) / 2;
+
+        int px = stepX * (centerCol - (playerCol + 1));
+        int py = stepY * (centerRow - (playerRow + 1));
+
+        int playerScreenX = (int)(screenWidth/2 - (450 * scale + px) - camX) + (int)(385 * scale);
+        int playerScreenY = (int)(screenHeight/2 - py - camY) + (int)(250 * scale);
+
+        int bfSize = (int)(150 * scale);
+
+        ImageIcon butterfly = butterflyToggle ?
+                PlayerSetupView.character2 :
+                PlayerSetupView.character1;
+
+        if (butterfly != null && butterfly.getImage() != null) {
+            g.drawImage(butterfly.getImage(), playerScreenX, playerScreenY, bfSize, bfSize, this);
         }
     }
 }
