@@ -22,3 +22,13 @@ Link to Repo: https://github.com/mmalawo/Trivia-Maze-Group-7/tree/main
 * An achievement made during the 2nd iteration was successfully implement a sound system, with randomized automatic track switching and a working volume slider that can change how loud audio is for the program. -**Tifanie**
 * I was focused primarily on developing and implementing the audio system for in-game music/SFX that time invested on the player logic portion of the project wasn't as prominent as expected, but I'd like to make it a goal for the upcoming iteration now that the main menu has been mostly implemented by now and the group can start working on the contents of the game for basic gameplay. -**Tifanie**
 
+**Iteration Three:**
+- Makani: Created QuestionDAO.java to retrieve random trivia questions from the database. Updated Door.java to assign a Question object to each door on creation. Updated Player.java with room tracking and game-over logic.
+- Tifanie: Implemented InstructionsView screen, added trivia questions to the database, worked on PlayerSetupView and PlayerController.
+- Angelina: Restructured layout with switchPanel() method for cleaner code, added character customization, created MazeView, fixed disappearing MenuBar bug.
+
+**Iteration Four:**
+- There's a bug found regarding the questions determining if a door stays locked or unlocked (sometimes, you can answer a door that should have been permanently locked; sometimes "unlocked" doors are still marked as "locked" and you have to answer two questions for a permanent door state change)
+That problem was discovered while creating visual door rendering.
+- More discussion is needed on how we plan to move the character visually.
+- Need to make it so any screen size can play the game. Right now the maze doesn't center itself properly (since we're starting in the middle).
