@@ -5,19 +5,21 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+
 import model.*;
 import model.Question;
 import model.QuestionDAO;
-import view.*;
-import controller.*;
 
 public class MazeView extends JPanel {
+
     private final JPanel playerPanel;
 
     public static Image mazeGrass;
 
     public static ImageIcon hedgeTest = new ImageIcon("src/images/FixedHedge900.png");
     public static ImageIcon shadyHedge = new ImageIcon("src/images/ShadyHedge.png");
+    public static ImageIcon lockedDoor = new ImageIcon("src/images/lockedDoor.png");
+    public static ImageIcon unlockedDoor = new ImageIcon("src/images/unlockedDoor.png");
 
     private JLabel hedge;
     private JLabel hedge2;
@@ -61,8 +63,8 @@ public class MazeView extends JPanel {
         playerRow = startPos[0];
         playerCol = startPos[1];
 
-        camX = (float)screenWidth/2 - 930;
-        camY = (float)screenHeight/2 - 100;
+        camX = (float)screenWidth / 2 - 930;
+        camY = (float)screenHeight / 2 - 100;
         targetCamX = camX;
         targetCamY = camY;
 
@@ -122,6 +124,7 @@ public class MazeView extends JPanel {
 
     private String getRoomInfo() {
         Room r = maze.getRoom(playerRow, playerCol);
+
         return "(" + playerCol + "," + playerRow + ") | " +
                 "N:" + (r.getNorthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
                 "S:" + (r.getSouthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
@@ -144,58 +147,118 @@ public class MazeView extends JPanel {
             case "west"  -> { return playerCol > 0; }
             case "east"  -> { return playerCol < maze.getCols() - 1; }
         }
+
         return false;
     }
 
     private void tryMove(String direction) {
+
         if (!isValidMove(direction)) {
             System.out.println("Can't move that way - wall!");
             return;
         }
 
         Room currentRoom = maze.getRoom(playerRow, playerCol);
+
         Door door = null;
+
         int newRow = playerRow;
         int newCol = playerCol;
 
         switch (direction) {
-            case "north" -> { door = currentRoom.getNorthDoor(); newRow = playerRow - 1; }
-            case "south" -> { door = currentRoom.getSouthDoor(); newRow = playerRow + 1; }
-            case "west"  -> { door = currentRoom.getWestDoor();  newCol = playerCol - 1; }
-            case "east"  -> { door = currentRoom.getEastDoor();  newCol = playerCol + 1; }
+            case "north" -> {
+                door = currentRoom.getNorthDoor();
+                newRow = playerRow - 1;
+            }
+
+            case "south" -> {
+                door = currentRoom.getSouthDoor();
+                newRow = playerRow + 1;
+            }
+
+            case "west" -> {
+                door = currentRoom.getWestDoor();
+                newCol = playerCol - 1;
+            }
+
+            case "east" -> {
+                door = currentRoom.getEastDoor();
+                newCol = playerCol + 1;
+            }
         }
 
         if (door == null) return;
 
         if (!door.isLocked()) {
+
             playerRow = newRow;
             playerCol = newCol;
+
             MainGUI.player.setCurrentRoom(maze.getRoom(playerRow, playerCol));
+
             coordLabel.setText(getRoomInfo());
+
             System.out.println("Moved to room [" + playerRow + "][" + playerCol + "]");
+
         } else {
+
             Question q = door.getQuestion();
+
             if (q != null) {
+
                 TriviaPopup popup = new TriviaPopup(q);
                 popup.setVisible(true);
+
                 if (popup.isAnsweredCorrectly()) {
+
                     door.setLocked(false);
+
                     playerRow = newRow;
                     playerCol = newCol;
+
                     MainGUI.player.setCurrentRoom(maze.getRoom(playerRow, playerCol));
+
                     coordLabel.setText(getRoomInfo());
-                    JOptionPane.showMessageDialog(MainGUI.window, "Correct! Door unlocked!", "Result", JOptionPane.INFORMATION_MESSAGE);
+
+                    JOptionPane.showMessageDialog(
+                            MainGUI.window,
+                            "Correct! Door unlocked!",
+                            "Result",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+
                     System.out.println("Correct! Moved to room [" + playerRow + "][" + playerCol + "]");
+
                 } else {
-                    JOptionPane.showMessageDialog(MainGUI.window, "Wrong! Door stays locked.", "Result", JOptionPane.ERROR_MESSAGE);
+
+                    JOptionPane.showMessageDialog(
+                            MainGUI.window,
+                            "Wrong! Door stays locked.",
+                            "Result",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+
                     System.out.println("Wrong! Staying in room [" + playerRow + "][" + playerCol + "]");
                 }
             }
         }
     }
 
+    private void drawDoor(Graphics2D g2, Door door, int x, int y, int w, int h) {
+        ImageIcon doorIcon;
+
+        if (door.isLocked()) {
+            doorIcon = lockedDoor;
+        } else {
+            doorIcon = unlockedDoor;
+        }
+
+        g2.drawImage(doorIcon.getImage(), x, y, w, h, this);
+    }
+
     private void setupButtons() {
-        // Angie's camera pan buttons - kept as is
+
+        // Camera movement buttons
         JButton upB = new JButton("↑");
         JButton downB = new JButton("↓");
         JButton leftB = new JButton("←");
@@ -231,7 +294,7 @@ public class MazeView extends JPanel {
             public void mouseReleased(MouseEvent e) { right = false; }
         });
 
-        // Player movement buttons (temporary)
+        // Player movement buttons
         JButton moveNorth = new JButton("N");
         JButton moveSouth = new JButton("S");
         JButton moveWest = new JButton("W");
@@ -254,46 +317,116 @@ public class MazeView extends JPanel {
     }
 
     private void updateCamera() {
+
         int stepX = (int)(770 * scale);
         int stepY = (int)(500 * scale);
 
-        if(up) { targetCamY -= stepY; up = false; }
-        if(down) { targetCamY += stepY; down = false; }
-        if(left) { targetCamX -= stepX; left = false; }
-        if(right) { targetCamX += stepX; right = false; }
+        if(up) {
+            targetCamY -= stepY;
+            up = false;
+        }
+
+        if(down) {
+            targetCamY += stepY;
+            down = false;
+        }
+
+        if(left) {
+            targetCamX -= stepX;
+            left = false;
+        }
+
+        if(right) {
+            targetCamX += stepX;
+            right = false;
+        }
 
         float smooth = 0.02f;
+
         camX += (targetCamX - camX) * smooth;
         camY += (targetCamY - camY) * smooth;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
+
         super.paintComponent(g);
+
         g.drawImage(mazeGrass, 0, 0, getWidth(), getHeight(), this);
+
+        Graphics2D g2 = (Graphics2D) g.create();
 
         int rows = maze.getRows();
         int cols = maze.getCols();
 
         int roomW = (int)(900 * scale);
         int roomH = (int)(900 * scale);
+
         int stepX = (int)(770 * scale);
         int stepY = (int)(500 * scale);
 
         for(int r = 1; r <= rows; r++) {
+
             for(int c = 1; c <= cols; c++) {
-                int centerRow = (rows + 1)/2;
-                int centerCol = (cols + 1)/2;
+
+                int centerRow = (rows + 1) / 2;
+                int centerCol = (cols + 1) / 2;
 
                 int x = stepX * (centerCol - c);
                 int y = stepY * (centerRow - r);
 
-                int screenX = (int)(screenWidth/2 - (450 * scale + x) - camX);
-                int screenY = (int)(screenHeight/2 - y - camY);
+                int screenX = (int)(screenWidth / 2 - (450 * scale + x) - camX);
+                int screenY = (int)(screenHeight / 2 - y - camY);
 
                 g.drawImage(hedgeTest.getImage(), screenX, screenY, roomW, roomH, this);
+
+                Room room = maze.getRoom(r - 1, c - 1);
+
+                int doorWidth = (int)(220 * scale);
+                int doorHeight = (int)(120 * scale);
+
+                // NORTH DOOR
+                drawDoor(g2,
+                        room.getNorthDoor(),
+                        screenX + roomW / 2 - doorWidth / 2,
+                        screenY + (int)(70 * scale),
+                        doorWidth,
+                        doorHeight
+                );
+
+                // EAST DOOR
+                drawDoor(
+                        g2,
+                        room.getEastDoor(),
+                        screenX + roomW - (int)(95 * scale),
+                        screenY + roomH / 2 - doorWidth / 2,
+                        doorHeight,
+                        doorWidth
+                );
+
+                // SOUTH DOOR
+                drawDoor(
+                        g2,
+                        room.getSouthDoor(),
+                        screenX + roomW / 2 - doorWidth / 2,
+                        screenY + roomH - (int)(95 * scale),
+                        doorWidth,
+                        doorHeight
+                );
+
+                // WEST DOOR
+                drawDoor(
+                        g2,
+                        room.getWestDoor(),
+                        screenX + (int)(35 * scale),
+                        screenY + roomH / 2 - doorWidth / 2,
+                        doorHeight,
+                        doorWidth
+                );
             }
         }
+
+        g2.dispose();
 
         // Draw butterfly at player's current room
         int centerRow = (rows + 1) / 2;
@@ -302,17 +435,30 @@ public class MazeView extends JPanel {
         int px = stepX * (centerCol - (playerCol + 1));
         int py = stepY * (centerRow - (playerRow + 1));
 
-        int playerScreenX = (int)(screenWidth/2 - (450 * scale + px) - camX) + (int)(385 * scale);
-        int playerScreenY = (int)(screenHeight/2 - py - camY) + (int)(250 * scale);
+        int playerScreenX =
+                (int)(screenWidth / 2 - (450 * scale + px) - camX)
+                        + (int)(385 * scale);
+
+        int playerScreenY =
+                (int)(screenHeight / 2 - py - camY)
+                        + (int)(250 * scale);
 
         int bfSize = (int)(150 * scale);
 
-        ImageIcon butterfly = butterflyToggle ?
-                PlayerSetupView.character2 :
-                PlayerSetupView.character1;
+        ImageIcon butterfly = butterflyToggle
+                ? PlayerSetupView.character2
+                : PlayerSetupView.character1;
 
         if (butterfly != null && butterfly.getImage() != null) {
-            g.drawImage(butterfly.getImage(), playerScreenX, playerScreenY, bfSize, bfSize, this);
+
+            g.drawImage(
+                    butterfly.getImage(),
+                    playerScreenX,
+                    playerScreenY,
+                    bfSize,
+                    bfSize,
+                    this
+            );
         }
     }
 }
