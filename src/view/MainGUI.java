@@ -143,6 +143,12 @@ public class MainGUI {
         // Shortcut to restart game with keyboard
         itemRestartGame.setAccelerator(KeyStroke.getKeyStroke("control R"));
 
+        JMenuItem itemSaveGame = new JMenuItem("Save Game");
+        itemSaveGame.setAccelerator(KeyStroke.getKeyStroke("control S"));
+
+        JMenuItem itemLoadGame = new JMenuItem("Load Game");
+        itemLoadGame.setAccelerator(KeyStroke.getKeyStroke("control L"));
+
         JMenuItem itemExitGame = new JMenuItem("Exit");
         itemExitGame.setAccelerator(KeyStroke.getKeyStroke("control E"));
 
@@ -150,6 +156,10 @@ public class MainGUI {
         // CAN ADD A SHORTCUT TO SETTINGS HERE IF WE WANT
 
         gameMenu.add(itemRestartGame);
+        gameMenu.addSeparator();
+        gameMenu.add(itemSaveGame);
+        gameMenu.addSeparator();
+        gameMenu.add(itemLoadGame);
         gameMenu.addSeparator();
         gameMenu.add(itemExitGame);
         gameMenu.addSeparator();
@@ -188,6 +198,15 @@ public class MainGUI {
 
         });
 
+        itemSaveGame.addActionListener(e -> {
+            MainGUI.saveGame();
+            JOptionPane.showMessageDialog(window, "Game saved!");
+        });
+
+        itemLoadGame.addActionListener(e -> {
+            MainGUI.loadGame();
+            JOptionPane.showMessageDialog(window, "Game loaded!");
+        });
 
         return menuBar;
     }
@@ -211,5 +230,22 @@ public class MainGUI {
         System.out.println();
     }
 
+    public static void saveGame() {
+        Memento save = new Memento(player, maze);
+        SaveManager.saveGame(save);
+    }
 
+    public static void loadGame() {
+        Memento loaded = SaveManager.loadGame();
+
+        if (loaded != null) {
+            player = loaded.getPlayer();
+            maze = loaded.getMaze();
+
+            mazeView = new MazeView(maze);
+            switchView(mazeView);
+
+            System.out.println("Loaded player: " + player.getName());
+        }
+    }
 }

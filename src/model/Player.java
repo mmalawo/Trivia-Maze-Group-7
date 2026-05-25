@@ -1,13 +1,16 @@
 package model;
 
 import view.*;
+import java.io.Serializable;
 import controller.*;
 
-public class Player {
-    public String myPlayerName;
-    public double myRecordTime;
-    public int myCorrectScore;
-    public int myIncorrectScore;
+public class Player implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String myPlayerName;
+    private double myRecordTime;
+    private int myCorrectScore;
+    private int myIncorrectScore;
     private long startTime;
     private Room myCurrentRoom;
     private int myRemainingAttempts;

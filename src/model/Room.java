@@ -1,6 +1,10 @@
 package model;
 
-public class Room {
+import java.io.Serializable;
+
+public class Room implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Door northDoor;
     private Door southDoor;
     private Door eastDoor;

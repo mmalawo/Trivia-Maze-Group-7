@@ -1,11 +1,15 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * Represents a door in the maze.
  * Each door is locked and requires the player to answer
  * a trivia question correctly to pass through.
  */
-public class Door {
+public class Door implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private boolean isLocked;
     private Question myQuestion;
 
