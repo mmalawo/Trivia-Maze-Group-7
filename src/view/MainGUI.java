@@ -48,7 +48,7 @@ public class MainGUI {
         // Initialize window
         window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
+        window.setResizable(true);
         // window.setUndecorated(true); // For Fullscreen mode
 
         window.setUndecorated(false);

@@ -1,14 +1,10 @@
 package view;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 
 import model.*;
-import model.Question;
-import model.QuestionDAO;
 
 public class MazeView extends JPanel {
 
@@ -18,20 +14,12 @@ public class MazeView extends JPanel {
 
     public static ImageIcon hedgeTest = new ImageIcon("src/images/FixedHedge900.png");
     public static ImageIcon shadyHedge = new ImageIcon("src/images/ShadyHedge.png");
+
     public static ImageIcon lockedDoor = new ImageIcon("src/images/lockedDoor.png");
     public static ImageIcon unlockedDoor = new ImageIcon("src/images/unlockedDoor.png");
 
-    private JLabel hedge;
-    private JLabel hedge2;
-    private JLabel hedge3;
-    private JLabel hedge4;
-
     public static ImageIcon character1;
     public static ImageIcon character2;
-
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    double screenWidth = screenSize.getWidth();
-    double screenHeight = screenSize.getHeight();
 
     private final Maze maze;
 
@@ -39,8 +27,8 @@ public class MazeView extends JPanel {
     private float camY;
     private float targetCamX;
     private float targetCamY;
+
     private boolean up, down, left, right;
-    private final float manualSpeed = 25f;
 
     // Player position in maze grid
     private int playerRow;
@@ -49,11 +37,14 @@ public class MazeView extends JPanel {
     // Room info label for dev purposes
     private JLabel coordLabel;
 
-    // Butterfly animation toggle
     private boolean butterflyToggle = false;
 
     // Zoom scale
     private float scale = 1.0f;
+
+    // Dynamic scaling base resolution based on original design size
+    private static final double BASE_WIDTH = 1536.0;
+    private static final double BASE_HEIGHT = 1024.0;
 
     public MazeView(Maze maze) {
         this.maze = maze;
@@ -63,8 +54,8 @@ public class MazeView extends JPanel {
         playerRow = startPos[0];
         playerCol = startPos[1];
 
-        camX = (float)screenWidth / 2 - 930;
-        camY = (float)screenHeight / 2 - 100;
+        camX = 0;
+        camY = 400;
         targetCamX = camX;
         targetCamY = camY;
 
@@ -102,9 +93,7 @@ public class MazeView extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-                System.out.println("Clicked at: (" + x + ", " + y + ")");
+                System.out.println("Clicked at: (" + e.getX() + ", " + e.getY() + ")");
             }
         });
 
@@ -122,6 +111,25 @@ public class MazeView extends JPanel {
         return playerPanel;
     }
 
+    // Calculates responsive scaling factor based on current panel size, which resizes
+    // PNG sprites and maze objects resize dynamically with the window
+    private double getUIScale() {
+        double scaleX = getWidth() / BASE_WIDTH;
+        double scaleY = getHeight() / BASE_HEIGHT;
+
+        return Math.min(scaleX, scaleY);
+    }
+
+    // Combines responsive UI scaling with zoom scaling
+    private double getWorldScale() {
+        return getUIScale() * scale;
+    }
+
+    // Converts original design pixel values into dynamically scaled values
+    private int scaled(double value) {
+        return (int)(value * getWorldScale());
+    }
+
     private String getRoomInfo() {
         Room r = maze.getRoom(playerRow, playerCol);
 
@@ -130,14 +138,6 @@ public class MazeView extends JPanel {
                 "S:" + (r.getSouthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
                 "E:" + (r.getEastDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
                 "W:" + (r.getWestDoor().isLocked() ? "LOCKED" : "OPEN");
-    }
-
-    private float worldCenterX(int col) {
-        return col * 770 + 770 / 2f;
-    }
-
-    private float worldCenterY(int row) {
-        return row * 500 + 500 / 2f;
     }
 
     private boolean isValidMove(String direction) {
@@ -152,14 +152,12 @@ public class MazeView extends JPanel {
     }
 
     private void tryMove(String direction) {
-
         if (!isValidMove(direction)) {
             System.out.println("Can't move that way - wall!");
             return;
         }
 
         Room currentRoom = maze.getRoom(playerRow, playerCol);
-
         Door door = null;
 
         int newRow = playerRow;
@@ -170,17 +168,14 @@ public class MazeView extends JPanel {
                 door = currentRoom.getNorthDoor();
                 newRow = playerRow - 1;
             }
-
             case "south" -> {
                 door = currentRoom.getSouthDoor();
                 newRow = playerRow + 1;
             }
-
             case "west" -> {
                 door = currentRoom.getWestDoor();
                 newCol = playerCol - 1;
             }
-
             case "east" -> {
                 door = currentRoom.getEastDoor();
                 newCol = playerCol + 1;
@@ -190,35 +185,17 @@ public class MazeView extends JPanel {
         if (door == null) return;
 
         if (!door.isLocked()) {
-
-            playerRow = newRow;
-            playerCol = newCol;
-
-            MainGUI.player.setCurrentRoom(maze.getRoom(playerRow, playerCol));
-
-            coordLabel.setText(getRoomInfo());
-
-            System.out.println("Moved to room [" + playerRow + "][" + playerCol + "]");
-
+            movePlayer(newRow, newCol);
         } else {
-
             Question q = door.getQuestion();
 
             if (q != null) {
-
                 TriviaPopup popup = new TriviaPopup(q);
                 popup.setVisible(true);
 
                 if (popup.isAnsweredCorrectly()) {
-
                     door.setLocked(false);
-
-                    playerRow = newRow;
-                    playerCol = newCol;
-
-                    MainGUI.player.setCurrentRoom(maze.getRoom(playerRow, playerCol));
-
-                    coordLabel.setText(getRoomInfo());
+                    movePlayer(newRow, newCol);
 
                     JOptionPane.showMessageDialog(
                             MainGUI.window,
@@ -226,11 +203,7 @@ public class MazeView extends JPanel {
                             "Result",
                             JOptionPane.INFORMATION_MESSAGE
                     );
-
-                    System.out.println("Correct! Moved to room [" + playerRow + "][" + playerCol + "]");
-
                 } else {
-
                     JOptionPane.showMessageDialog(
                             MainGUI.window,
                             "Wrong! Door stays locked.",
@@ -244,7 +217,38 @@ public class MazeView extends JPanel {
         }
     }
 
-    private void drawDoor(Graphics2D g2, Door door, int x, int y, int w, int h) {
+    // Helper method created for updating player's position in maze
+    private void movePlayer(int newRow, int newCol) {
+        playerRow = newRow;
+        playerCol = newCol;
+
+        MainGUI.player.setCurrentRoom(maze.getRoom(playerRow, playerCol));
+        coordLabel.setText(getRoomInfo());
+
+        System.out.println("Moved to room [" + playerRow + "][" + playerCol + "]");
+    }
+
+    // Automatically scales PNG sprites relative to current window size
+    private void drawSprite(Graphics g,
+                            ImageIcon sprite,
+                            int x,
+                            int y,
+                            int windowWidth,
+                            int windowHeight) {
+
+        int spriteWidth = scaled(windowWidth);
+        int spriteHeight = scaled(windowHeight);
+
+        g.drawImage(sprite.getImage(), x, y, spriteWidth, spriteHeight, this);
+    }
+
+    private void drawDoor(Graphics2D g2,
+                          Door door,
+                          int x,
+                          int y,
+                          int w,
+                          int h) {
+
         ImageIcon doorIcon;
 
         if (door.isLocked()) {
@@ -257,8 +261,6 @@ public class MazeView extends JPanel {
     }
 
     private void setupButtons() {
-
-        // Camera movement buttons
         JButton upB = new JButton("↑");
         JButton downB = new JButton("↓");
         JButton leftB = new JButton("←");
@@ -294,7 +296,6 @@ public class MazeView extends JPanel {
             public void mouseReleased(MouseEvent e) { right = false; }
         });
 
-        // Player movement buttons
         JButton moveNorth = new JButton("N");
         JButton moveSouth = new JButton("S");
         JButton moveWest = new JButton("W");
@@ -317,26 +318,25 @@ public class MazeView extends JPanel {
     }
 
     private void updateCamera() {
+        int stepX = scaled(770);
+        int stepY = scaled(500);
 
-        int stepX = (int)(770 * scale);
-        int stepY = (int)(500 * scale);
-
-        if(up) {
+        if (up) {
             targetCamY -= stepY;
             up = false;
         }
 
-        if(down) {
+        if (down) {
             targetCamY += stepY;
             down = false;
         }
 
-        if(left) {
+        if (left) {
             targetCamX -= stepX;
             left = false;
         }
 
-        if(right) {
+        if (right) {
             targetCamX += stepX;
             right = false;
         }
@@ -349,47 +349,59 @@ public class MazeView extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
 
-        g.drawImage(mazeGrass, 0, 0, getWidth(), getHeight(), this);
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+
+        // Scales background image to always fit current panel size
+        g.drawImage(mazeGrass, 0, 0, panelWidth, panelHeight, this);
 
         Graphics2D g2 = (Graphics2D) g.create();
 
         int rows = maze.getRows();
         int cols = maze.getCols();
 
-        int roomW = (int)(900 * scale);
-        int roomH = (int)(900 * scale);
+        // Dynamically scales maze room PNG sizes based on window size and zoom
+        int roomW = scaled(900);
+        int roomH = scaled(900);
 
-        int stepX = (int)(770 * scale);
-        int stepY = (int)(500 * scale);
+        // Dynamically scales spacing between maze rooms
+        int stepX = scaled(770);
+        int stepY = scaled(500);
 
-        for(int r = 1; r <= rows; r++) {
-
-            for(int c = 1; c <= cols; c++) {
-
+        for (int r = 1; r <= rows; r++) {
+            for (int c = 1; c <= cols; c++) {
                 int centerRow = (rows + 1) / 2;
                 int centerCol = (cols + 1) / 2;
 
                 int x = stepX * (centerCol - c);
                 int y = stepY * (centerRow - r);
 
-                int screenX = (int)(screenWidth / 2 - (450 * scale + x) - camX);
-                int screenY = (int)(screenHeight / 2 - y - camY);
+                int screenX = (int)(panelWidth / 2 - (scaled(450) + x) - camX);
+                int screenY = (int)(panelHeight / 2 - y - camY);
 
-                g.drawImage(hedgeTest.getImage(), screenX, screenY, roomW, roomH, this);
+                g.drawImage(
+                        hedgeTest.getImage(),
+                        screenX,
+                        screenY,
+                        roomW,
+                        roomH,
+                        this
+                );
 
                 Room room = maze.getRoom(r - 1, c - 1);
 
-                int doorWidth = (int)(220 * scale);
-                int doorHeight = (int)(120 * scale);
+                // Dynamically scales door sprite sizes relative to screen size
+                int doorWidth = scaled(220);
+                int doorHeight = scaled(120);
 
                 // NORTH DOOR
-                drawDoor(g2,
+                drawDoor(
+                        g2,
                         room.getNorthDoor(),
                         screenX + roomW / 2 - doorWidth / 2,
-                        screenY + (int)(70 * scale),
+                        screenY + scaled(70),
                         doorWidth,
                         doorHeight
                 );
@@ -398,7 +410,7 @@ public class MazeView extends JPanel {
                 drawDoor(
                         g2,
                         room.getEastDoor(),
-                        screenX + roomW - (int)(95 * scale),
+                        screenX + roomW - scaled(140),
                         screenY + roomH / 2 - doorWidth / 2,
                         doorHeight,
                         doorWidth
@@ -409,7 +421,7 @@ public class MazeView extends JPanel {
                         g2,
                         room.getSouthDoor(),
                         screenX + roomW / 2 - doorWidth / 2,
-                        screenY + roomH - (int)(95 * scale),
+                        screenY + roomH - scaled(95),
                         doorWidth,
                         doorHeight
                 );
@@ -418,7 +430,7 @@ public class MazeView extends JPanel {
                 drawDoor(
                         g2,
                         room.getWestDoor(),
-                        screenX + (int)(35 * scale),
+                        screenX + scaled(35),
                         screenY + roomH / 2 - doorWidth / 2,
                         doorHeight,
                         doorWidth
@@ -428,7 +440,6 @@ public class MazeView extends JPanel {
 
         g2.dispose();
 
-        // Draw butterfly at player's current room
         int centerRow = (rows + 1) / 2;
         int centerCol = (cols + 1) / 2;
 
@@ -436,28 +447,26 @@ public class MazeView extends JPanel {
         int py = stepY * (centerRow - (playerRow + 1));
 
         int playerScreenX =
-                (int)(screenWidth / 2 - (450 * scale + px) - camX)
-                        + (int)(385 * scale);
+                (int)(panelWidth / 2 - (scaled(450) + px) - camX)
+                        + scaled(385);
 
         int playerScreenY =
-                (int)(screenHeight / 2 - py - camY)
-                        + (int)(250 * scale);
-
-        int bfSize = (int)(150 * scale);
+                (int)(panelHeight / 2 - py - camY)
+                        + scaled(250);
 
         ImageIcon butterfly = butterflyToggle
                 ? PlayerSetupView.character2
                 : PlayerSetupView.character1;
 
         if (butterfly != null && butterfly.getImage() != null) {
-
-            g.drawImage(
-                    butterfly.getImage(),
+            // Dynamically scales player butterfly sprite
+            drawSprite(
+                    g,
+                    butterfly,
                     playerScreenX,
                     playerScreenY,
-                    bfSize,
-                    bfSize,
-                    this
+                    150,
+                    150
             );
         }
     }
