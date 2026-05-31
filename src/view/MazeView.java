@@ -17,6 +17,7 @@ public class MazeView extends JPanel {
 
     public static ImageIcon lockedDoor = new ImageIcon("src/images/lockedDoor.png");
     public static ImageIcon unlockedDoor = new ImageIcon("src/images/unlockedDoor.png");
+    public static ImageIcon permanentlyLockedDoor = new ImageIcon("src/images/lockedDoor.png"); // swap image later
 
     public static ImageIcon character1;
     public static ImageIcon character2;
@@ -184,6 +185,18 @@ public class MazeView extends JPanel {
 
         if (door == null) return;
 
+        // Permanently closed - no more attempts allowed
+        if (door.isPermanentlyClosed()) {
+            JOptionPane.showMessageDialog(
+                    MainGUI.window,
+                    "This door is permanently locked!",
+                    "Blocked",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        // Already unlocked - free passage
         if (!door.isLocked()) {
             movePlayer(newRow, newCol);
         } else {
@@ -193,10 +206,12 @@ public class MazeView extends JPanel {
                 TriviaPopup popup = new TriviaPopup(q);
                 popup.setVisible(true);
 
-                if (popup.isAnsweredCorrectly()) {
-                    door.setLocked(false);
-                    movePlayer(newRow, newCol);
+                // Use door.attemptAnswer() so the attempt counter is properly tracked
+                String playerAnswer = popup.getPlayerAnswer();
+                boolean correct = door.attemptAnswer(playerAnswer);
 
+                if (correct) {
+                    movePlayer(newRow, newCol);
                     JOptionPane.showMessageDialog(
                             MainGUI.window,
                             "Correct! Door unlocked!",
@@ -204,9 +219,13 @@ public class MazeView extends JPanel {
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 } else {
+                    String attemptsMsg = door.isPermanentlyClosed()
+                            ? "Wrong! This door is now permanently locked."
+                            : "Wrong! " + door.getAttemptsRemaining() + " attempt(s) remaining.";
+
                     JOptionPane.showMessageDialog(
                             MainGUI.window,
-                            "Wrong! Door stays locked.",
+                            attemptsMsg,
                             "Result",
                             JOptionPane.ERROR_MESSAGE
                     );
@@ -251,7 +270,9 @@ public class MazeView extends JPanel {
 
         ImageIcon doorIcon;
 
-        if (door.isLocked()) {
+        if (door.isPermanentlyClosed()) {
+            doorIcon = permanentlyLockedDoor; // swap for a distinct image later
+        } else if (door.isLocked()) {
             doorIcon = lockedDoor;
         } else {
             doorIcon = unlockedDoor;

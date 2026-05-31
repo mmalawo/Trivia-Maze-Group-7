@@ -4,62 +4,76 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-/**
- * QuestionDAO (Data Access Object) is responsible for retrieving
- * trivia questions from the SQLite database.
- * It acts as the bridge between the database and the rest of the game.
- */
 public class QuestionDAO {
 
-    // The database manager that handles our connection to the SQLite database
     private final DatabaseManager myDB;
 
-    /**
-     * Constructor - gets the single instance of DatabaseManager
-     * (Singleton pattern, same one used everywhere in the game)
-     */
+    // Shuffled pool of all questions for the current game
+    private static List<Question> questionPool = new ArrayList<>();
+    private static int poolIndex = 0;
+
     public QuestionDAO() {
         myDB = DatabaseManager.getInstance();
     }
 
     /**
-     * Retrieves a random trivia question from the database.
-     * Uses SQL's ORDER BY RANDOM() to shuffle the results,
-     * then LIMIT 1 to grab just one question.
-     *
-     * @return a Question object with all its data, or null if something goes wrong
+     * Loads all questions from the database, shuffles them randomly,
+     * and resets the index. Call this at the start of each new game.
      */
-    public Question getRandomQuestion() {
-        // SQL query that selects one random question from the questions table
-        String sql = "SELECT * FROM questions ORDER BY RANDOM() LIMIT 1";
+    public static void resetUsedQuestions() {
+        questionPool = new ArrayList<>();
+        poolIndex = 0;
 
         try {
-            // Get the active database connection
-            Connection conn = myDB.getConnection();
-
-            // Prepare and execute the SQL query
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM questions");
             ResultSet rs = stmt.executeQuery();
 
-            // If a row was returned, build a Question object from the data
-            if (rs.next()) {
-                return new Question(
-                        rs.getString("question_text"),  // The question being asked
-                        rs.getString("option_a"),        // First answer choice
-                        rs.getString("option_b"),        // Second answer choice
-                        rs.getString("option_c"),        // Third answer choice (null if not multiple choice)
-                        rs.getString("option_d"),        // Fourth answer choice (null if not multiple choice)
-                        rs.getString("correct_answer"),  // The correct answer
-                        rs.getString("question_type")    // "multiple choice", "true/false", or "short answer"
-                );
+            while (rs.next()) {
+                questionPool.add(new Question(
+                        rs.getString("question_text"),
+                        rs.getString("option_a"),
+                        rs.getString("option_b"),
+                        rs.getString("option_c"),
+                        rs.getString("option_d"),
+                        rs.getString("correct_answer"),
+                        rs.getString("question_type")
+                ));
             }
+
+            // Shuffle so every game gets a different order
+            Collections.shuffle(questionPool);
+
         } catch (SQLException e) {
-            // Print any database errors to help with debugging
             e.printStackTrace();
         }
+    }
 
-        // Return null if no question was found or an error occurred
-        return null;
+    /**
+     * Returns the next question from the pre-shuffled pool.
+     * If the pool runs out, reshuffles and starts over.
+     *
+     * @return a Question object, or null if pool is empty
+     */
+    public Question getRandomQuestion() {
+        // If pool is empty or not initialized, load it
+        if (questionPool.isEmpty()) {
+            resetUsedQuestions();
+        }
+
+        // If still empty something went wrong with DB
+        if (questionPool.isEmpty()) return null;
+
+        // If we've used all questions, reshuffle and start over
+        if (poolIndex >= questionPool.size()) {
+            Collections.shuffle(questionPool);
+            poolIndex = 0;
+        }
+
+        return questionPool.get(poolIndex++);
     }
 }

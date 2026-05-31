@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class TriviaPopup extends JDialog {
 
-    private boolean answeredCorrectly = false;
+    private String playerAnswer = "";
 
     public TriviaPopup(Question question) {
         super(MainGUI.window, true);
@@ -37,8 +37,9 @@ public class TriviaPopup extends JDialog {
             for (String option : options) {
                 if (option != null) {
                     JButton btn = new JButton(option);
+                    final String captured = option; // explicitly capture for lambda
                     btn.addActionListener(e -> {
-                        answeredCorrectly = option.toUpperCase().startsWith(question.getCorrectAnswer().toUpperCase());
+                        playerAnswer = captured;
                         dispose();
                     });
                     answersPanel.add(btn);
@@ -51,8 +52,9 @@ public class TriviaPopup extends JDialog {
             answersPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
             for (String option : new String[]{"True", "False"}) {
                 JButton btn = new JButton(option);
+                final String captured = option; // explicitly capture for lambda
                 btn.addActionListener(e -> {
-                    answeredCorrectly = option.equalsIgnoreCase(question.getCorrectAnswer());
+                    playerAnswer = captured;
                     dispose();
                 });
                 answersPanel.add(btn);
@@ -76,7 +78,7 @@ public class TriviaPopup extends JDialog {
             submitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
             submitBtn.setMaximumSize(new Dimension(200, 40));
             submitBtn.addActionListener(e -> {
-                answeredCorrectly = textField.getText().trim().equalsIgnoreCase(question.getCorrectAnswer());
+                playerAnswer = textField.getText().trim();
                 dispose();
             });
 
@@ -89,7 +91,7 @@ public class TriviaPopup extends JDialog {
         }
     }
 
-    public boolean isAnsweredCorrectly() {
-        return answeredCorrectly;
+    public String getPlayerAnswer() {
+        return playerAnswer;
     }
 }

@@ -32,6 +32,11 @@ public class Room implements Serializable {
     public Door getEastDoor() { return eastDoor; }
     public Door getWestDoor() { return westDoor; }
 
+    public void setNorthDoor(Door door) { this.northDoor = door; }
+    public void setSouthDoor(Door door) { this.southDoor = door; }
+    public void setEastDoor(Door door)  { this.eastDoor = door; }
+    public void setWestDoor(Door door)  { this.westDoor = door; }
+
     public boolean isVisited() { return visited; }
     public void setVisited(boolean visited) { this.visited = visited; }
 

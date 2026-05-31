@@ -6,11 +6,14 @@ import java.io.Serializable;
  * Represents a door in the maze.
  * Each door is locked and requires the player to answer
  * a trivia question correctly to pass through.
+ * Players have 3 attempts before the door is permanently locked.
  */
 public class Door implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private boolean isLocked;
+    private boolean isPermanentlyClosed;
+    private int attemptsRemaining;
     private Question myQuestion;
 
     /**
@@ -19,7 +22,8 @@ public class Door implements Serializable {
      */
     public Door() {
         this.isLocked = true;
-        // Use QuestionDAO to pull a random question from the DB
+        this.isPermanentlyClosed = false;
+        this.attemptsRemaining = 3;
         QuestionDAO dao = new QuestionDAO();
         this.myQuestion = dao.getRandomQuestion();
     }
@@ -29,6 +33,20 @@ public class Door implements Serializable {
      */
     public boolean isLocked() {
         return isLocked;
+    }
+
+    /**
+     * Returns whether the door is permanently closed (failed 3 times).
+     */
+    public boolean isPermanentlyClosed() {
+        return isPermanentlyClosed;
+    }
+
+    /**
+     * Returns how many attempts the player has remaining.
+     */
+    public int getAttemptsRemaining() {
+        return attemptsRemaining;
     }
 
     /**
@@ -48,16 +66,28 @@ public class Door implements Serializable {
 
     /**
      * Checks if the player's answer matches the correct answer.
+     * Uses startsWith so full option text like "B) Christian Bale" matches correct answer "B".
      * If correct, unlocks the door.
+     * If wrong, decrements attempts and permanently closes after 3 failures.
      *
      * @param theAnswer the answer the player provided
      * @return true if correct, false if wrong
      */
     public boolean attemptAnswer(String theAnswer) {
-        if (myQuestion != null && theAnswer.equalsIgnoreCase(myQuestion.getCorrectAnswer())) {
+        if (isPermanentlyClosed) return false;
+
+        if (myQuestion != null && theAnswer.toUpperCase().startsWith(myQuestion.getCorrectAnswer().toUpperCase())) {
             isLocked = false;
             return true;
         }
+
+        attemptsRemaining--;
+
+        if (attemptsRemaining <= 0) {
+            isPermanentlyClosed = true;
+            isLocked = true;
+        }
+
         return false;
     }
 }
