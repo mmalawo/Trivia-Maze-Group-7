@@ -7,6 +7,7 @@ import java.io.Serializable;
  * Each door is locked and requires the player to answer
  * a trivia question correctly to pass through.
  * Players have 3 attempts before the door is permanently locked.
+ * Each wrong answer fetches a new question for the next attempt.
  */
 public class Door implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -51,7 +52,6 @@ public class Door implements Serializable {
 
     /**
      * Sets the locked state of the door.
-     * Call with false when the player answers correctly.
      */
     public void setLocked(boolean locked) {
         isLocked = locked;
@@ -68,7 +68,7 @@ public class Door implements Serializable {
      * Checks if the player's answer matches the correct answer.
      * Uses startsWith so full option text like "B) Christian Bale" matches correct answer "B".
      * If correct, unlocks the door.
-     * If wrong, decrements attempts and permanently closes after 3 failures.
+     * If wrong, decrements attempts, fetches a new question, and permanently closes after 3 failures.
      *
      * @param theAnswer the answer the player provided
      * @return true if correct, false if wrong
@@ -86,6 +86,10 @@ public class Door implements Serializable {
         if (attemptsRemaining <= 0) {
             isPermanentlyClosed = true;
             isLocked = true;
+        } else {
+            // Fetch a new question for the next attempt
+            QuestionDAO dao = new QuestionDAO();
+            myQuestion = dao.getRandomQuestion();
         }
 
         return false;

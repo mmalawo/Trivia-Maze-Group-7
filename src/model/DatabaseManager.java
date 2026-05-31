@@ -24,41 +24,18 @@ import java.sql.Statement;
  */
 public class DatabaseManager {
 
-    // The single instance of this class (Singleton pattern from lecture)
-    // "volatile" makes sure this works correctly even with multiple threads
     private static volatile DatabaseManager myInstance;
-
-    // The database connection object - this is what lets us talk to SQLite
     private Connection myConnection;
-
-    // The path/name of our database file.
-    // This will create a file called "trivia.db" in the project folder.
     private static final String DB_URL = "jdbc:sqlite:trivia.db";
 
-    /**
-     * Private constructor - this is the Singleton pattern!
-     * By making the constructor private, no other class can do
-     * "new DatabaseManager()" - they MUST use getInstance() instead.
-     * This guarantees only one DatabaseManager ever exists.
-     */
     private DatabaseManager() {
-        // When the DatabaseManager is first created, set up everything
         connect();
         createTable();
         populateQuestions();
     }
 
-    /**
-     * This is how other classes get access to the DatabaseManager.
-     * If it doesn't exist yet, create it. If it does, just return it.
-     * This is the Singleton getInstance() method from the lecture slides!
-     *
-     * @return the single instance of DatabaseManager
-     */
     public static DatabaseManager getInstance() {
-        // Only create a new instance if one doesn't exist yet
         if (myInstance == null) {
-            // "synchronized" makes this thread-safe (from lecture)
             synchronized (DatabaseManager.class) {
                 if (myInstance == null) {
                     myInstance = new DatabaseManager();
@@ -68,34 +45,15 @@ public class DatabaseManager {
         return myInstance;
     }
 
-    /**
-     * Opens a connection to the SQLite database file.
-     * If the file doesn't exist yet, SQLite will create it automatically.
-     * This is the JDBC connection from Task 2.
-     */
     private void connect() {
         try {
-            // DriverManager.getConnection() is the JDBC way of opening a database
             myConnection = DriverManager.getConnection(DB_URL);
             System.out.println("Connected to SQLite database successfully!");
         } catch (SQLException e) {
-            // If something goes wrong, print the error so we can debug it
             System.out.println("Error connecting to database: " + e.getMessage());
         }
     }
 
-    /**
-     * Creates the questions table in the database if it doesn't exist yet.
-     * "IF NOT EXISTS" means it won't crash if the table is already there.
-     * Each row in the table represents one trivia question.
-     *
-     * Table columns:
-     * - id: a unique number for each question (auto-increments)
-     * - question_text: the actual question being asked
-     * - option_a through option_d: the answer choices (null for true/false or short answer)
-     * - correct_answer: the correct answer
-     * - question_type: "multiple choice" or "true/false" or "short answer"
-     */
     private void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS questions (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -117,20 +75,20 @@ public class DatabaseManager {
 
     /**
      * Inserts trivia questions into the database.
-     * Currently supports (as of the Third Iteration):
-     * - 8 multiple choice questions
+     * Currently supports (as of the Fifth Iteration):
+     * - 19 multiple choice questions
      * - 8 true/false questions
-     * - 5 Short answer questions
+     * - 4 short answer questions
+     * Total: 31 questions
      *
      * HOW TO ADD MORE QUESTIONS:
      * Copy one of the existing INSERT statements below and modify it.
      * For multiple choice: fill in all 4 options and the correct answer.
      * For true/false: option_c and option_d should be NULL.
-     * For short answer: all should be NULL.
+     * For short answer: all options should be NULL.
      * After adding, delete trivia.db and rerun the game to reset the database.
      */
     private void populateQuestions() {
-        // Check if questions already exist so we don't add duplicates
         try {
             Statement checkStmt = myConnection.createStatement();
             var rs = checkStmt.executeQuery("SELECT COUNT(*) FROM questions");
@@ -145,39 +103,27 @@ public class DatabaseManager {
         String[] questions = {
 
                 // ------------------------------------------------------------------------
-                // MULTIPLE CHOICE QUESTIONS (8 total)
-                // Format: question, A, B, C, D, correct letter, type
-                // To add more: copy a line below and change the values
+                // MULTIPLE CHOICE QUESTIONS (19 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
                         "'Which actor played both Patrick Bateman in American Psycho and Bruce Wayne in Batman Begins?', " +
-                        "'A) Matt Damon', 'B) Christian Bale', 'C) Joaquin Phoenix', 'D) Tom Hardy', " +
+                        "'A) Matt Damon', 'B) Christian Bale', 'C) Pedro Pascal', 'D) Tom Hardy', " +
                         "'B', 'multiple choice')",
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'The Bear is set inside what type of restaurant in Chicago?', " +
-                        "'A) Fine dining', 'B) Pizza', 'C) Italian beef sandwich', 'D) Sushi', " +
-                        "'C', 'multiple choice')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'Which 2013 Spike Jonze film stars Joaquin Phoenix falling in love with an AI operating system?', " +
+                        "'Which film stars Joaquin Phoenix falling in love with an AI operating system?', " +
                         "'A) Ex Machina', 'B) Eternal Sunshine', 'C) Her', 'D) Bicentennial Man', " +
                         "'C', 'multiple choice')",
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'What was the original network that aired Its Always Sunny in Philadelphia before it moved to FX?', " +
+                        "'What was the original network that aired Its Always Sunny in Philadelphia?', " +
                         "'A) Comedy Central', 'B) FXX', 'C) Fox', 'D) FX', " +
                         "'D', 'multiple choice')",
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'Which prestige drama features the fictional media dynasty the Roy family?', " +
+                        "'Which drama features the Roy family?', " +
                         "'A) Billions', 'B) Succession', 'C) Industry', 'D) The Affair', " +
-                        "'B', 'multiple choice')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'What 2018 film directed by Alfonso Cuaron won Best Picture Best Director and Best Foreign Language Film at the Oscars?', " +
-                        "'A) A Fantastic Woman', 'B) Roma', 'C) Cold War', 'D) Shoplifters', " +
                         "'B', 'multiple choice')",
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -186,45 +132,78 @@ public class DatabaseManager {
                         "'D', 'multiple choice')",
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'Barry Keoghan plays which character in the psychological thriller Saltburn?', " +
-                        "'A) Felix', 'B) Farleigh', 'C) Oliver', 'D) Duncan', " +
+                        "'What draft position was Michael Jordan selected in the 1984 NBA draft?', " +
+                        "'A) First', 'B) Second', 'C) Third', 'D) Fifth', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Which Steven Spielberg film features a friendly alien stranded on Earth?', " +
+                        "'A) Close Encounters', 'B) War of the Worlds', 'C) Signs', 'D) ET', " +
+                        "'D', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'In the movie Superbad, what year of high school are Seth and Evan in?', " +
+                        "'A) Junior', 'B) Freshman', 'C) Sophomore', 'D) Senior', " +
+                        "'D', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Which ancient Greek city state was known for having the most powerful army?', " +
+                        "'A) Athens', 'B) Corinth', 'C) Sparta', 'D) Thebes', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'In Ratatouille, what is the name of the villainous food critic?', " +
+                        "'A) Gusteau', 'B) Skinner', 'C) Anton Ego', 'D) Colette', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'This Pixar film was rejected by every major studio before Disney picked it up and its director John Lasseter was fired from Disney earlier for promoting the same technology used to make it.', " +
+                        "'A) Toy Story', 'B) A Bugs Life', 'C) Monsters Inc', 'D) Wall-E', " +
+                        "'A', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Which planet is known as the Red Planet?', " +
+                        "'A) Venus', 'B) Jupiter', 'C) Mars', 'D) Saturn', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'How many continents are there on Earth?', " +
+                        "'A) 5', 'B) 6', 'C) 7', 'D) 8', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What is the fastest land animal in the world?', " +
+                        "'A) Lion', 'B) Cheetah', 'C) Horse', 'D) Leopard', " +
+                        "'B', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'In which ocean is the Bermuda Triangle located?', " +
+                        "'A) Pacific', 'B) Indian', 'C) Arctic', 'D) Atlantic', " +
+                        "'D', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'How many rings are on the Olympic flag?', " +
+                        "'A) 4', 'B) 6', 'C) 5', 'D) 3', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What is the name of the longest running animated TV show in history?', " +
+                        "'A) Family Guy', 'B) South Park', 'C) Futurama', 'D) The Simpsons', " +
+                        "'D', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What is the most spoken language in the world?', " +
+                        "'A) English', 'B) Spanish', 'C) Hindi', 'D) Mandarin', " +
+                        "'D', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Which country has won the most FIFA World Cup titles?', " +
+                        "'A) Germany', 'B) Argentina', 'C) Brazil', 'D) France', " +
                         "'C', 'multiple choice')",
 
                 // ------------------------------------------------------------------------
                 // TRUE/FALSE QUESTIONS (8 total)
-                // Format: question, True, False, NULL, NULL, correct answer, type
-                // To add more: copy a line below and change the values
                 // ------------------------------------------------------------------------
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'Aaron Paul and Bryan Cranston appeared together in a Super Bowl commercial reprising their Breaking Bad roles.', " +
-                        "'True', 'False', NULL, NULL, " +
-                        "'True', 'true/false')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'The Truman Show starring Jim Carrey was directed by Peter Weir not Steven Spielberg.', " +
-                        "'True', 'False', NULL, NULL, " +
-                        "'True', 'true/false')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'Quentin Tarantino has stated he will retire after directing his 10th film.', " +
-                        "'True', 'False', NULL, NULL, " +
-                        "'True', 'true/false')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'The Wire creator David Simon was formerly a crime reporter for the Baltimore Sun.', " +
-                        "'True', 'False', NULL, NULL, " +
-                        "'True', 'true/false')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'Robert Eggers directed both The Witch and The Lighthouse.', " +
-                        "'True', 'False', NULL, NULL, " +
-                        "'True', 'true/false')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'Martin Scorseses Killers of the Flower Moon is based on a true story about the Osage Nation murders in Oklahoma.', " +
-                        "'True', 'False', NULL, NULL, " +
-                        "'True', 'true/false')",
 
                 "INSERT INTO questions VALUES (NULL, " +
                         "'TWICE member Jihyo trained at JYP Entertainment for 10 years before making her debut.', " +
@@ -232,14 +211,42 @@ public class DatabaseManager {
                         "'True', 'true/false')",
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'There are two Japanese members in TWICE', " +
+                        "'There are two Japanese members in TWICE.', " +
                         "'True', 'False', NULL, NULL, " +
                         "'False', 'true/false')",
 
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'All opposite sides of a standard die add up to seven.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'The Amazon River is the longest river in the world.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'The Great Wall of China is visible from space with the naked eye.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Australia is both a country and a continent.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'The sun rises in the east.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Octopuses have three hearts.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
                 // ------------------------------------------------------------------------
-                // SHORT ANSWER QUESTIONS (5 total)
-                // Format: question, NULL, NULL, NULL, NULL, correct answer, type
-                // To add more: copy a line below and change the values
+                // SHORT ANSWER QUESTIONS (4 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -260,15 +267,9 @@ public class DatabaseManager {
                 "INSERT INTO questions VALUES (NULL, " +
                         "'What is the name of the song behind the infamous Rickroll meme?', " +
                         "NULL, NULL, NULL, NULL, " +
-                        "'Never Gonna Give You Up', 'short answer')",
-
-                "INSERT INTO questions VALUES (NULL, " +
-                        "'What venue in Seattle will the FIFA World Cup 2026 be held in?', " +
-                        "NULL, NULL, NULL, NULL, " +
-                        "'Lumen Field', 'short answer')"
+                        "'Never Gonna Give You Up', 'short answer')"
         };
 
-        // Loop through each question and insert it into the database
         try {
             Statement stmt = myConnection.createStatement();
             int count = 0;
@@ -282,20 +283,10 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Returns the database connection so other classes can use it
-     * to retrieve questions. QuestionDAO will use this to query the database.
-     *
-     * @return the active database connection
-     */
     public Connection getConnection() {
         return myConnection;
     }
 
-    /**
-     * Closes the database connection when the game is done.
-     * Always important to close connections to avoid memory leaks!
-     */
     public void closeConnection() {
         try {
             if (myConnection != null && !myConnection.isClosed()) {
@@ -307,34 +298,21 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Simple test method to verify the database is working.
-     * Run this directly to test without opening the full game window.
-     * DELETE or COMMENT OUT this method when done testing!
-     */
     public static void main(String[] args) {
         System.out.println("Testing database...");
-
-        // This will trigger the Singleton to create the database
         DatabaseManager db = DatabaseManager.getInstance();
-
-        // Test that we can retrieve questions
         try {
             var stmt = db.getConnection().createStatement();
             var rs = stmt.executeQuery("SELECT COUNT(*) FROM questions");
             System.out.println("Total questions in database: " + rs.getInt(1));
-
-            // Print all questions to verify they loaded correctly
             var rs2 = stmt.executeQuery("SELECT id, question_type, question_text FROM questions");
             while (rs2.next()) {
                 System.out.println("ID: " + rs2.getInt("id") +
                         " | Type: " + rs2.getString("question_type") +
                         " | Question: " + rs2.getString("question_text"));
             }
-
             db.closeConnection();
             System.out.println("Database test complete!");
-
         } catch (Exception e) {
             System.out.println("Error testing database: " + e.getMessage());
         }

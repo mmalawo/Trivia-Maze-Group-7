@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class QuestionDAO {
 
@@ -15,6 +17,9 @@ public class QuestionDAO {
     // Shuffled pool of all questions for the current game
     private static List<Question> questionPool = new ArrayList<>();
     private static int poolIndex = 0;
+
+    // Tracks questions that were correctly answered so they don't repeat
+    private static final Set<String> correctlyAnswered = new HashSet<>();
 
     public QuestionDAO() {
         myDB = DatabaseManager.getInstance();
@@ -27,6 +32,7 @@ public class QuestionDAO {
     public static void resetUsedQuestions() {
         questionPool = new ArrayList<>();
         poolIndex = 0;
+        correctlyAnswered.clear();
 
         try {
             Connection conn = DatabaseManager.getInstance().getConnection();
@@ -45,7 +51,6 @@ public class QuestionDAO {
                 ));
             }
 
-            // Shuffle so every game gets a different order
             Collections.shuffle(questionPool);
 
         } catch (SQLException e) {
@@ -54,26 +59,51 @@ public class QuestionDAO {
     }
 
     /**
-     * Returns the next question from the pre-shuffled pool.
+     * Marks a question as correctly answered so it won't be given out again.
+     *
+     * @param question the question that was correctly answered
+     */
+    public static void markAsCorrectlyAnswered(Question question) {
+        if (question != null) {
+            correctlyAnswered.add(question.getQuestionText());
+        }
+    }
+
+    /**
+     * Returns the next question from the pre-shuffled pool that hasn't
+     * been correctly answered yet.
      * If the pool runs out, reshuffles and starts over.
      *
      * @return a Question object, or null if pool is empty
      */
     public Question getRandomQuestion() {
-        // If pool is empty or not initialized, load it
         if (questionPool.isEmpty()) {
             resetUsedQuestions();
         }
 
-        // If still empty something went wrong with DB
         if (questionPool.isEmpty()) return null;
 
-        // If we've used all questions, reshuffle and start over
-        if (poolIndex >= questionPool.size()) {
-            Collections.shuffle(questionPool);
-            poolIndex = 0;
+        // Try to find a question that hasn't been correctly answered yet
+        int attempts = 0;
+        while (attempts < questionPool.size()) {
+            if (poolIndex >= questionPool.size()) {
+                Collections.shuffle(questionPool);
+                poolIndex = 0;
+            }
+
+            Question q = questionPool.get(poolIndex++);
+
+            if (!correctlyAnswered.contains(q.getQuestionText())) {
+                return q;
+            }
+
+            attempts++;
         }
 
+        // If all questions have been correctly answered, reset and return any question
+        correctlyAnswered.clear();
+        Collections.shuffle(questionPool);
+        poolIndex = 0;
         return questionPool.get(poolIndex++);
     }
 }

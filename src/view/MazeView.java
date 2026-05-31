@@ -112,28 +112,22 @@ public class MazeView extends JPanel {
         return playerPanel;
     }
 
-    // Calculates responsive scaling factor based on current panel size, which resizes
-    // PNG sprites and maze objects resize dynamically with the window
     private double getUIScale() {
         double scaleX = getWidth() / BASE_WIDTH;
         double scaleY = getHeight() / BASE_HEIGHT;
-
         return Math.min(scaleX, scaleY);
     }
 
-    // Combines responsive UI scaling with zoom scaling
     private double getWorldScale() {
         return getUIScale() * scale;
     }
 
-    // Converts original design pixel values into dynamically scaled values
     private int scaled(double value) {
         return (int)(value * getWorldScale());
     }
 
     private String getRoomInfo() {
         Room r = maze.getRoom(playerRow, playerCol);
-
         return "(" + playerCol + "," + playerRow + ") | " +
                 "N:" + (r.getNorthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
                 "S:" + (r.getSouthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
@@ -148,7 +142,6 @@ public class MazeView extends JPanel {
             case "west"  -> { return playerCol > 0; }
             case "east"  -> { return playerCol < maze.getCols() - 1; }
         }
-
         return false;
     }
 
@@ -206,11 +199,12 @@ public class MazeView extends JPanel {
                 TriviaPopup popup = new TriviaPopup(q);
                 popup.setVisible(true);
 
-                // Use door.attemptAnswer() so the attempt counter is properly tracked
                 String playerAnswer = popup.getPlayerAnswer();
                 boolean correct = door.attemptAnswer(playerAnswer);
 
                 if (correct) {
+                    // Mark this question as correctly answered so it won't repeat
+                    QuestionDAO.markAsCorrectlyAnswered(q);
                     movePlayer(newRow, newCol);
                     JOptionPane.showMessageDialog(
                             MainGUI.window,
@@ -236,7 +230,6 @@ public class MazeView extends JPanel {
         }
     }
 
-    // Helper method created for updating player's position in maze
     private void movePlayer(int newRow, int newCol) {
         playerRow = newRow;
         playerCol = newCol;
@@ -247,7 +240,6 @@ public class MazeView extends JPanel {
         System.out.println("Moved to room [" + playerRow + "][" + playerCol + "]");
     }
 
-    // Automatically scales PNG sprites relative to current window size
     private void drawSprite(Graphics g,
                             ImageIcon sprite,
                             int x,
@@ -271,7 +263,7 @@ public class MazeView extends JPanel {
         ImageIcon doorIcon;
 
         if (door.isPermanentlyClosed()) {
-            doorIcon = permanentlyLockedDoor; // swap for a distinct image later
+            doorIcon = permanentlyLockedDoor;
         } else if (door.isLocked()) {
             doorIcon = lockedDoor;
         } else {
@@ -375,7 +367,6 @@ public class MazeView extends JPanel {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
 
-        // Scales background image to always fit current panel size
         g.drawImage(mazeGrass, 0, 0, panelWidth, panelHeight, this);
 
         Graphics2D g2 = (Graphics2D) g.create();
@@ -383,11 +374,9 @@ public class MazeView extends JPanel {
         int rows = maze.getRows();
         int cols = maze.getCols();
 
-        // Dynamically scales maze room PNG sizes based on window size and zoom
         int roomW = scaled(900);
         int roomH = scaled(900);
 
-        // Dynamically scales spacing between maze rooms
         int stepX = scaled(770);
         int stepY = scaled(500);
 
@@ -413,49 +402,32 @@ public class MazeView extends JPanel {
 
                 Room room = maze.getRoom(r - 1, c - 1);
 
-                // Dynamically scales door sprite sizes relative to screen size
                 int doorWidth = scaled(220);
                 int doorHeight = scaled(120);
 
                 // NORTH DOOR
-                drawDoor(
-                        g2,
-                        room.getNorthDoor(),
+                drawDoor(g2, room.getNorthDoor(),
                         screenX + roomW / 2 - doorWidth / 2,
                         screenY + scaled(70),
-                        doorWidth,
-                        doorHeight
-                );
+                        doorWidth, doorHeight);
 
                 // EAST DOOR
-                drawDoor(
-                        g2,
-                        room.getEastDoor(),
+                drawDoor(g2, room.getEastDoor(),
                         screenX + roomW - scaled(140),
                         screenY + roomH / 2 - doorWidth / 2,
-                        doorHeight,
-                        doorWidth
-                );
+                        doorHeight, doorWidth);
 
                 // SOUTH DOOR
-                drawDoor(
-                        g2,
-                        room.getSouthDoor(),
+                drawDoor(g2, room.getSouthDoor(),
                         screenX + roomW / 2 - doorWidth / 2,
                         screenY + roomH - scaled(95),
-                        doorWidth,
-                        doorHeight
-                );
+                        doorWidth, doorHeight);
 
                 // WEST DOOR
-                drawDoor(
-                        g2,
-                        room.getWestDoor(),
+                drawDoor(g2, room.getWestDoor(),
                         screenX + scaled(35),
                         screenY + roomH / 2 - doorWidth / 2,
-                        doorHeight,
-                        doorWidth
-                );
+                        doorHeight, doorWidth);
             }
         }
 
@@ -480,15 +452,7 @@ public class MazeView extends JPanel {
                 : PlayerSetupView.character1;
 
         if (butterfly != null && butterfly.getImage() != null) {
-            // Dynamically scales player butterfly sprite
-            drawSprite(
-                    g,
-                    butterfly,
-                    playerScreenX,
-                    playerScreenY,
-                    150,
-                    150
-            );
+            drawSprite(g, butterfly, playerScreenX, playerScreenY, 150, 150);
         }
     }
 }
