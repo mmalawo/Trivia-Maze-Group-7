@@ -45,6 +45,8 @@ public class Room implements Serializable {
     public boolean canGoRight() { return hasRight; }
     public boolean canGoCenter() { return hasCenter; }
 
+
+
     @Override
     public String toString() {
         return "Room{ north=" + northDoor.isLocked() +
