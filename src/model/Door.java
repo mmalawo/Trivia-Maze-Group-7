@@ -94,4 +94,11 @@ public class Door implements Serializable {
 
         return false;
     }
+
+    public void reset() {
+        this.isLocked = true;
+        this.isPermanentlyClosed = false;
+        this.attemptsRemaining = 3;
+    }
+
 }

@@ -10,6 +10,9 @@ public class MazeView extends JPanel {
 
     private final JPanel playerPanel;
 
+    private int startRow;
+    private int startCol;
+
     // Background image
     public static Image mazeGrass;
 
@@ -50,6 +53,9 @@ public class MazeView extends JPanel {
     private int playerRow;
     private int playerCol;
 
+    private float renderRow;
+    private float renderCol;
+
     // Room info label for dev purposes
     private JLabel coordLabel;
 
@@ -77,11 +83,18 @@ public class MazeView extends JPanel {
         targetCamX = camX;
         targetCamY = camY;
 
+        renderRow = playerRow;
+        renderCol = playerCol;
+
+        startRow = startPos[0];
+        startCol = startPos[1];
+
         setupButtons();
 
         // game loop
         new Timer(16, e -> {
             updateCamera();
+            updatePlayerAnimation();
             repaint();
         }).start();
 
@@ -123,6 +136,13 @@ public class MazeView extends JPanel {
                 scale = Math.max(scale - 0.1f, 0.3f);
             }
         });
+    }
+
+    private void updatePlayerAnimation() {
+        float speed = 0.02f;
+
+        renderRow += (playerRow - renderRow) * speed;
+        renderCol += (playerCol - renderCol) * speed;
     }
 
     public JPanel getPlayerPanel() {
@@ -248,8 +268,17 @@ public class MazeView extends JPanel {
     }
 
     private void movePlayer(int newRow, int newCol) {
+        int rowDiff = newRow - playerRow;
+        int colDiff = newCol - playerCol;
+
         playerRow = newRow;
         playerCol = newCol;
+
+        int stepX = scaled(770);
+        int stepY = scaled(500);
+
+        targetCamX += colDiff * stepX;
+        targetCamY += rowDiff * stepY;
 
         Room currentRoom = maze.getRoom(playerRow, playerCol);
         currentRoom.setVisited(true);
@@ -511,8 +540,8 @@ public class MazeView extends JPanel {
         // PLAYER (TOPMOST)
         // =====================================================
 
-        int px = stepX * (centerCol - (playerCol + 1));
-        int py = stepY * (centerRow - (playerRow + 1));
+        float px = stepX * (centerCol - (renderCol + 1));
+        float py = stepY * (centerRow - (renderRow + 1));
 
         int playerScreenX =
                 (int)(panelWidth / 2 - (scaled(450) + px) - camX)
@@ -597,5 +626,81 @@ public class MazeView extends JPanel {
                 screenX - scaled(5),
                 roomCenterY - doorHeight/2,
                 doorWidth, doorHeight);
+    }
+    public void resetVisitedRooms() {
+        for (int r = 0; r < maze.getRows(); r++) {
+            for (int c = 0; c < maze.getCols(); c++) {
+                maze.getRoom(r, c).setVisited(false);
+            }
+        }
+
+        maze.getRoom(playerRow, playerCol).setVisited(true);
+
+        repaint();
+    }
+    public void resetPlayer() {
+
+        playerRow = startRow;
+        playerCol = startCol;
+
+        renderRow = startRow;
+        renderCol = startCol;
+
+        targetCamX = 0;
+        targetCamY = 400;
+
+        camX = targetCamX;
+        camY = targetCamY;
+
+        repaint();
+    }
+    public void resetDoors() {
+        for (int r = 0; r < maze.getRows(); r++) {
+            for (int c = 0; c < maze.getCols(); c++) {
+
+                Room room = maze.getRoom(r, c);
+
+                room.getNorthDoor().reset();
+                room.getSouthDoor().reset();
+                room.getEastDoor().reset();
+                room.getWestDoor().reset();
+            }
+        }
+    }
+    public void resetGame() {
+
+        scale = 1.0f; // <-- RESET SCROLL WHEEL ZOOM
+
+        // reset rooms
+        for (int r = 0; r < maze.getRows(); r++) {
+            for (int c = 0; c < maze.getCols(); c++) {
+
+                Room room = maze.getRoom(r, c);
+
+                room.setVisited(false);
+
+                room.getNorthDoor().reset();
+                room.getSouthDoor().reset();
+                room.getEastDoor().reset();
+                room.getWestDoor().reset();
+            }
+        }
+
+        // move player to start
+        playerRow = startRow;
+        playerCol = startCol;
+
+        renderRow = startRow;
+        renderCol = startCol;
+
+        maze.getRoom(startRow, startCol).setVisited(true);
+
+        // reset camera
+        camX = 0;
+        camY = 400;
+        targetCamX = camX;
+        targetCamY = camY;
+
+        repaint();
     }
 }
