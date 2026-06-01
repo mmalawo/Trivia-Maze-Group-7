@@ -32,6 +32,7 @@ public class DatabaseManager {
         connect();
         createTable();
         populateQuestions();
+        createLeaderboardTable();
     }
 
     public static DatabaseManager getInstance() {
@@ -280,6 +281,23 @@ public class DatabaseManager {
             System.out.println(count + " trivia questions added to database successfully!");
         } catch (SQLException e) {
             System.out.println("Error inserting questions: " + e.getMessage());
+        }
+    }
+
+    private void createLeaderboardTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS leaderboard (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "player_name TEXT NOT NULL, " +
+                "time_seconds REAL NOT NULL, " +
+                "correct_score INTEGER, " +
+                "incorrect_score INTEGER)";
+
+        try {
+            Statement stmt = myConnection.createStatement();
+            stmt.execute(sql);
+            System.out.println("Leaderboard table created successfully!");
+        } catch (SQLException e) {
+            System.out.println("Error creating leaderboard table: " + e.getMessage());
         }
     }
 
