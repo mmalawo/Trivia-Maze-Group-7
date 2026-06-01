@@ -155,6 +155,11 @@ public class MainGUI {
         JMenuItem itemSettings = new JMenuItem("Settings");
         // CAN ADD A SHORTCUT TO SETTINGS HERE IF WE WANT
 
+        JMenuItem itemLeaderboard = new JMenuItem("Leaderboard");
+
+        JMenuItem itemLeaderboardTest = new JMenuItem("Leaderboard Test");
+        JMenuItem itemAddFakeScore = new JMenuItem("Add Fake Score");
+
         gameMenu.add(itemRestartGame);
         gameMenu.addSeparator();
         gameMenu.add(itemSaveGame);
@@ -164,6 +169,12 @@ public class MainGUI {
         gameMenu.add(itemExitGame);
         gameMenu.addSeparator();
         gameMenu.add(itemSettings);
+        gameMenu.addSeparator();
+        gameMenu.add(itemLeaderboard);
+        gameMenu.addSeparator();
+        gameMenu.add(itemLeaderboardTest);
+        gameMenu.addSeparator();
+        gameMenu.add(itemAddFakeScore);
 
         menuBar.add(gameMenu);
 
@@ -206,6 +217,35 @@ public class MainGUI {
         itemLoadGame.addActionListener(e -> {
             MainGUI.loadGame();
             JOptionPane.showMessageDialog(window, "Game loaded!");
+        });
+
+        itemLeaderboard.addActionListener(e -> {
+            LeaderboardView.showLeaderboard();
+        });
+
+        itemLeaderboardTest.addActionListener(e -> {
+            LeaderboardView.showLeaderboard();
+        });
+
+        itemAddFakeScore.addActionListener(e -> {
+            Player fakePlayer = new Player();
+
+            fakePlayer.setName("Test Player");
+            fakePlayer.setRecordTime(99.9);
+            fakePlayer.setCorrectScore(5);
+            fakePlayer.setIncorrectScore(2);
+
+            LeaderboardDAO dao = new LeaderboardDAO();
+            dao.saveScore(fakePlayer);
+
+            JOptionPane.showMessageDialog(
+                    window,
+                    "Fake leaderboard score added!",
+                    "Test",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            LeaderboardView.showLeaderboard();
         });
 
         return menuBar;

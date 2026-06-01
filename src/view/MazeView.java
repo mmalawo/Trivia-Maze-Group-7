@@ -68,6 +68,8 @@ public class MazeView extends JPanel {
     private static final double BASE_WIDTH = 1536.0;
     private static final double BASE_HEIGHT = 1024.0;
 
+    private boolean gameFinished = false;
+
     public MazeView(Maze maze) {
         this.maze = maze;
 
@@ -289,6 +291,10 @@ public class MazeView extends JPanel {
         coordLabel.setText(getRoomInfo());
 
         System.out.println("Moved to room [" + playerRow + "][" + playerCol + "]");
+
+        if (currentRoom == maze.getExit()) {
+            finishGame();
+        }
     }
 
     private void drawSprite(Graphics g,
@@ -377,16 +383,19 @@ public class MazeView extends JPanel {
         JButton downB = new JButton("↓");
         JButton leftB = new JButton("←");
         JButton rightB = new JButton("→");
+        JButton hintButton = new JButton("Hint");
 
         upB.setBounds(1100, 500, 60, 60);
         downB.setBounds(1100, 620, 60, 60);
         leftB.setBounds(1040, 560, 60, 60);
         rightB.setBounds(1160, 560, 60, 60);
+        hintButton.setBounds(50, 120, 100, 40);
 
         add(upB);
         add(downB);
         add(leftB);
         add(rightB);
+        add(hintButton);
 
         upB.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) { up = true; }
@@ -427,6 +436,7 @@ public class MazeView extends JPanel {
         moveSouth.addActionListener(e -> tryMove("south"));
         moveWest.addActionListener(e -> tryMove("west"));
         moveEast.addActionListener(e -> tryMove("east"));
+        hintButton.addActionListener(e -> showHint());
     }
 
     private void updateCamera() {
@@ -667,6 +677,65 @@ public class MazeView extends JPanel {
             }
         }
     }
+
+    private void showHint() {
+        int[] exitPos = maze.findRoom(maze.getExit());
+
+        int exitRow = exitPos[0];
+        int exitCol = exitPos[1];
+
+        StringBuilder hint = new StringBuilder("Hint: Try moving ");
+
+        if (exitRow > playerRow) {
+            hint.append("south ");
+        } else if (exitRow < playerRow) {
+            hint.append("north ");
+        }
+
+        if (exitCol > playerCol) {
+            hint.append("east ");
+        } else if (exitCol < playerCol) {
+            hint.append("west ");
+        }
+
+        if (exitRow == playerRow && exitCol == playerCol) {
+            hint = new StringBuilder("You are already at the exit!");
+        } else {
+            hint.append("toward the exit.");
+        }
+
+        JOptionPane.showMessageDialog(
+                MainGUI.window,
+                hint.toString(),
+                "Hint",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    private void finishGame() {
+        if (gameFinished) {
+            return;
+        }
+
+        gameFinished = true;
+
+        MainGUI.player.stopTimer();
+
+        LeaderboardDAO leaderboardDAO = new LeaderboardDAO();
+        leaderboardDAO.saveScore(MainGUI.player);
+
+        JOptionPane.showMessageDialog(
+                MainGUI.window,
+                "You reached the exit!\nTime: " +
+                        String.format("%.2f", MainGUI.player.getRecordTime()) +
+                        " seconds\nYour score was saved to the leaderboard.",
+                "Game Complete",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        LeaderboardView.showLeaderboard();
+    }
+
     public void resetGame() {
 
         scale = 1.0f; // <-- RESET SCROLL WHEEL ZOOM
