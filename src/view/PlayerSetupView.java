@@ -199,7 +199,7 @@ public class PlayerSetupView extends JPanel{
         return slide;
     }
     public static void setSlide(int n) {
-        if (n < 1 || n > 2) {
+        if (n < 1 || n > 4) {
             return;
         } else {
             slide = n;
@@ -218,11 +218,17 @@ public class PlayerSetupView extends JPanel{
 
     public void updateCharacter() {
         if(slide == 1) {
-            character1 = new ImageIcon("src/images/PurpleFlap.png");
-            character2 = new ImageIcon("src/images/PurpleUnflap.png");
+            character1 = new ImageIcon("src/images/MagentaFlap.png");
+            character2 = new ImageIcon("src/images/MagentaUnflap.png");
         } else if(slide == 2) {
             character1 = new ImageIcon("src/images/BlueFlap.png");
             character2 = new ImageIcon("src/images/BlueUnflap.png");
+        } else if(slide == 3) {
+            character1 = new ImageIcon("src/images/AuburnFlap.png");
+            character2 = new ImageIcon("src/images/AuburnUnflap.png");
+        } else if(slide == 4) {
+            character1 = new ImageIcon("src/images/PurpleFlap.png");
+            character2 = new ImageIcon("src/images/PurpleUnflap.png");
         }
         butterflyIcon.setIcon(character1);
     }
