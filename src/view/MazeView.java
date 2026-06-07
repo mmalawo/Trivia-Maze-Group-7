@@ -231,6 +231,11 @@ public class MazeView extends JPanel {
                     "Blocked",
                     JOptionPane.ERROR_MESSAGE
             );
+
+            if (!hasAnyPossibleProgress()) {
+                loseGame("You are completely blocked!\nAll reachable doors are permanently locked.\nGame Over.");
+            }
+
             return;
         }
 
@@ -278,13 +283,155 @@ public class MazeView extends JPanel {
 
                     System.out.println("Wrong! Staying in room [" + playerRow + "][" + playerCol + "]");
 
-                    // Lose condition - exit door permanently locked after failed attempts
+// Lose condition - exit door permanently locked after failed attempts
                     if (isExitDoor && door.isPermanentlyClosed()) {
-                        loseGame();
+                        loseGame("You failed to unlock the exit!\nGame Over.");
+                        return;
+                    }
+
+// Lose condition - player has no usable doors left from current room
+                    if (!hasAvailableMove()) {
+                        loseGame("All available doors from this room are permanently locked!\nYou are trapped.\nGame Over.");
+                        return;
                     }
                 }
             }
         }
+    }
+
+    private boolean hasAnyPossibleProgress() {
+        boolean[][] visited = new boolean[maze.getRows()][maze.getCols()];
+        return searchForAvailableDoor(playerRow, playerCol, visited);
+    }
+
+    private boolean searchForAvailableDoor(int row, int col, boolean[][] visited) {
+        if (row < 0 || row >= maze.getRows() || col < 0 || col >= maze.getCols()) {
+            return false;
+        }
+
+        if (visited[row][col]) {
+            return false;
+        }
+
+        visited[row][col] = true;
+
+        Room room = maze.getRoom(row, col);
+
+        if (doorCanStillBeUsed(room.getNorthDoor(), "north", row, col)) {
+            return true;
+        }
+
+        if (doorCanStillBeUsed(room.getSouthDoor(), "south", row, col)) {
+            return true;
+        }
+
+        if (doorCanStillBeUsed(room.getEastDoor(), "east", row, col)) {
+            return true;
+        }
+
+        if (doorCanStillBeUsed(room.getWestDoor(), "west", row, col)) {
+            return true;
+        }
+
+        // Continue searching only through already-unlocked doors.
+        if (canTravelThrough(room.getNorthDoor(), "north", row, col)) {
+            if (searchForAvailableDoor(row - 1, col, visited)) {
+                return true;
+            }
+        }
+
+        if (canTravelThrough(room.getSouthDoor(), "south", row, col)) {
+            if (searchForAvailableDoor(row + 1, col, visited)) {
+                return true;
+            }
+        }
+
+        if (canTravelThrough(room.getEastDoor(), "east", row, col)) {
+            if (searchForAvailableDoor(row, col + 1, visited)) {
+                return true;
+            }
+        }
+
+        if (canTravelThrough(room.getWestDoor(), "west", row, col)) {
+            if (searchForAvailableDoor(row, col - 1, visited)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean doorCanStillBeUsed(Door door, String direction, int row, int col) {
+        if (door == null || door.isPermanentlyClosed()) {
+            return false;
+        }
+
+        boolean isExitDoor = door == maze.getExitDoor();
+
+        if (isExitDoor) {
+            return true;
+        }
+
+        int newRow = row;
+        int newCol = col;
+
+        switch (direction) {
+            case "north" -> newRow--;
+            case "south" -> newRow++;
+            case "east" -> newCol++;
+            case "west" -> newCol--;
+        }
+
+        if (newRow < 0 || newRow >= maze.getRows() || newCol < 0 || newCol >= maze.getCols()) {
+            return false;
+        }
+
+        // Locked but not permanently closed means the player can still answer it.
+        return true;
+    }
+
+    private boolean canTravelThrough(Door door, String direction, int row, int col) {
+        if (door == null || door.isLocked() || door.isPermanentlyClosed()) {
+            return false;
+        }
+
+        int newRow = row;
+        int newCol = col;
+
+        switch (direction) {
+            case "north" -> newRow--;
+            case "south" -> newRow++;
+            case "east" -> newCol++;
+            case "west" -> newCol--;
+        }
+
+        return newRow >= 0 && newRow < maze.getRows()
+                && newCol >= 0 && newCol < maze.getCols();
+    }
+
+    private boolean hasAvailableMove() {
+        Room currentRoom = maze.getRoom(playerRow, playerCol);
+
+        return isDoorAvailable("north", currentRoom.getNorthDoor())
+                || isDoorAvailable("south", currentRoom.getSouthDoor())
+                || isDoorAvailable("east", currentRoom.getEastDoor())
+                || isDoorAvailable("west", currentRoom.getWestDoor());
+    }
+
+    private boolean isDoorAvailable(String direction, Door door) {
+        if (door == null || door.isPermanentlyClosed()) {
+            return false;
+        }
+
+        boolean isExitDoor = door == maze.getExitDoor();
+
+        // Exit door is available even though it leads outside the maze
+        if (isExitDoor) {
+            return true;
+        }
+
+        // Normal doors are only available if they lead to another room
+        return isValidMove(direction);
     }
 
     private void movePlayer(int newRow, int newCol) {
@@ -727,21 +874,32 @@ public class MazeView extends JPanel {
         LeaderboardView.showLeaderboard();
     }
 
-    private void loseGame() {
+    private void loseGame(String message) {
         if (gameFinished) return;
 
         gameFinished = true;
 
         MainGUI.player.stopTimer();
 
-        JOptionPane.showMessageDialog(
+        Object[] options = {"Main Menu", "Exit Game"};
+
+        int choice = JOptionPane.showOptionDialog(
                 MainGUI.window,
-                "You failed to unlock the exit!\nGame Over.",
-                "You Lost!",
-                JOptionPane.ERROR_MESSAGE
+                message,
+                "Game Over",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                options,
+                options[0]
         );
 
-        LeaderboardView.showLeaderboard();
+        if (choice == JOptionPane.YES_OPTION) {
+            MainGUI.startNewGame();
+            MainGUI.switchView(MainGUI.menuView);
+        } else {
+            System.exit(0);
+        }
     }
 
     public void resetGame() {
