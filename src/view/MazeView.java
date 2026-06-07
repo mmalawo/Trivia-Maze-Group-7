@@ -138,6 +138,7 @@ public class MazeView extends JPanel {
                 scale = Math.max(scale - 0.1f, 0.3f);
             }
         });
+        addTimer();
     }
 
     private void updatePlayerAnimation() {
@@ -623,7 +624,7 @@ public class MazeView extends JPanel {
                 doorHeight, doorWidth);
 
         drawDoor(g2, room.getEastDoor(), "east",
-                screenX + (newRoomW - doorWidth/2),
+                screenX + (newRoomW - doorWidth/2)-30,
                 roomCenterY - doorHeight/2,
                 doorWidth, doorHeight);
 
@@ -771,5 +772,23 @@ public class MazeView extends JPanel {
         targetCamY = camY;
 
         repaint();
+    }
+    public static JLabel timerLabel;
+    public void addTimer() {
+
+        timerLabel = new JLabel("Time: 0");
+        timerLabel.setBounds(50,50,200,40);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        timerLabel.setForeground(Color.WHITE);
+        this.add(timerLabel);
+    }
+    public void updateTimer(double time) {
+        int totalSeconds = (int) time;
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+
+        timerLabel.setText("Time: " + String.format("%02d:%02d:%02d", hours, minutes, seconds));
     }
 }

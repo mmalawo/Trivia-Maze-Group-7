@@ -44,5 +44,6 @@ public class InstructionsView extends JPanel {
 
     public void addStartGameListener(ActionListener theListener) {
         startGameButton.addActionListener(theListener);
+
     }
 }

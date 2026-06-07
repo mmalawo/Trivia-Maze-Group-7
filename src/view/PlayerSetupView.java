@@ -116,11 +116,16 @@ public class PlayerSetupView extends JPanel{
         prevSlide.setBounds((int)(screenWidth/2-(screenWidth/6.4)), (int)(screenHeight/2-(screenHeight/3.6)), 70, 40);
         add(prevSlide);
 
+
+
+
+
         butterflyIcon = new JLabel(character1);
         butterflyIcon.setBounds((int)(screenWidth/2 - (screenWidth/9.6)),(int)(screenHeight/2-(screenHeight/2.7)),400,400);
 
-        add(butterflyIcon);
+
         updateCharacter();
+        add(butterflyIcon);
         Timer butterflyAnimation = new Timer(300, new ActionListener() {
             private boolean toggle = false;
 
@@ -199,7 +204,7 @@ public class PlayerSetupView extends JPanel{
         return slide;
     }
     public static void setSlide(int n) {
-        if (n < 1 || n > 4) {
+        if (n < 1 || n > 3) {
             return;
         } else {
             slide = n;
@@ -217,20 +222,31 @@ public class PlayerSetupView extends JPanel{
     }
 
     public void updateCharacter() {
-        if(slide == 1) {
-            character1 = new ImageIcon("src/images/MagentaFlap.png");
-            character2 = new ImageIcon("src/images/MagentaUnflap.png");
-        } else if(slide == 2) {
-            character1 = new ImageIcon("src/images/BlueFlap.png");
-            character2 = new ImageIcon("src/images/BlueUnflap.png");
-        } else if(slide == 3) {
-            character1 = new ImageIcon("src/images/AuburnFlap.png");
-            character2 = new ImageIcon("src/images/AuburnUnflap.png");
-        } else if(slide == 4) {
-            character1 = new ImageIcon("src/images/PurpleFlap.png");
-            character2 = new ImageIcon("src/images/PurpleUnflap.png");
+        if(MainGUI.settingsView.isDarkModeSelected()) {
+            if (slide == 1) {
+                character1 = new ImageIcon("src/images/NightMagentaFlap.png");
+                character2 = new ImageIcon("src/images/NightMagentaUnflap.png");
+            } else if (slide == 2) {
+                character1 = new ImageIcon("src/images/NightBlueFlap.png");
+                character2 = new ImageIcon("src/images/NightBlueUnflap.png");
+            } else if (slide == 3) {
+                character1 = new ImageIcon("src/images/NightAuburnFlap.png");
+                character2 = new ImageIcon("src/images/NightAuburnUnflap.png");
+            }
+            butterflyIcon.setIcon(character1);
+        } else {
+            if (slide == 1) {
+                character1 = new ImageIcon("src/images/MagentaFlap.png");
+                character2 = new ImageIcon("src/images/MagentaUnflap.png");
+            } else if (slide == 2) {
+                character1 = new ImageIcon("src/images/BlueFlap.png");
+                character2 = new ImageIcon("src/images/BlueUnflap.png");
+            } else if (slide == 3) {
+                character1 = new ImageIcon("src/images/AuburnFlap.png");
+                character2 = new ImageIcon("src/images/AuburnUnflap.png");
+            }
+            butterflyIcon.setIcon(character1);
         }
-        butterflyIcon.setIcon(character1);
     }
     public void addPrevListener(ActionListener theListener) {
         prevSlide.addActionListener(theListener);
