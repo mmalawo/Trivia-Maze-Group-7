@@ -1,6 +1,7 @@
 package view;
 
 import controller.SettingsController;
+import model.Maze;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -178,13 +179,38 @@ public class SettingsView extends JPanel {
 
 
         // Maze View Background
-        /*if(darkMode) {
+        if(darkMode) {
             ImageIcon nightGrass = new ImageIcon("src/images/NightGrass.png");
             MazeView.mazeGrass = nightGrass.getImage();
+            MazeView.hedgeTest = new ImageIcon("src/images/NightHedge.png");
+
+            // North
+            MazeView.northDoorImage = new ImageIcon("src/images/NightNorthDoorUnlocked.png");
+            // East
+            MazeView.eastDoorImage = new ImageIcon("src/images/NightEastDoorUnlocked.png");
+            // South
+            //MazeView.southDoorImage = new ImageIcon("src/images/")
+
+
+            MazeView.westDoorImage = new ImageIcon("src/images/NightWestUnlockedHedge.png");
+
+
+            MainGUI.setupView.updateCharacter();
         } else {
             ImageIcon dayGrass = new ImageIcon("src/images/DayGrass.png");
             MazeView.mazeGrass = dayGrass.getImage();
-        } */
+            MazeView.hedgeTest = new ImageIcon("src/images/Hedge900-675.png");
+
+            MazeView.eastDoorImageLocked = new ImageIcon("src/images/EastDoorLocked.png");
+            MazeView.westDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
+
+
+            MazeView.northDoorImage = new ImageIcon("src/images/NorthDoorUnlocked.png");
+
+            MainGUI.setupView.updateCharacter();
+        }
+
+
 
         //settingsPanel.setBackground(Color.WHITE);
 

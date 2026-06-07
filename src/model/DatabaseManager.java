@@ -104,7 +104,7 @@ public class DatabaseManager {
         String[] questions = {
 
                 // ------------------------------------------------------------------------
-                // MULTIPLE CHOICE QUESTIONS (19 total)
+                // MULTIPLE CHOICE QUESTIONS (22 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -202,8 +202,23 @@ public class DatabaseManager {
                         "'A) Germany', 'B) Argentina', 'C) Brazil', 'D) France', " +
                         "'C', 'multiple choice')",
 
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Who was historically considered the greatest traitor to George Washington?', " +
+                        "'A) Benedict Arnold', 'B) Alexander Hamilton', 'C) Henry Knox', 'D) Robert Townsend, " +
+                        "'A', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What did Thailand offer the USA during the Civil War?', " +
+                        "'A) Money', 'B) Elephants', 'C) Silk Armor', 'D) Mongkut's Firstborn, " +
+                        "'B', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Who is a son of Ragnar Lothbrok, one of the most famous Vikings?', " +
+                        "'A) Ivar the Boneless', 'B) Rollo', 'C) Erik the Red', 'D) Floki, " +
+                        "'A', 'multiple choice')",
+
                 // ------------------------------------------------------------------------
-                // TRUE/FALSE QUESTIONS (8 total)
+                // TRUE/FALSE QUESTIONS (11 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -246,8 +261,30 @@ public class DatabaseManager {
                         "'True', 'False', NULL, NULL, " +
                         "'True', 'true/false')",
 
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Elvis Presley ran for president in 1977.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'France allied with the Continental army (Americans) in the Revolutionary War.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'American soldiers were known as Red-Coats.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'World War II ended in 1953.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+
+
                 // ------------------------------------------------------------------------
-                // SHORT ANSWER QUESTIONS (4 total)
+                // SHORT ANSWER QUESTIONS (7 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -268,7 +305,22 @@ public class DatabaseManager {
                 "INSERT INTO questions VALUES (NULL, " +
                         "'What is the name of the song behind the infamous Rickroll meme?', " +
                         "NULL, NULL, NULL, NULL, " +
-                        "'Never Gonna Give You Up', 'short answer')"
+                        "'Never Gonna Give You Up', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What year did America gain Independence?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'1776', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Who is considered the King of Pop?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Michael Jackson', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What famous ancient city was destroyed by a volcanic eruption in 79 AD?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Pompeii', 'short answer')"
         };
 
         try {
