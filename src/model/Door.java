@@ -8,6 +8,8 @@ import java.io.Serializable;
  * a trivia question correctly to pass through.
  * Players have 3 attempts before the door is permanently locked.
  * Each wrong answer fetches a new question for the next attempt.
+ * Questions are assigned lazily (on first access) to avoid wasting
+ * questions on doors that get replaced during maze generation.
  */
 public class Door implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -18,60 +20,50 @@ public class Door implements Serializable {
     private Question myQuestion;
 
     /**
-     * Constructor - creates a locked door and assigns
-     * a random trivia question from the database using QuestionDAO.
+     * Constructor - creates a locked door.
+     * Question is NOT assigned here — it is assigned lazily
+     * the first time the player tries to open this door.
      */
     public Door() {
         this.isLocked = true;
         this.isPermanentlyClosed = false;
         this.attemptsRemaining = 3;
-        QuestionDAO dao = new QuestionDAO();
-        this.myQuestion = dao.getRandomQuestion();
+        this.myQuestion = null;
     }
 
-    /**
-     * Returns whether the door is currently locked.
-     */
     public boolean isLocked() {
         return isLocked;
     }
 
-    /**
-     * Returns whether the door is permanently closed (failed 3 times).
-     */
     public boolean isPermanentlyClosed() {
         return isPermanentlyClosed;
     }
 
-    /**
-     * Returns how many attempts the player has remaining.
-     */
     public int getAttemptsRemaining() {
         return attemptsRemaining;
     }
 
-    /**
-     * Sets the locked state of the door.
-     */
     public void setLocked(boolean locked) {
         isLocked = locked;
     }
 
     /**
      * Returns the Question object assigned to this door.
+     * Lazily assigns a question on first access so questions are only
+     * pulled from the pool when a player actually clicks the door.
      */
     public Question getQuestion() {
+        if (myQuestion == null) {
+            QuestionDAO dao = new QuestionDAO();
+            myQuestion = dao.getRandomQuestion();
+        }
         return myQuestion;
     }
 
     /**
      * Checks if the player's answer matches the correct answer.
      * Uses startsWith so full option text like "B) Christian Bale" matches correct answer "B".
-     * If correct, unlocks the door.
-     * If wrong, decrements attempts, fetches a new question, and permanently closes after 3 failures.
-     *
-     * @param theAnswer the answer the player provided
-     * @return true if correct, false if wrong
+     * Marks current question as used before fetching a new one on wrong answers.
      */
     public boolean attemptAnswer(String theAnswer) {
         if (isPermanentlyClosed) return false;
@@ -84,10 +76,13 @@ public class Door implements Serializable {
         attemptsRemaining--;
 
         if (attemptsRemaining <= 0) {
+            // Mark last question as used so it won't appear on other doors
+            QuestionDAO.markAsCorrectlyAnswered(myQuestion);
             isPermanentlyClosed = true;
             isLocked = true;
         } else {
-            // Fetch a new question for the next attempt
+            // Mark current question as used before fetching a new one
+            QuestionDAO.markAsCorrectlyAnswered(myQuestion);
             QuestionDAO dao = new QuestionDAO();
             myQuestion = dao.getRandomQuestion();
         }
@@ -99,6 +94,6 @@ public class Door implements Serializable {
         this.isLocked = true;
         this.isPermanentlyClosed = false;
         this.attemptsRemaining = 3;
+        this.myQuestion = null;
     }
-
 }

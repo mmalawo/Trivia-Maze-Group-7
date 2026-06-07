@@ -5,23 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * This class manages the SQLite database for the Trivia Maze game.
- * It uses the Singleton pattern to ensure only ONE database connection
- * is ever created. Think of it like a single filing cabinet that everyone
- * in the game shares - you don't want multiple cabinets with different info!
- *
- * This class handles:
- * 1. Creating the database file (trivia.db)
- * 2. Creating the questions table
- * 3. Pre-populating the table with trivia questions
- *
- * HOW TO ADD MORE QUESTIONS:
- * - Find the questions array in populateQuestions() below
- * - Add a new INSERT statement following the same format
- * - Delete the trivia.db file from the project folder
- * - Rerun the game and the database will recreate with your new questions
- */
 public class DatabaseManager {
 
     private static volatile DatabaseManager myInstance;
@@ -76,18 +59,11 @@ public class DatabaseManager {
 
     /**
      * Inserts trivia questions into the database.
-     * Currently supports (as of the Fifth Iteration):
-     * - 19 multiple choice questions
-     * - 8 true/false questions
-     * - 4 short answer questions
-     * Total: 31 questions
-     *
-     * HOW TO ADD MORE QUESTIONS:
-     * Copy one of the existing INSERT statements below and modify it.
-     * For multiple choice: fill in all 4 options and the correct answer.
-     * For true/false: option_c and option_d should be NULL.
-     * For short answer: all options should be NULL.
-     * After adding, delete trivia.db and rerun the game to reset the database.
+     * Currently supports (as of the Sixth Iteration):
+     * - 23 multiple choice questions
+     * - 10 true/false questions
+     * - 6 short answer questions
+     * Total: 39 questions
      */
     private void populateQuestions() {
         try {
@@ -104,7 +80,7 @@ public class DatabaseManager {
         String[] questions = {
 
                 // ------------------------------------------------------------------------
-                // MULTIPLE CHOICE QUESTIONS (19 total)
+                // MULTIPLE CHOICE QUESTIONS (23 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -202,8 +178,38 @@ public class DatabaseManager {
                         "'A) Germany', 'B) Argentina', 'C) Brazil', 'D) France', " +
                         "'C', 'multiple choice')",
 
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'How many bones are in the adult human body?', " +
+                        "'A) 196', 'B) 206', 'C) 216', 'D) 226', " +
+                        "'B', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Which element has the chemical symbol Au?', " +
+                        "'A) Silver', 'B) Copper', 'C) Gold', 'D) Aluminum', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Which planet has the most moons?', " +
+                        "'A) Jupiter', 'B) Saturn', 'C) Uranus', 'D) Neptune', " +
+                        "'B', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What is the speed of light?', " +
+                        "'A) 200,000 km/s', 'B) 250,000 km/s', 'C) 300,000 km/s', 'D) 350,000 km/s', " +
+                        "'C', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Which artist holds the record for the most streamed song on Spotify of all time?', " +
+                        "'A) Drake', 'B) Ed Sheeran', 'C) The Weeknd', 'D) Bad Bunny', " +
+                        "'D', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What year was Google founded?', " +
+                        "'A) 1996', 'B) 1998', 'C) 2000', 'D) 2002', " +
+                        "'B', 'multiple choice')",
+
                 // ------------------------------------------------------------------------
-                // TRUE/FALSE QUESTIONS (8 total)
+                // TRUE/FALSE QUESTIONS (10 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -246,8 +252,18 @@ public class DatabaseManager {
                         "'True', 'False', NULL, NULL, " +
                         "'True', 'true/false')",
 
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'The video game Minecraft has sold more copies than any other game in history.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'The iPhone was first released in 2007.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
                 // ------------------------------------------------------------------------
-                // SHORT ANSWER QUESTIONS (4 total)
+                // SHORT ANSWER QUESTIONS (6 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -256,19 +272,19 @@ public class DatabaseManager {
                         "'Ryan Gosling', 'short answer')",
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'Who was the creator of Star Wars?', " +
-                        "NULL, NULL, NULL, NULL, " +
-                        "'George Lucas', 'short answer')",
-
-                "INSERT INTO questions VALUES (NULL, " +
                         "'What was the name of the survival show that the K-Pop girl group TWICE formed from?', " +
                         "NULL, NULL, NULL, NULL, " +
                         "'SIXTEEN', 'short answer')",
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'What is the name of the song behind the infamous Rickroll meme?', " +
+                        "'What is the name of the restaurant SpongeBob works at?', " +
                         "NULL, NULL, NULL, NULL, " +
-                        "'Never Gonna Give You Up', 'short answer')"
+                        "'Krusty Krab', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What streaming service is home to shows like Stranger Things?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Netflix', 'short answer')"
         };
 
         try {

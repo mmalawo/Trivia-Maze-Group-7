@@ -16,7 +16,7 @@ public class MainGUI {
     public static void main(String args[]) {
         System.out.println("Starting application...");
         startApplication();
-        testMaze();
+        //testMaze();
     }
     public static JFrame window;
 
