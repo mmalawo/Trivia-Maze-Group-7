@@ -210,8 +210,13 @@ public class MainGUI {
         });
 
         itemLoadGame.addActionListener(e -> {
-            MainGUI.loadGame();
-            JOptionPane.showMessageDialog(window, "Game loaded!");
+            boolean loaded = MainGUI.loadGame();
+
+            if (loaded) {
+                JOptionPane.showMessageDialog(window, "Game loaded!");
+            } else {
+                JOptionPane.showMessageDialog(window, "No saved game found.");
+            }
         });
 
         itemLeaderboard.addActionListener(e -> {
@@ -270,7 +275,7 @@ public class MainGUI {
         SaveManager.saveGame(save);
     }
 
-    public static void loadGame() {
+    public static boolean loadGame() {
         Memento loaded = SaveManager.loadGame();
 
         if (loaded != null) {
@@ -282,8 +287,10 @@ public class MainGUI {
             switchView(mazeView);
 
             System.out.println("Loaded player: " + player.getName());
+            return true;
         }
-
+        
+        return false;
     }
 
     public static void startNewGame() {

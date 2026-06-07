@@ -232,7 +232,7 @@ public class MazeView extends JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
 
-            if (!hasAnyPossibleProgress()) {
+            if (!checkForPossiblePathways()) {
                 loseGame("You are completely blocked!\nAll reachable doors are permanently locked.\nGame Over.");
             }
 
@@ -289,9 +289,9 @@ public class MazeView extends JPanel {
                         return;
                     }
 
-// Lose condition - player has no usable doors left from current room
-                    if (!hasAvailableMove()) {
-                        loseGame("All available doors from this room are permanently locked!\nYou are trapped.\nGame Over.");
+// Lose condition - player has no accessible pathways left from current room
+                    if (!checkForPossiblePathways()) {
+                        loseGame("All doors in your vicinity are permanently locked.\nGame Over.");
                         return;
                     }
                 }
@@ -299,139 +299,187 @@ public class MazeView extends JPanel {
         }
     }
 
-    private boolean hasAnyPossibleProgress() {
-        boolean[][] visited = new boolean[maze.getRows()][maze.getCols()];
-        return searchForAvailableDoor(playerRow, playerCol, visited);
+    private boolean checkForPossiblePathways() {
+        boolean[][] visitedRooms = new boolean[maze.getRows()][maze.getCols()];
+        return hasAttemptableDoor(playerRow, playerCol, visitedRooms);
     }
 
-    private boolean searchForAvailableDoor(int row, int col, boolean[][] visited) {
-        if (row < 0 || row >= maze.getRows() || col < 0 || col >= maze.getCols()) {
+    /**
+     * Recursively checks whether the player still has at least one reachable door
+     * that can be attempted.
+     *
+     * <p>This method searches through all rooms the player can currently reach by
+     * traveling through already-unlocked doors. While searching those reachable
+     * rooms, it looks for at least one locked door that is not permanently closed.</p>
+     *
+     * <p>If no reachable locked door can still be attempted, then the player has
+     * no possible progress left and should lose the game.</p>
+     *
+     * @param row the row of the room currently being checked
+     * @param column the column of the room currently being checked
+     * @param visitedRooms tracks which rooms have already been searched
+     * @return true if at least one reachable door can still be attempted;
+     *         false if the player is completely blocked
+     */
+    private boolean hasAttemptableDoor(int row, int column, boolean[][] visitedRooms) {
+        // Stop searching if the row or column is outside the maze.
+        if (row < 0 || row >= maze.getRows() || column < 0 || column >= maze.getCols()) {
             return false;
         }
 
-        if (visited[row][col]) {
+        // Stop searching if this room has already been checked.
+        // This prevents infinite recursion when unlocked doors form loops.
+        if (visitedRooms[row][column]) {
             return false;
         }
 
-        visited[row][col] = true;
+        // Mark the current room as visited before checking its doors.
+        visitedRooms[row][column] = true;
 
-        Room room = maze.getRoom(row, col);
+        // Get the room object at the current row and column.
+        Room room = maze.getRoom(row, column);
 
-        if (doorCanStillBeUsed(room.getNorthDoor(), "north", row, col)) {
+        // Check each door in the current room.
+        // If any door is locked and still attemptable, the player can still progress.
+        if (isAttemptableDoor(room.getNorthDoor(), "north", row, column)) {
             return true;
         }
 
-        if (doorCanStillBeUsed(room.getSouthDoor(), "south", row, col)) {
+        if (isAttemptableDoor(room.getSouthDoor(), "south", row, column)) {
             return true;
         }
 
-        if (doorCanStillBeUsed(room.getEastDoor(), "east", row, col)) {
+        if (isAttemptableDoor(room.getEastDoor(), "east", row, column)) {
             return true;
         }
 
-        if (doorCanStillBeUsed(room.getWestDoor(), "west", row, col)) {
+        if (isAttemptableDoor(room.getWestDoor(), "west", row, column)) {
             return true;
         }
 
-        // Continue searching only through already-unlocked doors.
-        if (canTravelThrough(room.getNorthDoor(), "north", row, col)) {
-            if (searchForAvailableDoor(row - 1, col, visited)) {
+        // If no attemptable door was found in this room,
+        // continue searching through doors that are already unlocked.
+        //
+        // These unlocked doors do not count as progress by themselves.
+        // They only allow us to reach other rooms that may have attemptable doors.
+        if (canTravelThrough(room.getNorthDoor(), "north", row, column)) {
+            if (hasAttemptableDoor(row - 1, column, visitedRooms)) {
                 return true;
             }
         }
 
-        if (canTravelThrough(room.getSouthDoor(), "south", row, col)) {
-            if (searchForAvailableDoor(row + 1, col, visited)) {
+        // Example: Search the room south of the current room if the south door is open.
+        if (canTravelThrough(room.getSouthDoor(), "south", row, column)) {
+            if (hasAttemptableDoor(row + 1, column, visitedRooms)) {
                 return true;
             }
         }
 
-        if (canTravelThrough(room.getEastDoor(), "east", row, col)) {
-            if (searchForAvailableDoor(row, col + 1, visited)) {
+        // Example 2: Search the room east of the current room if the east door is open
+        // (and repeat for other directions)
+        if (canTravelThrough(room.getEastDoor(), "east", row, column)) {
+            if (hasAttemptableDoor(row, column + 1, visitedRooms)) {
                 return true;
             }
         }
 
-        if (canTravelThrough(room.getWestDoor(), "west", row, col)) {
-            if (searchForAvailableDoor(row, col - 1, visited)) {
+        if (canTravelThrough(room.getWestDoor(), "west", row, column)) {
+            if (hasAttemptableDoor(row, column - 1, visitedRooms)) {
                 return true;
             }
         }
 
+        // If this room and all reachable rooms have no attemptable doors,
+        // return false. This means the player is blocked from making progress.
         return false;
     }
 
-    private boolean doorCanStillBeUsed(Door door, String direction, int row, int col) {
+    /**
+     * Determines whether a specific door can still be attempted by the player.
+     *
+     * <p>A door is attemptable if it is locked, not permanently closed, and leads
+     * to a valid room. The exit door is also considered attemptable as long as it
+     * is not permanently closed because reaching it means the player can still win.</p>
+     *
+     * @param door the door being checked
+     * @param direction the direction of the door from the current room
+     * @param row the row of the current room
+     * @param column the column of the current room
+     * @return true if the door can still be attempted; false otherwise
+     */
+    private boolean isAttemptableDoor(Door door, String direction, int row, int column) {
+        // A missing door or permanently closed door cannot be attempted.
         if (door == null || door.isPermanentlyClosed()) {
             return false;
         }
 
+        // Check whether this door is the special exit door.
         boolean isExitDoor = door == maze.getExitDoor();
 
+        // If the exit door is reachable and not permanently closed,
+        // the player can still win.
         if (isExitDoor) {
             return true;
         }
 
-        int newRow = row;
-        int newCol = col;
-
-        switch (direction) {
-            case "north" -> newRow--;
-            case "south" -> newRow++;
-            case "east" -> newCol++;
-            case "west" -> newCol--;
-        }
-
-        if (newRow < 0 || newRow >= maze.getRows() || newCol < 0 || newCol >= maze.getCols()) {
+        // If the door is already unlocked, it is only a pathway.
+        // It should not count as an attemptable door because no question remains.
+        if (!door.isLocked()) {
             return false;
         }
 
-        // Locked but not permanently closed means the player can still answer it.
-        return true;
+        // Calculate the neighboring room this door would lead to.
+        int updatedRow = row;
+        int updatedColumn = column;
+
+        switch (direction) {
+            case "north" -> updatedRow--;
+            case "south" -> updatedRow++;
+            case "east" -> updatedColumn++;
+            case "west" -> updatedColumn--;
+        }
+
+        // A locked door only counts as attemptable if it leads to
+        // a valid room inside the maze.
+        return updatedRow >= 0 && updatedRow < maze.getRows()
+                && updatedColumn >= 0 && updatedColumn < maze.getCols();
     }
 
-    private boolean canTravelThrough(Door door, String direction, int row, int col) {
+    /**
+     * Determines whether the player can travel through a specific door into
+     * a neighboring room.
+     *
+     * <p>This method is used for the recursive search. It allows the search to move
+     * through already-unlocked doors so that the game can check the entire reachable
+     * area, not just the room the player is currently standing in.</p>
+     *
+     * @param door the door being checked
+     * @param direction the direction of the door from the current room
+     * @param row the row of the current room
+     * @param column the column of the current room
+     * @return true if the player can travel through the door; false otherwise
+     */
+    private boolean canTravelThrough(Door door, String direction, int row, int column) {
+        // A missing door, locked or permanently closed door cannot be attempted.
         if (door == null || door.isLocked() || door.isPermanentlyClosed()) {
             return false;
         }
 
-        int newRow = row;
-        int newCol = col;
+        // Calculate the neighboring room this door leads to.
+        int updatedRow = row;
+        int updatedColumn = column;
 
         switch (direction) {
-            case "north" -> newRow--;
-            case "south" -> newRow++;
-            case "east" -> newCol++;
-            case "west" -> newCol--;
+            case "north" -> updatedRow--;
+            case "south" -> updatedRow++;
+            case "east" -> updatedColumn++;
+            case "west" -> updatedColumn--;
         }
 
-        return newRow >= 0 && newRow < maze.getRows()
-                && newCol >= 0 && newCol < maze.getCols();
-    }
-
-    private boolean hasAvailableMove() {
-        Room currentRoom = maze.getRoom(playerRow, playerCol);
-
-        return isDoorAvailable("north", currentRoom.getNorthDoor())
-                || isDoorAvailable("south", currentRoom.getSouthDoor())
-                || isDoorAvailable("east", currentRoom.getEastDoor())
-                || isDoorAvailable("west", currentRoom.getWestDoor());
-    }
-
-    private boolean isDoorAvailable(String direction, Door door) {
-        if (door == null || door.isPermanentlyClosed()) {
-            return false;
-        }
-
-        boolean isExitDoor = door == maze.getExitDoor();
-
-        // Exit door is available even though it leads outside the maze
-        if (isExitDoor) {
-            return true;
-        }
-
-        // Normal doors are only available if they lead to another room
-        return isValidMove(direction);
+        // The player can only travel through the door if the neighboring
+        // room is inside the maze boundaries.
+        return updatedRow >= 0 && updatedRow < maze.getRows()
+                && updatedColumn >= 0 && updatedColumn < maze.getCols();
     }
 
     private void movePlayer(int newRow, int newCol) {
