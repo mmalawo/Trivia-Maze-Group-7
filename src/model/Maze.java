@@ -9,7 +9,9 @@ public class Maze implements Serializable {
     private int rows;
     private int cols;
     private Room entrance;
-    private Room exit;
+    private Room exitRoom;
+    private Door exitDoor;
+    private String exitDoorDirection;
 
     public Maze(int rows, int cols) {
         this.rows = rows;
@@ -38,11 +40,27 @@ public class Maze implements Serializable {
     }
 
     public Room getExit() {
-        return exit;
+        return exitRoom;
     }
 
-    public void setExit(Room exit) {
-        this.exit = exit;
+    public void setExitRoom(Room exitRoom) {
+        this.exitRoom = exitRoom;
+    }
+
+    public Door getExitDoor() {
+        return exitDoor;
+    }
+
+    public void setExitDoor(Door exitDoor) {
+        this.exitDoor = exitDoor;
+    }
+
+    public String getExitDoorDirection() {
+        return exitDoorDirection;
+    }
+
+    public void setExitDoorDirection(String exitDoorDirection) {
+        this.exitDoorDirection = exitDoorDirection;
     }
 
     public int getRows() {
