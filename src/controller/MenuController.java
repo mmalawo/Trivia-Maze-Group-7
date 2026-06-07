@@ -23,8 +23,8 @@ public class MenuController {// Action Listener and events
 
     private void addListeners() {
         menu.addPlayListener(e -> {
+            MainGUI.startNewGame();
             MainGUI.switchView(MainGUI.setupView);
-
         });
 
         menu.addExitListener(e -> {

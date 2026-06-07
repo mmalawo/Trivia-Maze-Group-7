@@ -15,6 +15,13 @@ public class SaveManager {
     }
 
     public static Memento loadGame() {
+        File file = new File(SAVE_FILE);
+
+        if (!file.exists()) {
+            System.out.println("No save file found.");
+            return null;
+        }
+
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(SAVE_FILE))) {
             System.out.println("Game loaded!");
             return (Memento) in.readObject();

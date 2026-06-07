@@ -16,7 +16,7 @@ public class MainGUI {
     public static void main(String args[]) {
         System.out.println("Starting application...");
         startApplication();
-        testMaze();
+        //testMaze();
     }
     public static JFrame window;
 
@@ -76,10 +76,7 @@ public class MainGUI {
         window.setJMenuBar(menuBar);
         instructionsView = new InstructionsView();
 
-        maze = GenerateMaze.generateMaze();
-        player = new Player();
-        player.setCurrentRoom(maze.getEntrance());
-        mazeView = new MazeView(maze);
+        startNewGame();
 
         currentView = menuView;
         previousView = menuView;
@@ -201,9 +198,7 @@ public class MainGUI {
                     "Are you sure you want to go back? Progress will not save.",
                     "Main Menu",
                     JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
-                System.out.println("Name before: " + MainGUI.player.getName());
-                GameController.restartGame();
-                System.out.println("Name after: " + MainGUI.player.getName());
+                MainGUI.startNewGame();
                 MainGUI.switchView(MainGUI.menuView);
             }
 
@@ -283,9 +278,24 @@ public class MainGUI {
             maze = loaded.getMaze();
 
             mazeView = new MazeView(maze);
+            panelHistory.clear();
             switchView(mazeView);
 
             System.out.println("Loaded player: " + player.getName());
         }
+
+    }
+
+    public static void startNewGame() {
+        maze = GenerateMaze.generateMaze();
+
+        player = new Player();
+        player.setCurrentRoom(maze.getEntrance());
+
+        mazeView = new MazeView(maze);
+
+        panelHistory.clear();
+
+        System.out.println("Started a new game.");
     }
 }

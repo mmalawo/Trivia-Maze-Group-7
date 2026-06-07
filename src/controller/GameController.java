@@ -27,8 +27,7 @@ public void addListeners() {
 }
 
 public static void restartGame() {
-    MainGUI.player.reset();
-    MainGUI.mazeView.resetGame();
+    MainGUI.startNewGame();
     System.out.println("Game restarted.");
 }
 
