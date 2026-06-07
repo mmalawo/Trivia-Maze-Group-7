@@ -80,7 +80,7 @@ public class DatabaseManager {
         String[] questions = {
 
                 // ------------------------------------------------------------------------
-                // MULTIPLE CHOICE QUESTIONS (23 total)
+                // MULTIPLE CHOICE QUESTIONS (28 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -179,6 +179,21 @@ public class DatabaseManager {
                         "'C', 'multiple choice')",
 
                 "INSERT INTO questions VALUES (NULL, " +
+                        "'Who was historically considered the greatest traitor to George Washington?', " +
+                        "'A) Benedict Arnold', 'B) Alexander Hamilton', 'C) Henry Knox', 'D) Robert Townsend', " +
+                        "'A', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What did Thailand offer the USA during the Civil War?', " +
+                        "'A) Money', 'B) Elephants', 'C) Silk Armor', 'D) Mongkut''s Firstborn', " +
+                        "'B', 'multiple choice')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Who is a son of Ragnar Lothbrok, one of the most famous Vikings?', " +
+                        "'A) Ivar the Boneless', 'B) Rollo', 'C) Erik the Red', 'D) Floki', " +
+                        "'A', 'multiple choice')",
+                
+                "INSERT INTO questions VALUES (NULL, " +
                         "'How many bones are in the adult human body?', " +
                         "'A) 196', 'B) 206', 'C) 216', 'D) 226', " +
                         "'B', 'multiple choice')",
@@ -209,11 +224,11 @@ public class DatabaseManager {
                         "'B', 'multiple choice')",
 
                 // ------------------------------------------------------------------------
-                // TRUE/FALSE QUESTIONS (10 total)
+                // TRUE/FALSE QUESTIONS (13 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
-                        "'TWICE member Jihyo trained at JYP Entertainment for 10 years before making her debut.', " +
+                        "'Jihyo from TWICE trained at JYP Entertainment for 10 years before making her debut.', " +
                         "'True', 'False', NULL, NULL, " +
                         "'True', 'true/false')",
 
@@ -253,17 +268,39 @@ public class DatabaseManager {
                         "'True', 'true/false')",
 
                 "INSERT INTO questions VALUES (NULL, " +
+                        "'Elvis Presley ran for president in 1977.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'France allied with the Continental army (Americans) in the Revolutionary War.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'True', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
                         "'The video game Minecraft has sold more copies than any other game in history.', " +
                         "'True', 'False', NULL, NULL, " +
                         "'True', 'true/false')",
 
                 "INSERT INTO questions VALUES (NULL, " +
+                        "'American soldiers were known as Red-Coats.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'World War II ended in 1953.', " +
+                        "'True', 'False', NULL, NULL, " +
+                        "'False', 'true/false')",
+                        
+                "INSERT INTO questions VALUES (NULL, " +
                         "'The iPhone was first released in 2007.', " +
                         "'True', 'False', NULL, NULL, " +
                         "'True', 'true/false')",
 
+                        
+
                 // ------------------------------------------------------------------------
-                // SHORT ANSWER QUESTIONS (6 total)
+                // SHORT ANSWER QUESTIONS (7 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
@@ -284,7 +321,22 @@ public class DatabaseManager {
                 "INSERT INTO questions VALUES (NULL, " +
                         "'What streaming service is home to shows like Stranger Things?', " +
                         "NULL, NULL, NULL, NULL, " +
-                        "'Netflix', 'short answer')"
+                        "'Netflix', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What year did America gain Independence?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'1776', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'Who is considered the King of Pop?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Michael Jackson', 'short answer')",
+
+                "INSERT INTO questions VALUES (NULL, " +
+                        "'What famous ancient city was destroyed by a volcanic eruption in 79 AD?', " +
+                        "NULL, NULL, NULL, NULL, " +
+                        "'Pompeii', 'short answer')"
         };
 
         try {

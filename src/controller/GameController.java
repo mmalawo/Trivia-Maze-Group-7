@@ -5,6 +5,8 @@ import view.*;
 
 import java.awt.*;
 
+import static view.MainGUI.maze;
+
 
 public class GameController {
 
@@ -20,15 +22,7 @@ public GameController(GameMenuView theMenu, Player thePlayer) {
 public void addListeners() {
     menu.addPlayListener(e -> {
         System.out.println("Game in progress...");
-        player.startTimer();
 
-        new javax.swing.Timer(1000, evt -> {
-            double time = player.elapsedTime();
-            menu.updateTimer(time);
-
-//            System.out.println("Time: " + player.elapsedTime());
-
-        }).start();
     });
 }
 

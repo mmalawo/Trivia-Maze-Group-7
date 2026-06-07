@@ -39,6 +39,15 @@ public class PlayerController {
             MainGUI.player.startTimer();
 
             MainGUI.switchView(MainGUI.mazeView);
+            MainGUI.player.startTimer();
+
+            new javax.swing.Timer(1000, evt -> {
+                double time = MainGUI.player.elapsedTime();
+                MainGUI.mazeView.updateTimer(time);
+
+//            System.out.println("Time: " + player.elapsedTime());
+
+            }).start();
 
 
 

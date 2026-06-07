@@ -83,7 +83,7 @@ public class GameMenuView extends JPanel {
         // -------------------------------------------------------
 
 
-        addTimer();
+
         // -------------------------------------------------------
 
     }
@@ -120,27 +120,6 @@ public class GameMenuView extends JPanel {
 
 
 
-    public static JLabel timerLabel;
-public void addTimer() {
-    // ----------------------------------------------------------------
-    // THIS CODE IS FOR TESTING PURPOSES. ADD IT TO THE MAZE GAME VIEW
-    // ----------------------------------------------------------------
-
-
-    timerLabel = new JLabel("Time: 0");
-    timerLabel.setBounds(50,50,200,40);
-    timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
-    this.add(timerLabel);
-}
-public void updateTimer(double time) {
-    int totalSeconds = (int) time;
-    int hours = totalSeconds / 3600;
-    int minutes = (totalSeconds % 3600) / 60;
-    int seconds = totalSeconds % 60;
-
-
-    timerLabel.setText("Time: " + String.format("%02d:%02d:%02d", hours, minutes, seconds));
-}
 
 
 
