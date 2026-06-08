@@ -7,7 +7,7 @@ import java.io.Serializable;
  * It can hold three types of questions: multiple choice, true/false, and short answer.
  * Think of this like a flashcard object that stores everything about one question.
  */
-public class Question implements Serializable {
+public abstract class Question implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // The actual question being asked, e.g. "What is the capital of France?"

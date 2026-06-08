@@ -40,15 +40,7 @@ public class QuestionDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                questionPool.add(new Question(
-                        rs.getString("question_text"),
-                        rs.getString("option_a"),
-                        rs.getString("option_b"),
-                        rs.getString("option_c"),
-                        rs.getString("option_d"),
-                        rs.getString("correct_answer"),
-                        rs.getString("question_type")
-                ));
+                questionPool.add(QuestionFactory.createQuestion(rs));
             }
 
             Collections.shuffle(questionPool);

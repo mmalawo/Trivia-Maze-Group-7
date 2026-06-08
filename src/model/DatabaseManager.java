@@ -224,7 +224,7 @@ public class DatabaseManager {
                         "'B', 'multiple choice')",
 
                 // ------------------------------------------------------------------------
-                // TRUE/FALSE QUESTIONS (13 total)
+                // TRUE/FALSE QUESTIONS (14 total)
                 // ------------------------------------------------------------------------
 
                 "INSERT INTO questions VALUES (NULL, " +
