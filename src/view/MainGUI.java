@@ -41,6 +41,9 @@ public class MainGUI {
     public static JMenuBar menuBar;
     public static InstructionsView instructionsView;
 
+    /** Tracks whether the player has saved since the last new game. */
+    public static boolean hasSaved = false;
+
     public static JFrame getWindow() {
         return window;
     }
@@ -74,7 +77,6 @@ public class MainGUI {
         currentView = menuView;
         previousView = menuView;
 
-        // GameController for menu (no maze yet)
         gameController = new GameController(menuView, player);
         new MenuController(menuView, settingsView);
         new PlayerController(setupView);
@@ -88,6 +90,10 @@ public class MainGUI {
     }
 
     public static void switchView(JPanel panel) {
+        // Refresh resume button visibility when returning to menu
+        if (panel == menuView && menuView != null) {
+            menuView.refreshResumeButton();
+        }
         if (currentView != null) {
             panelHistory.push(currentView);
         }
@@ -110,7 +116,7 @@ public class MainGUI {
 
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu gameMenu = new JMenu("Game");
+        JMenu gameMenu = new JMenu("File");
         JMenu help = new JMenu("Help");
 
         JMenuItem itemRestartGame = new JMenuItem("Main Menu");
@@ -166,12 +172,17 @@ public class MainGUI {
         itemSettings.addActionListener(e -> MainGUI.switchView(MainGUI.settingsView));
 
         itemRestartGame.addActionListener(e -> {
-            if (JOptionPane.showConfirmDialog(null,
-                    "Are you sure you want to go back? Progress will not save.",
-                    "Main Menu",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
-                MainGUI.startNewGame();
+            if (hasSaved) {
+                // Save file is preserved — just go back to menu, Resume will show
                 MainGUI.switchView(MainGUI.menuView);
+            } else {
+                if (JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to go back? Any unsaved progress will be lost.",
+                        "Main Menu",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION) {
+                    MainGUI.startNewGame();
+                    MainGUI.switchView(MainGUI.menuView);
+                }
             }
         });
 
@@ -234,8 +245,10 @@ public class MainGUI {
     }
 
     public static void saveGame() {
+        player.saveElapsedTime();
         Memento save = new Memento(player, maze);
         SaveManager.saveGame(save);
+        hasSaved = true;
     }
 
     public static boolean loadGame() {
@@ -244,6 +257,9 @@ public class MainGUI {
         if (loaded != null) {
             player = loaded.getPlayer();
             maze = loaded.getMaze();
+
+            // Restore timer from saved elapsed time
+            player.resumeTimer();
 
             // Wire up GameController and MazeView
             GameController loadedController = new GameController(maze, player);
@@ -267,11 +283,15 @@ public class MainGUI {
         player = new Player();
         player.setCurrentRoom(maze.getEntrance());
 
-        // Wire up GameController and MazeView with proper MVC references
         GameController newController = new GameController(maze, player);
         mazeView = new MazeView(maze, newController);
         newController.setMazeView(mazeView);
         gameController = newController;
+
+        hasSaved = false;
+
+        // Delete save file so Resume button is hidden on new game
+        SaveManager.deleteSaveFile();
 
         panelHistory.clear();
 
