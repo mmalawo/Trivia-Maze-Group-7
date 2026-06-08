@@ -133,6 +133,9 @@ public class MainGUI {
         // "Game" drop down menu
         JMenu gameMenu  = new JMenu("Game");
 
+        // "Help" drop down menu
+        JMenu help = new JMenu("Help");
+
         // _____________________________________________________
         // Options you can click in the dropdown menu of Game.
         // _____________________________________________________
@@ -177,6 +180,16 @@ public class MainGUI {
 
         // CHANGE THIS TO BE THE FRAME OR PANEL OF THE GAME VIEW
         //window.setJMenuBar(menuBar);
+
+
+        JMenuItem itemAbout = new JMenuItem("About");
+
+        JMenuItem itemInstructions = new JMenuItem("How To Play");
+
+        help.add(itemAbout);
+        help.add(itemInstructions);
+
+        menuBar.add(help);
 
         itemExitGame.addActionListener(e -> {
             if(JOptionPane.showConfirmDialog(null,
@@ -246,6 +259,33 @@ public class MainGUI {
             );
 
             LeaderboardView.showLeaderboard();
+        });
+
+
+        // HELP ---> DROP DOWN ACTION LISTENERS
+        itemAbout.addActionListener(e -> {
+            JOptionPane.showMessageDialog(
+                    window,
+                    "About the game:\n\n" +
+                            "Created by: Angelina Christianson, Makani Malawo, and Tifanie Ngo\n" +
+                            "Course: TCSS 360\n" +
+                            "Version: 2.7\n\n" +
+                            "This game is a garden style trivia maze game where you go through\ndoors by answering trivia questions correctly.\n",
+                    "About",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        });
+
+        itemInstructions.addActionListener(e -> {
+            JOptionPane.showMessageDialog(
+                    window,
+                    "How to Play:\n\n" +
+                            "Use the buttons on the right side of the screen to traverse through the maze.\n" +
+                            "You have 3 tries per door to get it right. If you fail all 3 tries, the door locks permanently.\n" +
+                            "Use the hint button if you can't find the exit!\n\n",
+                    "Instructions",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
         });
 
         return menuBar;
