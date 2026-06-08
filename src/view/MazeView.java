@@ -243,6 +243,7 @@ public class MazeView extends JPanel {
                 boolean correct = door.attemptAnswer(playerAnswer);
 
                 if (correct) {
+                    MainGUI.player.incrementCorrectScore();
                     QuestionDAO.markAsCorrectlyAnswered(q);
 
                     // Win condition - exit door answered correctly
@@ -260,6 +261,8 @@ public class MazeView extends JPanel {
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 } else {
+                    MainGUI.player.incrementIncorrectScore();
+
                     String attemptsMsg = door.isPermanentlyClosed()
                             ? "Wrong! This door is now permanently locked."
                             : "Wrong! " + door.getAttemptsRemaining() + " attempt(s) remaining.";
@@ -798,8 +801,10 @@ public class MazeView extends JPanel {
         JOptionPane.showMessageDialog(
                 MainGUI.window,
                 "You reached the exit!\nTime: " +
-                        String.format("%.2f", MainGUI.player.getRecordTime()) +
-                        " seconds\nYour score was saved to the leaderboard.",
+                        formatTime(MainGUI.player.getRecordTime()) +
+                        "\nCorrect answers: " + MainGUI.player.getCorrectScore() +
+                        "\nIncorrect answers: " + MainGUI.player.getIncorrectScore() +
+                        "\nYour score was saved to the leaderboard.",
                 "Game Complete",
                 JOptionPane.INFORMATION_MESSAGE
         );
@@ -886,5 +891,13 @@ public class MazeView extends JPanel {
         int seconds = totalSeconds % 60;
 
         timerLabel.setText("Time: " + String.format("%02d:%02d:%02d", hours, minutes, seconds));
+    }
+
+    private String formatTime(double timeSeconds) {
+        int totalSeconds = (int) Math.round(timeSeconds);
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+
+        return String.format("%d min %02d sec", minutes, seconds);
     }
 }

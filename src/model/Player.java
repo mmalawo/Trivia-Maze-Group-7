@@ -23,9 +23,6 @@ public class Player implements Serializable {
         this.myPlayerName =  theName;
     }
 
-
-
-
     public int getCorrectScore() {
         return myCorrectScore;
     }
@@ -34,12 +31,19 @@ public class Player implements Serializable {
         this.myCorrectScore = theCorrectScore;
     }
 
+    public void incrementCorrectScore() {
+        myCorrectScore++;
+    }
     public int getIncorrectScore() {
         return myIncorrectScore;
     }
 
     public void setIncorrectScore(int theIncorrectScore) {
         this.myIncorrectScore = theIncorrectScore;
+    }
+
+    public void incrementIncorrectScore() {
+        myIncorrectScore++;
     }
 
     public void startTimer() {
@@ -62,12 +66,6 @@ public class Player implements Serializable {
     public void setRecordTime(double recordTime) {
         this.myRecordTime = recordTime;
     }
-
-    /*
-    public String playerDirection() {
-
-    }
-     */
 
 
     public void reset() {
