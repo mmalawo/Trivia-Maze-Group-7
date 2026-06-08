@@ -511,8 +511,8 @@ public class MazeView extends JPanel {
         int screenHeight = screen.height;
 
 
-        ImageIcon northIcon = new ImageIcon("src/images/NorthArrow.png");
-        ImageIcon northClicked = new ImageIcon("src/images/NorthArrowClicked.png");
+        ImageIcon northIcon = new ImageIcon("src/images/NorthArrow2.png");
+        ImageIcon northClicked = new ImageIcon("src/images/NorthArrowClicked2.png");
 
         ImageIcon southIcon = new ImageIcon("src/images/SouthArrow.png");
         ImageIcon southClicked = new ImageIcon("src/images/SouthArrowClicked.png");
@@ -539,7 +539,7 @@ public class MazeView extends JPanel {
             button.setOpaque(false);
         }
 
-        moveNorth.setBounds((screenWidth*6)/7, (screenHeight)/3, 150, 150);
+        moveNorth.setBounds((screenWidth*6)/7, (screenHeight)/3+50, 150, 150);
         moveSouth.setBounds((screenWidth*6)/7, (screenHeight)/2+75, 150, 150);
         moveWest.setBounds((screenWidth*6)/7-100, screenHeight/2 - 75, 150, 150);
         moveEast.setBounds((screenWidth*6)/7+102, screenHeight/2 - 75, 150, 150);
