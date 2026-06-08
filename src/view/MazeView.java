@@ -4,8 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import controller.GameController;
 import model.*;
 
+/**
+ * MazeView is responsible for rendering the maze, rooms, doors, and player.
+ * All game logic (movement validation, trivia, win/lose) is delegated to GameController.
+ */
 public class MazeView extends JPanel {
 
     private final JPanel playerPanel;
@@ -20,9 +25,7 @@ public class MazeView extends JPanel {
     public static ImageIcon hedgeTest = new ImageIcon("src/images/Hedge900-675.png");
     public static ImageIcon shadyHedge = new ImageIcon("src/images/ShadyHedge.png");
 
-
     public static ImageIcon unlockedDoor = new ImageIcon("src/images/UnlockedHedge.png");
-
 
     // Unlocked doors (open path)
     public static ImageIcon eastDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
@@ -36,11 +39,11 @@ public class MazeView extends JPanel {
     public static ImageIcon southDoorImageLocked = new ImageIcon("src/images/SouthDoorLocked.png");
     public static ImageIcon westDoorImageLocked = new ImageIcon("src/images/WestDoorLocked.png");
 
-
     public static ImageIcon character1;
     public static ImageIcon character2;
 
-    private final Maze maze;
+    private final Maze myMaze;
+    private GameController myController;
 
     private float camX;
     private float camY;
@@ -54,7 +57,7 @@ public class MazeView extends JPanel {
     private float renderRow;
     private float renderCol;
 
-    // Room info label for dev purposes
+    // Room info label
     private JLabel coordLabel;
 
     private boolean butterflyToggle = false;
@@ -66,17 +69,18 @@ public class MazeView extends JPanel {
     private static final double BASE_WIDTH = 1536.0;
     private static final double BASE_HEIGHT = 1024.0;
 
-    private boolean gameFinished = false;
+    public static JLabel timerLabel;
 
-    public MazeView(Maze maze) {
-        this.maze = maze;
+    public MazeView(Maze theMaze, GameController theController) {
+        this.myMaze = theMaze;
+        this.myController = theController;
 
         // Find player starting position
-        int[] startPos = maze.findRoom(MainGUI.player.getCurrentRoom());
+        int[] startPos = myMaze.findRoom(MainGUI.player.getCurrentRoom());
         playerRow = startPos[0];
         playerCol = startPos[1];
 
-        maze.getRoom(playerRow, playerCol).setVisited(true);
+        myMaze.getRoom(playerRow, playerCol).setVisited(true);
 
         camX = 0;
         camY = 0;
@@ -131,9 +135,47 @@ public class MazeView extends JPanel {
         addTimer();
     }
 
+    // =====================================================
+    // GETTERS FOR CONTROLLER
+    // =====================================================
+
+    /** Returns the player's current row in the maze grid. */
+    public int getPlayerRow() {
+        return playerRow;
+    }
+
+    /** Returns the player's current column in the maze grid. */
+    public int getPlayerCol() {
+        return playerCol;
+    }
+
+    // =====================================================
+    // PLAYER MOVEMENT (called by GameController)
+    // =====================================================
+
+    /**
+     * Moves the player to the given row/col and updates the camera and room info.
+     */
+    public void movePlayer(int theNewRow, int theNewCol) {
+        playerRow = theNewRow;
+        playerCol = theNewCol;
+
+        Room currentRoom = myMaze.getRoom(playerRow, playerCol);
+        currentRoom.setVisited(true);
+
+        MainGUI.player.setCurrentRoom(currentRoom);
+
+        coordLabel.setText(getRoomInfo());
+
+        System.out.println("Moved to room [" + playerRow + "][" + playerCol + "]");
+    }
+
+    // =====================================================
+    // ANIMATION
+    // =====================================================
+
     private void updatePlayerAnimation() {
         float speed = 0.02f;
-
         renderRow += (playerRow - renderRow) * speed;
         renderCol += (playerCol - renderCol) * speed;
     }
@@ -141,6 +183,10 @@ public class MazeView extends JPanel {
     public JPanel getPlayerPanel() {
         return playerPanel;
     }
+
+    // =====================================================
+    // SCALING
+    // =====================================================
 
     private double getUIScale() {
         double scaleX = getWidth() / BASE_WIDTH;
@@ -156,8 +202,12 @@ public class MazeView extends JPanel {
         return (int)(value * getWorldScale());
     }
 
+    // =====================================================
+    // ROOM INFO
+    // =====================================================
+
     private String getRoomInfo() {
-        Room r = maze.getRoom(playerRow, playerCol);
+        Room r = myMaze.getRoom(playerRow, playerCol);
         return "(" + playerCol + "," + playerRow + ") | " +
                 "N:" + (r.getNorthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
                 "S:" + (r.getSouthDoor().isLocked() ? "LOCKED" : "OPEN") + " " +
@@ -165,351 +215,18 @@ public class MazeView extends JPanel {
                 "W:" + (r.getWestDoor().isLocked() ? "LOCKED" : "OPEN");
     }
 
-    private boolean isValidMove(String direction) {
-        switch (direction) {
-            case "north" -> { return playerRow > 0; }
-            case "south" -> { return playerRow < maze.getRows() - 1; }
-            case "west"  -> { return playerCol > 0; }
-            case "east"  -> { return playerCol < maze.getCols() - 1; }
-        }
-        return false;
-    }
-
-    private void tryMove(String direction) {
-        // Check if this direction leads to the exit door before blocking perimeter moves
-        Room currentRoom = maze.getRoom(playerRow, playerCol);
-        Door potentialDoor = switch (direction) {
-            case "north" -> currentRoom.getNorthDoor();
-            case "south" -> currentRoom.getSouthDoor();
-            case "west"  -> currentRoom.getWestDoor();
-            case "east"  -> currentRoom.getEastDoor();
-            default -> null;
-        };
-
-        boolean isExitDoor = potentialDoor != null && potentialDoor == maze.getExitDoor();
-
-        // Only block perimeter moves if it's NOT the exit door
-        if (!isValidMove(direction) && !isExitDoor) {
-            JOptionPane.showMessageDialog(
-                    MainGUI.getWindow(),
-                    "That door leads nowhere! Try a different door.",
-                    "Dead End",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-
-        Door door = potentialDoor;
-
-        int newRow = playerRow;
-        int newCol = playerCol;
-
-        switch (direction) {
-            case "north" -> newRow = playerRow - 1;
-            case "south" -> newRow = playerRow + 1;
-            case "west"  -> newCol = playerCol - 1;
-            case "east"  -> newCol = playerCol + 1;
-        }
-
-        if (door == null) return;
-
-        // Permanently closed - no more attempts allowed
-        if (door.isPermanentlyClosed()) {
-            JOptionPane.showMessageDialog(
-                    MainGUI.getWindow(),
-                    "This door is permanently locked!",
-                    "Blocked",
-                    JOptionPane.ERROR_MESSAGE
-            );
-
-            if (!checkForPossiblePathways()) {
-                loseGame("You are completely blocked!\nAll reachable doors are permanently locked.\nGame Over.");
-            }
-
-            return;
-        }
-
-        // Already unlocked - free passage (only for non-exit doors)
-        if (!door.isLocked() && !isExitDoor) {
-            movePlayer(newRow, newCol);
-        } else {
-            Question q = door.getQuestion();
-
-            if (q != null) {
-                TriviaPopup popup = new TriviaPopup(q);
-                popup.setVisible(true);
-
-                String playerAnswer = popup.getPlayerAnswer();
-                boolean correct = door.attemptAnswer(playerAnswer);
-
-                if (correct) {
-                    MainGUI.player.incrementCorrectScore();
-                    QuestionDAO.markAsCorrectlyAnswered(q);
-
-                    // Win condition - exit door answered correctly
-                    if (isExitDoor) {
-                        finishGame();
-                        return;
-                    }
-
-                    movePlayer(newRow, newCol);
-
-                    JOptionPane.showMessageDialog(
-                            MainGUI.getWindow(),
-                            "Correct! Door unlocked!",
-                            "Result",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                } else {
-                    MainGUI.player.incrementIncorrectScore();
-
-                    String attemptsMsg = door.isPermanentlyClosed()
-                            ? "Wrong! This door is now permanently locked."
-                            : "Wrong! " + door.getAttemptsRemaining() + " attempt(s) remaining.";
-
-                    JOptionPane.showMessageDialog(
-                            MainGUI.getWindow(),
-                            attemptsMsg,
-                            "Result",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-
-                    System.out.println("Wrong! Staying in room [" + playerRow + "][" + playerCol + "]");
-
-                    // Lose condition - exit door permanently locked after failed attempts
-                    if (isExitDoor && door.isPermanentlyClosed()) {
-                        loseGame("You failed to unlock the exit!\nGame Over.");
-                        return;
-                    }
-
-                    // Lose condition - player has no accessible pathways left
-                    if (!checkForPossiblePathways()) {
-                        loseGame("All doors in your vicinity are permanently locked.\nGame Over.");
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean checkForPossiblePathways() {
-        boolean[][] visitedRooms = new boolean[maze.getRows()][maze.getCols()];
-        return hasAttemptableDoor(playerRow, playerCol, visitedRooms);
-    }
-
-    /**
-     * Recursively checks whether the player still has at least one reachable door
-     * that can be attempted.
-     */
-    private boolean hasAttemptableDoor(int row, int column, boolean[][] visitedRooms) {
-        if (row < 0 || row >= maze.getRows() || column < 0 || column >= maze.getCols()) {
-            return false;
-        }
-
-        if (visitedRooms[row][column]) {
-            return false;
-        }
-
-        visitedRooms[row][column] = true;
-
-        Room room = maze.getRoom(row, column);
-
-        if (isAttemptableDoor(room.getNorthDoor(), "north", row, column)) return true;
-        if (isAttemptableDoor(room.getSouthDoor(), "south", row, column)) return true;
-        if (isAttemptableDoor(room.getEastDoor(), "east", row, column)) return true;
-        if (isAttemptableDoor(room.getWestDoor(), "west", row, column)) return true;
-
-        if (canTravelThrough(room.getNorthDoor(), "north", row, column)) {
-            if (hasAttemptableDoor(row - 1, column, visitedRooms)) return true;
-        }
-
-        if (canTravelThrough(room.getSouthDoor(), "south", row, column)) {
-            if (hasAttemptableDoor(row + 1, column, visitedRooms)) return true;
-        }
-
-        if (canTravelThrough(room.getEastDoor(), "east", row, column)) {
-            if (hasAttemptableDoor(row, column + 1, visitedRooms)) return true;
-        }
-
-        if (canTravelThrough(room.getWestDoor(), "west", row, column)) {
-            if (hasAttemptableDoor(row, column - 1, visitedRooms)) return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Determines whether a specific door can still be attempted by the player.
-     */
-    private boolean isAttemptableDoor(Door door, String direction, int row, int column) {
-        if (door == null || door.isPermanentlyClosed()) return false;
-
-        boolean isExitDoor = door == maze.getExitDoor();
-        if (isExitDoor) return true;
-
-        if (!door.isLocked()) return false;
-
-        int updatedRow = row;
-        int updatedColumn = column;
-
-        switch (direction) {
-            case "north" -> updatedRow--;
-            case "south" -> updatedRow++;
-            case "east" -> updatedColumn++;
-            case "west" -> updatedColumn--;
-        }
-
-        return updatedRow >= 0 && updatedRow < maze.getRows()
-                && updatedColumn >= 0 && updatedColumn < maze.getCols();
-    }
-
-    /**
-     * Determines whether the player can travel through a specific door into
-     * a neighboring room.
-     */
-    private boolean canTravelThrough(Door door, String direction, int row, int column) {
-        if (door == null || door.isLocked() || door.isPermanentlyClosed()) return false;
-
-        int updatedRow = row;
-        int updatedColumn = column;
-
-        switch (direction) {
-            case "north" -> updatedRow--;
-            case "south" -> updatedRow++;
-            case "east" -> updatedColumn++;
-            case "west" -> updatedColumn--;
-        }
-
-        return updatedRow >= 0 && updatedRow < maze.getRows()
-                && updatedColumn >= 0 && updatedColumn < maze.getCols();
-    }
-
-    private void movePlayer(int newRow, int newCol) {
-        playerRow = newRow;
-        playerCol = newCol;
-
-        Room currentRoom = maze.getRoom(playerRow, playerCol);
-        currentRoom.setVisited(true);
-
-        MainGUI.player.setCurrentRoom(currentRoom);
-
-        coordLabel.setText(getRoomInfo());
-
-        System.out.println("Moved to room [" + playerRow + "][" + playerCol + "]");
-    }
-
-    private void drawSprite(Graphics g,
-                            ImageIcon sprite,
-                            int x,
-                            int y,
-                            int windowWidth,
-                            int windowHeight) {
-
-        int spriteWidth = scaled(windowWidth);
-        int spriteHeight = scaled(windowHeight);
-
-        g.drawImage(sprite.getImage(), x, y, spriteWidth, spriteHeight, this);
-    }
-
-    private void drawDoor(Graphics2D g2,
-                          Door door,
-                          String direction,
-                          int x,
-                          int y,
-                          int w,
-                          int h) {
-
-        ImageIcon doorIcon;
-
-        if (door.isPermanentlyClosed()) {
-            doorIcon = null;
-        } else {
-            switch (direction) {
-                case "north" -> {
-                    if (door.isLocked()) {
-                        doorIcon = northDoorImageLocked;
-                    } else {
-                        doorIcon = northDoorImage;
-                    }
-                }
-                case "south" -> {
-                    if (door.isLocked()) {
-                        doorIcon = southDoorImageLocked;
-                    } else {
-                        doorIcon = southDoorImage;
-                    }
-                }
-                case "east" -> {
-                    if (door.isLocked()) {
-                        doorIcon = eastDoorImageLocked;
-                    } else {
-                        doorIcon = eastDoorImage;
-                    }
-                }
-                case "west" -> {
-                    if (door.isLocked()) {
-                        doorIcon = westDoorImageLocked;
-                    } else {
-                        doorIcon = westDoorImage;
-                    }
-                }
-                default -> doorIcon = unlockedDoor;
-            }
-        }
-
-        if (doorIcon == null) return;
-
-        g2.drawImage(doorIcon.getImage(), x, y, w, h, this);
-    }
+    // =====================================================
+    // BUTTONS
+    // =====================================================
 
     private void setupButtons() {
-        // =====================================================
-        // SCROLL BUTTONS - commented out, camera now auto-tracks player
-        // =====================================================
-//        JButton upB = new JButton("↑");
-//        JButton downB = new JButton("↓");
-//        JButton leftB = new JButton("←");
-//        JButton rightB = new JButton("→");
-//
-//        upB.setBounds(1100, 500, 60, 60);
-//        downB.setBounds(1100, 620, 60, 60);
-//        leftB.setBounds(1040, 560, 60, 60);
-//        rightB.setBounds(1160, 560, 60, 60);
-//
-//        add(upB);
-//        add(downB);
-//        add(leftB);
-//        add(rightB);
-//
-//        upB.addMouseListener(new MouseAdapter() {
-//            public void mousePressed(MouseEvent e) { up = true; }
-//            public void mouseReleased(MouseEvent e) { up = false; }
-//        });
-//
-//        downB.addMouseListener(new MouseAdapter() {
-//            public void mousePressed(MouseEvent e) { down = true; }
-//            public void mouseReleased(MouseEvent e) { down = false; }
-//        });
-//
-//        leftB.addMouseListener(new MouseAdapter() {
-//            public void mousePressed(MouseEvent e) { left = true; }
-//            public void mouseReleased(MouseEvent e) { left = false; }
-//        });
-//
-//        rightB.addMouseListener(new MouseAdapter() {
-//            public void mousePressed(MouseEvent e) { right = true; }
-//            public void mouseReleased(MouseEvent e) { right = false; }
-//        });
-
         JButton hintButton = new JButton("Hint");
         hintButton.setBounds(50, 120, 100, 40);
         add(hintButton);
 
-
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screen.width;
         int screenHeight = screen.height;
-
 
         ImageIcon northIcon = new ImageIcon("src/images/NorthArrow2.png");
         ImageIcon northClicked = new ImageIcon("src/images/NorthArrowClicked2.png");
@@ -528,11 +245,8 @@ public class MazeView extends JPanel {
         JButton moveWest = new JButton(westIcon);
         JButton moveEast = new JButton(eastIcon);
 
-
-        JButton[] buttons = {
-                moveNorth, moveSouth, moveWest, moveEast
-        };
-        for(JButton button : buttons) {
+        JButton[] buttons = { moveNorth, moveSouth, moveWest, moveEast };
+        for (JButton button : buttons) {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
             button.setFocusPainted(false);
@@ -551,8 +265,7 @@ public class MazeView extends JPanel {
 
         moveNorth.addActionListener(e -> {
             moveNorth.setIcon(northClicked);
-            tryMove("north");
-
+            myController.handleMove("north");
             new javax.swing.Timer(150, evt -> {
                 moveNorth.setIcon(northIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
@@ -560,8 +273,7 @@ public class MazeView extends JPanel {
         });
         moveSouth.addActionListener(e -> {
             moveSouth.setIcon(southClicked);
-            tryMove("south");
-
+            myController.handleMove("south");
             new javax.swing.Timer(150, evt -> {
                 moveSouth.setIcon(southIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
@@ -569,8 +281,7 @@ public class MazeView extends JPanel {
         });
         moveWest.addActionListener(e -> {
             moveWest.setIcon(westClicked);
-            tryMove("west");
-
+            myController.handleMove("west");
             new javax.swing.Timer(150, evt -> {
                 moveWest.setIcon(westIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
@@ -578,28 +289,29 @@ public class MazeView extends JPanel {
         });
         moveEast.addActionListener(e -> {
             moveEast.setIcon(eastClicked);
-            tryMove("east");
-
+            myController.handleMove("east");
             new javax.swing.Timer(150, evt -> {
                 moveEast.setIcon(eastIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
             }).start();
         });
-        hintButton.addActionListener(e -> showHint());
+        hintButton.addActionListener(e -> myController.showHint(playerRow, playerCol));
     }
+
+    // =====================================================
+    // CAMERA
+    // =====================================================
 
     private void updateCamera() {
         int stepX = scaled(770);
         int stepY = scaled(500);
 
-        int centerRow = (maze.getRows() + 1) / 2;
-        int centerCol = (maze.getCols() + 1) / 2;
+        int centerRow = (myMaze.getRows() + 1) / 2;
+        int centerCol = (myMaze.getCols() + 1) / 2;
 
-        // Calculate where the player is in world space
         float px = stepX * (centerCol - (renderCol + 1));
         float py = stepY * (centerRow - (renderRow + 1));
 
-        // Set camera target to keep player centered on screen
         targetCamX = -(scaled(450) + px) + scaled(385);
         targetCamY = -py + scaled(400);
 
@@ -608,6 +320,10 @@ public class MazeView extends JPanel {
         camX += (targetCamX - camX) * smooth;
         camY += (targetCamY - camY) * smooth;
     }
+
+    // =====================================================
+    // PAINTING
+    // =====================================================
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -620,8 +336,8 @@ public class MazeView extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g.create();
 
-        int rows = maze.getRows();
-        int cols = maze.getCols();
+        int rows = myMaze.getRows();
+        int cols = myMaze.getCols();
 
         int roomW = scaled(900);
         int roomH = scaled(900);
@@ -635,69 +351,40 @@ public class MazeView extends JPanel {
         int doorWidth = scaled(165);
         int doorHeight = scaled(220);
 
-        // =====================================================
         // PASS 1: UNVISITED (BOTTOM LAYER)
-        // =====================================================
         for (int r = 1; r <= rows; r++) {
             for (int c = 1; c <= cols; c++) {
-
                 int rowIndex = r - 1;
                 int colIndex = c - 1;
-
-                Room room = maze.getRoom(rowIndex, colIndex);
-
+                Room room = myMaze.getRoom(rowIndex, colIndex);
                 if (room.isVisited()) continue;
-
-                drawRoom(g, g2, room,
-                        rowIndex, colIndex,
-                        panelWidth, panelHeight,
-                        stepX, stepY,
-                        centerRow, centerCol,
-                        roomW, roomH,
-                        doorWidth, doorHeight);
+                drawRoom(g, g2, room, rowIndex, colIndex,
+                        panelWidth, panelHeight, stepX, stepY,
+                        centerRow, centerCol, roomW, roomH, doorWidth, doorHeight);
             }
         }
 
-        // =====================================================
         // PASS 2: VISITED (TOP LAYER)
-        // =====================================================
         for (int r = 1; r <= rows; r++) {
             for (int c = 1; c <= cols; c++) {
-
                 int newRoomW = scaled(770 * 1.2);
                 int newRoomH = scaled(500 * 1.4);
-
                 int rowIndex = r - 1;
                 int colIndex = c - 1;
-
-                Room room = maze.getRoom(rowIndex, colIndex);
-
+                Room room = myMaze.getRoom(rowIndex, colIndex);
                 if (!room.isVisited()) continue;
-
-                drawRoom(g, g2, room,
-                        rowIndex, colIndex,
-                        panelWidth, panelHeight,
-                        stepX, stepY,
-                        centerRow, centerCol,
-                        newRoomW, newRoomH,
-                        doorWidth, doorHeight);
+                drawRoom(g, g2, room, rowIndex, colIndex,
+                        panelWidth, panelHeight, stepX, stepY,
+                        centerRow, centerCol, newRoomW, newRoomH, doorWidth, doorHeight);
             }
         }
 
-        // =====================================================
         // PLAYER (TOPMOST)
-        // =====================================================
-
         float px = stepX * (centerCol - (renderCol + 1));
         float py = stepY * (centerRow - (renderRow + 1));
 
-        int playerScreenX =
-                (int)(panelWidth / 2 - (scaled(450) + px) - camX)
-                        + scaled(385);
-
-        int playerScreenY =
-                (int)(panelHeight / 2 - py - camY)
-                        + scaled(250);
+        int playerScreenX = (int)(panelWidth / 2 - (scaled(450) + px) - camX) + scaled(385);
+        int playerScreenY = (int)(panelHeight / 2 - py - camY) + scaled(250);
 
         ImageIcon butterfly = butterflyToggle
                 ? PlayerSetupView.character2
@@ -707,37 +394,49 @@ public class MazeView extends JPanel {
 
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screen.width;
-        int screenHeight = screen.height;
 
         ImageIcon original = new ImageIcon("src/images/Compass.png");
-
-        Image scaledImage = original.getImage()
-                .getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-
+        Image scaledImage = original.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
         ImageIcon compass = new ImageIcon(scaledImage);
-
-        //ImageIcon compass = new ImageIcon("src/images/Compass.png");
-        g.drawImage(compass.getImage(), (screenWidth*6)/7, (screenHeight*1)/2 - 53, 150, 150, this);
-
+        g.drawImage(compass.getImage(), (screenWidth*6)/7, (screen.height*1)/2 - 53, 150, 150, this);
 
         g2.dispose();
     }
 
-    private void drawRoom(Graphics g,
-                          Graphics2D g2,
-                          Room room,
-                          int rowIndex,
-                          int colIndex,
-                          int panelWidth,
-                          int panelHeight,
-                          int stepX,
-                          int stepY,
-                          int centerRow,
-                          int centerCol,
-                          int roomW,
-                          int roomH,
-                          int doorWidth,
-                          int doorHeight) {
+    private void drawSprite(Graphics g, ImageIcon sprite, int x, int y,
+                            int windowWidth, int windowHeight) {
+        int spriteWidth = scaled(windowWidth);
+        int spriteHeight = scaled(windowHeight);
+        g.drawImage(sprite.getImage(), x, y, spriteWidth, spriteHeight, this);
+    }
+
+    private void drawDoor(Graphics2D g2, Door door, String direction,
+                          int x, int y, int w, int h) {
+        ImageIcon doorIcon;
+
+        if (door.isPermanentlyClosed()) {
+            doorIcon = null;
+        } else {
+            switch (direction) {
+                case "north" -> doorIcon = door.isLocked() ? northDoorImageLocked : northDoorImage;
+                case "south" -> doorIcon = door.isLocked() ? southDoorImageLocked : southDoorImage;
+                case "east"  -> doorIcon = door.isLocked() ? eastDoorImageLocked  : eastDoorImage;
+                case "west"  -> doorIcon = door.isLocked() ? westDoorImageLocked  : westDoorImage;
+                default      -> doorIcon = unlockedDoor;
+            }
+        }
+
+        if (doorIcon == null) return;
+        g2.drawImage(doorIcon.getImage(), x, y, w, h, this);
+    }
+
+    private void drawRoom(Graphics g, Graphics2D g2, Room room,
+                          int rowIndex, int colIndex,
+                          int panelWidth, int panelHeight,
+                          int stepX, int stepY,
+                          int centerRow, int centerCol,
+                          int roomW, int roomH,
+                          int doorWidth, int doorHeight) {
 
         int r = rowIndex + 1;
         int c = colIndex + 1;
@@ -754,205 +453,83 @@ public class MazeView extends JPanel {
         int roomCenterX = screenX + newRoomW / 2;
         int roomCenterY = screenY + newRoomH / 2;
 
-        // =====================================================
-        // ROOM BASE IMAGE
-        // =====================================================
-        Image img = room.isVisited()
-                ? hedgeTest.getImage()
-                : shadyHedge.getImage();
-
+        Image img = room.isVisited() ? hedgeTest.getImage() : shadyHedge.getImage();
         g.drawImage(img, screenX, screenY, roomW, roomH, this);
 
-        // =====================================================
-        // DOORS
-        // =====================================================
-
         drawDoor(g2, room.getNorthDoor(), "north",
-                roomCenterX - doorHeight/2,
-                screenY + scaled(20),
-                doorHeight, doorWidth);
-
+                roomCenterX - doorHeight/2, screenY + scaled(20), doorHeight, doorWidth);
         drawDoor(g2, room.getEastDoor(), "east",
-                screenX + (newRoomW - doorWidth/2)-30,
-                roomCenterY - doorHeight/2,
-                doorWidth, doorHeight);
-
+                screenX + (newRoomW - doorWidth/2)-30, roomCenterY - doorHeight/2, doorWidth, doorHeight);
         drawDoor(g2, room.getSouthDoor(), "south",
-                roomCenterX - doorHeight/2,
-                screenY + newRoomH - doorWidth,
-                doorHeight, doorWidth);
-
+                roomCenterX - doorHeight/2, screenY + newRoomH - doorWidth, doorHeight, doorWidth);
         drawDoor(g2, room.getWestDoor(), "west",
-                screenX - scaled(5),
-                roomCenterY - doorHeight/2,
-                doorWidth, doorHeight);
-
-
+                screenX - scaled(5), roomCenterY - doorHeight/2, doorWidth, doorHeight);
     }
 
+    // =====================================================
+    // RESET METHODS
+    // =====================================================
+
     public void resetVisitedRooms() {
-        for (int r = 0; r < maze.getRows(); r++) {
-            for (int c = 0; c < maze.getCols(); c++) {
-                maze.getRoom(r, c).setVisited(false);
+        for (int r = 0; r < myMaze.getRows(); r++) {
+            for (int c = 0; c < myMaze.getCols(); c++) {
+                myMaze.getRoom(r, c).setVisited(false);
             }
         }
-
-        maze.getRoom(playerRow, playerCol).setVisited(true);
-
+        myMaze.getRoom(playerRow, playerCol).setVisited(true);
         repaint();
     }
 
     public void resetPlayer() {
         playerRow = startRow;
         playerCol = startCol;
-
         renderRow = startRow;
         renderCol = startCol;
-
         targetCamX = 0;
         targetCamY = 0;
-
         camX = targetCamX;
         camY = targetCamY;
-
         repaint();
     }
 
     public void resetDoors() {
-        for (int r = 0; r < maze.getRows(); r++) {
-            for (int c = 0; c < maze.getCols(); c++) {
-
-                Room room = maze.getRoom(r, c);
-
+        for (int r = 0; r < myMaze.getRows(); r++) {
+            for (int c = 0; c < myMaze.getCols(); c++) {
+                Room room = myMaze.getRoom(r, c);
                 room.getNorthDoor().reset();
                 room.getSouthDoor().reset();
                 room.getEastDoor().reset();
                 room.getWestDoor().reset();
             }
-        }
-    }
-
-    private void showHint() {
-        int[] exitPos = maze.findRoom(maze.getExit());
-
-        int exitRow = exitPos[0];
-        int exitCol = exitPos[1];
-
-        StringBuilder hint = new StringBuilder("Hint: Try moving ");
-
-        if (exitRow > playerRow) {
-            hint.append("south ");
-        } else if (exitRow < playerRow) {
-            hint.append("north ");
-        }
-
-        if (exitCol > playerCol) {
-            hint.append("east ");
-        } else if (exitCol < playerCol) {
-            hint.append("west ");
-        }
-
-        if (exitRow == playerRow && exitCol == playerCol) {
-            hint = new StringBuilder("You are already at the exit room! Find the exit door.");
-        } else {
-            hint.append("toward the exit.");
-        }
-
-        JOptionPane.showMessageDialog(
-                MainGUI.getWindow(),
-                hint.toString(),
-                "Hint",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
-    private void finishGame() {
-        if (gameFinished) return;
-
-        gameFinished = true;
-
-        MainGUI.player.stopTimer();
-
-        LeaderboardDAO leaderboardDAO = new LeaderboardDAO();
-        leaderboardDAO.saveScore(MainGUI.player);
-
-        JOptionPane.showMessageDialog(
-                MainGUI.getWindow(),
-                "You reached the exit!\nTime: " +
-                        formatTime(MainGUI.player.getRecordTime()) +
-                        "\nCorrect answers: " + MainGUI.player.getCorrectScore() +
-                        "\nIncorrect answers: " + MainGUI.player.getIncorrectScore() +
-                        "\nYour score was saved to the leaderboard.",
-                "Game Complete",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-
-        LeaderboardView.showLeaderboard();
-    }
-
-    private void loseGame(String message) {
-        if (gameFinished) return;
-
-        gameFinished = true;
-
-        MainGUI.player.stopTimer();
-
-        Object[] options = {"Main Menu", "Exit Game"};
-
-        int choice = JOptionPane.showOptionDialog(
-                MainGUI.getWindow(),
-                message,
-                "Game Over",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.ERROR_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        if (choice == JOptionPane.YES_OPTION) {
-            MainGUI.startNewGame();
-            MainGUI.switchView(MainGUI.menuView);
-        } else {
-            System.exit(0);
         }
     }
 
     public void resetGame() {
-        // reset rooms
-        for (int r = 0; r < maze.getRows(); r++) {
-            for (int c = 0; c < maze.getCols(); c++) {
-
-                Room room = maze.getRoom(r, c);
-
+        for (int r = 0; r < myMaze.getRows(); r++) {
+            for (int c = 0; c < myMaze.getCols(); c++) {
+                Room room = myMaze.getRoom(r, c);
                 room.setVisited(false);
-
                 room.getNorthDoor().reset();
                 room.getSouthDoor().reset();
                 room.getEastDoor().reset();
                 room.getWestDoor().reset();
             }
         }
-
-        // move player to start
         playerRow = startRow;
         playerCol = startCol;
-
         renderRow = startRow;
         renderCol = startCol;
-
-        maze.getRoom(startRow, startCol).setVisited(true);
-
-        // reset camera
+        myMaze.getRoom(startRow, startCol).setVisited(true);
         camX = 0;
         camY = 0;
         targetCamX = camX;
         targetCamY = camY;
-
         repaint();
     }
 
-    public static JLabel timerLabel;
+    // =====================================================
+    // TIMER
+    // =====================================================
 
     public void addTimer() {
         timerLabel = new JLabel("Time: 0");
@@ -967,15 +544,6 @@ public class MazeView extends JPanel {
         int hours = totalSeconds / 3600;
         int minutes = (totalSeconds % 3600) / 60;
         int seconds = totalSeconds % 60;
-
         timerLabel.setText("Time: " + String.format("%02d:%02d:%02d", hours, minutes, seconds));
-    }
-
-    private String formatTime(double timeSeconds) {
-        int totalSeconds = (int) Math.round(timeSeconds);
-        int minutes = totalSeconds / 60;
-        int seconds = totalSeconds % 60;
-
-        return String.format("%d min %02d sec", minutes, seconds);
     }
 }
