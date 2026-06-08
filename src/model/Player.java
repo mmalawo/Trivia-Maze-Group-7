@@ -1,8 +1,7 @@
 package model;
 
-import view.*;
 import java.io.Serializable;
-import controller.*;
+
 
 public class Player implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -74,7 +73,7 @@ public class Player implements Serializable {
         myCorrectScore = 0;
         myIncorrectScore = 0;
         startTime = 0;
-        MainGUI.setupView.namePrompt.setText("");
+        myCurrentRoom = null;
     }
 
 
