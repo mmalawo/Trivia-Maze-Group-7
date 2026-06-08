@@ -550,7 +550,7 @@ public class MazeView extends JPanel {
             moveNorth.setIcon(northClicked);
             tryMove("north");
 
-            new javax.swing.Timer(20, evt -> {
+            new javax.swing.Timer(150, evt -> {
                 moveNorth.setIcon(northIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
             }).start();
@@ -559,7 +559,7 @@ public class MazeView extends JPanel {
             moveSouth.setIcon(southClicked);
             tryMove("south");
 
-            new javax.swing.Timer(20, evt -> {
+            new javax.swing.Timer(150, evt -> {
                 moveSouth.setIcon(southIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
             }).start();
@@ -568,7 +568,7 @@ public class MazeView extends JPanel {
             moveWest.setIcon(westClicked);
             tryMove("west");
 
-            new javax.swing.Timer(20, evt -> {
+            new javax.swing.Timer(150, evt -> {
                 moveWest.setIcon(westIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
             }).start();
@@ -577,7 +577,7 @@ public class MazeView extends JPanel {
             moveEast.setIcon(eastClicked);
             tryMove("east");
 
-            new javax.swing.Timer(20, evt -> {
+            new javax.swing.Timer(150, evt -> {
                 moveEast.setIcon(eastIcon);
                 ((javax.swing.Timer) evt.getSource()).stop();
             }).start();
@@ -702,6 +702,21 @@ public class MazeView extends JPanel {
 
         drawSprite(g, butterfly, playerScreenX, playerScreenY, 150, 150);
 
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screen.width;
+        int screenHeight = screen.height;
+
+        ImageIcon original = new ImageIcon("src/images/Compass.png");
+
+        Image scaledImage = original.getImage()
+                .getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+
+        ImageIcon compass = new ImageIcon(scaledImage);
+
+        //ImageIcon compass = new ImageIcon("src/images/Compass.png");
+        g.drawImage(compass.getImage(), (screenWidth*6)/7, (screenHeight*1)/2 - 53, 150, 150, this);
+
+
         g2.dispose();
     }
 
@@ -768,6 +783,8 @@ public class MazeView extends JPanel {
                 screenX - scaled(5),
                 roomCenterY - doorHeight/2,
                 doorWidth, doorHeight);
+
+
     }
 
     public void resetVisitedRooms() {
