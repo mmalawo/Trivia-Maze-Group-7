@@ -505,25 +505,86 @@ public class MazeView extends JPanel {
         hintButton.setBounds(50, 120, 100, 40);
         add(hintButton);
 
-        JButton moveNorth = new JButton("N");
-        JButton moveSouth = new JButton("S");
-        JButton moveWest = new JButton("W");
-        JButton moveEast = new JButton("E");
 
-        moveNorth.setBounds(200, 500, 60, 60);
-        moveSouth.setBounds(200, 620, 60, 60);
-        moveWest.setBounds(140, 560, 60, 60);
-        moveEast.setBounds(260, 560, 60, 60);
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screen.width;
+        int screenHeight = screen.height;
+
+
+        ImageIcon northIcon = new ImageIcon("src/images/NorthArrow.png");
+        ImageIcon northClicked = new ImageIcon("src/images/NorthArrowClicked.png");
+
+        ImageIcon southIcon = new ImageIcon("src/images/SouthArrow.png");
+        ImageIcon southClicked = new ImageIcon("src/images/SouthArrowClicked.png");
+
+        ImageIcon westIcon = new ImageIcon("src/images/WestArrow.png");
+        ImageIcon westClicked = new ImageIcon("src/images/WestArrowClicked.png");
+
+        ImageIcon eastIcon = new ImageIcon("src/images/EastArrow.png");
+        ImageIcon eastClicked = new ImageIcon("src/images/EastArrowClicked.png");
+
+        JButton moveNorth = new JButton(northIcon);
+        JButton moveSouth = new JButton(southIcon);
+        JButton moveWest = new JButton(westIcon);
+        JButton moveEast = new JButton(eastIcon);
+
+
+        JButton[] buttons = {
+                moveNorth, moveSouth, moveWest, moveEast
+        };
+        for(JButton button : buttons) {
+            button.setBorderPainted(false);
+            button.setContentAreaFilled(false);
+            button.setFocusPainted(false);
+            button.setOpaque(false);
+        }
+
+        moveNorth.setBounds((screenWidth*6)/7, (screenHeight)/3, 150, 150);
+        moveSouth.setBounds((screenWidth*6)/7, (screenHeight)/2+75, 150, 150);
+        moveWest.setBounds((screenWidth*6)/7-100, screenHeight/2 - 75, 150, 150);
+        moveEast.setBounds((screenWidth*6)/7+102, screenHeight/2 - 75, 150, 150);
 
         add(moveNorth);
         add(moveSouth);
         add(moveWest);
         add(moveEast);
 
-        moveNorth.addActionListener(e -> tryMove("north"));
-        moveSouth.addActionListener(e -> tryMove("south"));
-        moveWest.addActionListener(e -> tryMove("west"));
-        moveEast.addActionListener(e -> tryMove("east"));
+        moveNorth.addActionListener(e -> {
+            moveNorth.setIcon(northClicked);
+            tryMove("north");
+
+            new javax.swing.Timer(20, evt -> {
+                moveNorth.setIcon(northIcon);
+                ((javax.swing.Timer) evt.getSource()).stop();
+            }).start();
+        });
+        moveSouth.addActionListener(e -> {
+            moveSouth.setIcon(southClicked);
+            tryMove("south");
+
+            new javax.swing.Timer(20, evt -> {
+                moveSouth.setIcon(southIcon);
+                ((javax.swing.Timer) evt.getSource()).stop();
+            }).start();
+        });
+        moveWest.addActionListener(e -> {
+            moveWest.setIcon(westClicked);
+            tryMove("west");
+
+            new javax.swing.Timer(20, evt -> {
+                moveWest.setIcon(westIcon);
+                ((javax.swing.Timer) evt.getSource()).stop();
+            }).start();
+        });
+        moveEast.addActionListener(e -> {
+            moveEast.setIcon(eastClicked);
+            tryMove("east");
+
+            new javax.swing.Timer(20, evt -> {
+                moveEast.setIcon(eastIcon);
+                ((javax.swing.Timer) evt.getSource()).stop();
+            }).start();
+        });
         hintButton.addActionListener(e -> showHint());
     }
 
@@ -540,7 +601,7 @@ public class MazeView extends JPanel {
 
         // Set camera target to keep player centered on screen
         targetCamX = -(scaled(450) + px) + scaled(385);
-        targetCamY = -py + scaled(250);
+        targetCamY = -py + scaled(400);
 
         float smooth = 0.08f;
 
