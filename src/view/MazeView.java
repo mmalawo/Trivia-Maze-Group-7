@@ -47,8 +47,6 @@ public class MazeView extends JPanel {
     private float targetCamX;
     private float targetCamY;
 
-    private boolean up, down, left, right;
-
     // Player position in maze grid
     private int playerRow;
     private int playerCol;
@@ -61,8 +59,8 @@ public class MazeView extends JPanel {
 
     private boolean butterflyToggle = false;
 
-    // Zoom scale
-    private float scale = 1.0f;
+    // Zoom scale (fixed - no zoom in/out)
+    private final float scale = 1.0f;
 
     // Dynamic scaling base resolution based on original design size
     private static final double BASE_WIDTH = 1536.0;
@@ -81,7 +79,7 @@ public class MazeView extends JPanel {
         maze.getRoom(playerRow, playerCol).setVisited(true);
 
         camX = 0;
-        camY = 400;
+        camY = 0;
         targetCamX = camX;
         targetCamY = camY;
 
@@ -130,14 +128,6 @@ public class MazeView extends JPanel {
             }
         });
 
-        // Zoom with scroll wheel
-        addMouseWheelListener(e -> {
-            if (e.getWheelRotation() < 0) {
-                scale = Math.min(scale + 0.1f, 2.0f);
-            } else {
-                scale = Math.max(scale - 0.1f, 0.3f);
-            }
-        });
         addTimer();
     }
 
@@ -283,13 +273,13 @@ public class MazeView extends JPanel {
 
                     System.out.println("Wrong! Staying in room [" + playerRow + "][" + playerCol + "]");
 
-// Lose condition - exit door permanently locked after failed attempts
+                    // Lose condition - exit door permanently locked after failed attempts
                     if (isExitDoor && door.isPermanentlyClosed()) {
                         loseGame("You failed to unlock the exit!\nGame Over.");
                         return;
                     }
 
-// Lose condition - player has no accessible pathways left from current room
+                    // Lose condition - player has no accessible pathways left
                     if (!checkForPossiblePathways()) {
                         loseGame("All doors in your vicinity are permanently locked.\nGame Over.");
                         return;
@@ -307,128 +297,55 @@ public class MazeView extends JPanel {
     /**
      * Recursively checks whether the player still has at least one reachable door
      * that can be attempted.
-     *
-     * <p>This method searches through all rooms the player can currently reach by
-     * traveling through already-unlocked doors. While searching those reachable
-     * rooms, it looks for at least one locked door that is not permanently closed.</p>
-     *
-     * <p>If no reachable locked door can still be attempted, then the player has
-     * no possible progress left and should lose the game.</p>
-     *
-     * @param row the row of the room currently being checked
-     * @param column the column of the room currently being checked
-     * @param visitedRooms tracks which rooms have already been searched
-     * @return true if at least one reachable door can still be attempted;
-     *         false if the player is completely blocked
      */
     private boolean hasAttemptableDoor(int row, int column, boolean[][] visitedRooms) {
-        // Stop searching if the row or column is outside the maze.
         if (row < 0 || row >= maze.getRows() || column < 0 || column >= maze.getCols()) {
             return false;
         }
 
-        // Stop searching if this room has already been checked.
-        // This prevents infinite recursion when unlocked doors form loops.
         if (visitedRooms[row][column]) {
             return false;
         }
 
-        // Mark the current room as visited before checking its doors.
         visitedRooms[row][column] = true;
 
-        // Get the room object at the current row and column.
         Room room = maze.getRoom(row, column);
 
-        // Check each door in the current room.
-        // If any door is locked and still attemptable, the player can still progress.
-        if (isAttemptableDoor(room.getNorthDoor(), "north", row, column)) {
-            return true;
-        }
+        if (isAttemptableDoor(room.getNorthDoor(), "north", row, column)) return true;
+        if (isAttemptableDoor(room.getSouthDoor(), "south", row, column)) return true;
+        if (isAttemptableDoor(room.getEastDoor(), "east", row, column)) return true;
+        if (isAttemptableDoor(room.getWestDoor(), "west", row, column)) return true;
 
-        if (isAttemptableDoor(room.getSouthDoor(), "south", row, column)) {
-            return true;
-        }
-
-        if (isAttemptableDoor(room.getEastDoor(), "east", row, column)) {
-            return true;
-        }
-
-        if (isAttemptableDoor(room.getWestDoor(), "west", row, column)) {
-            return true;
-        }
-
-        // If no attemptable door was found in this room,
-        // continue searching through doors that are already unlocked.
-        //
-        // These unlocked doors do not count as progress by themselves.
-        // They only allow us to reach other rooms that may have attemptable doors.
         if (canTravelThrough(room.getNorthDoor(), "north", row, column)) {
-            if (hasAttemptableDoor(row - 1, column, visitedRooms)) {
-                return true;
-            }
+            if (hasAttemptableDoor(row - 1, column, visitedRooms)) return true;
         }
 
-        // Example: Search the room south of the current room if the south door is open.
         if (canTravelThrough(room.getSouthDoor(), "south", row, column)) {
-            if (hasAttemptableDoor(row + 1, column, visitedRooms)) {
-                return true;
-            }
+            if (hasAttemptableDoor(row + 1, column, visitedRooms)) return true;
         }
 
-        // Example 2: Search the room east of the current room if the east door is open
-        // (and repeat for other directions)
         if (canTravelThrough(room.getEastDoor(), "east", row, column)) {
-            if (hasAttemptableDoor(row, column + 1, visitedRooms)) {
-                return true;
-            }
+            if (hasAttemptableDoor(row, column + 1, visitedRooms)) return true;
         }
 
         if (canTravelThrough(room.getWestDoor(), "west", row, column)) {
-            if (hasAttemptableDoor(row, column - 1, visitedRooms)) {
-                return true;
-            }
+            if (hasAttemptableDoor(row, column - 1, visitedRooms)) return true;
         }
 
-        // If this room and all reachable rooms have no attemptable doors,
-        // return false. This means the player is blocked from making progress.
         return false;
     }
 
     /**
      * Determines whether a specific door can still be attempted by the player.
-     *
-     * <p>A door is attemptable if it is locked, not permanently closed, and leads
-     * to a valid room. The exit door is also considered attemptable as long as it
-     * is not permanently closed because reaching it means the player can still win.</p>
-     *
-     * @param door the door being checked
-     * @param direction the direction of the door from the current room
-     * @param row the row of the current room
-     * @param column the column of the current room
-     * @return true if the door can still be attempted; false otherwise
      */
     private boolean isAttemptableDoor(Door door, String direction, int row, int column) {
-        // A missing door or permanently closed door cannot be attempted.
-        if (door == null || door.isPermanentlyClosed()) {
-            return false;
-        }
+        if (door == null || door.isPermanentlyClosed()) return false;
 
-        // Check whether this door is the special exit door.
         boolean isExitDoor = door == maze.getExitDoor();
+        if (isExitDoor) return true;
 
-        // If the exit door is reachable and not permanently closed,
-        // the player can still win.
-        if (isExitDoor) {
-            return true;
-        }
+        if (!door.isLocked()) return false;
 
-        // If the door is already unlocked, it is only a pathway.
-        // It should not count as an attemptable door because no question remains.
-        if (!door.isLocked()) {
-            return false;
-        }
-
-        // Calculate the neighboring room this door would lead to.
         int updatedRow = row;
         int updatedColumn = column;
 
@@ -439,8 +356,6 @@ public class MazeView extends JPanel {
             case "west" -> updatedColumn--;
         }
 
-        // A locked door only counts as attemptable if it leads to
-        // a valid room inside the maze.
         return updatedRow >= 0 && updatedRow < maze.getRows()
                 && updatedColumn >= 0 && updatedColumn < maze.getCols();
     }
@@ -448,24 +363,10 @@ public class MazeView extends JPanel {
     /**
      * Determines whether the player can travel through a specific door into
      * a neighboring room.
-     *
-     * <p>This method is used for the recursive search. It allows the search to move
-     * through already-unlocked doors so that the game can check the entire reachable
-     * area, not just the room the player is currently standing in.</p>
-     *
-     * @param door the door being checked
-     * @param direction the direction of the door from the current room
-     * @param row the row of the current room
-     * @param column the column of the current room
-     * @return true if the player can travel through the door; false otherwise
      */
     private boolean canTravelThrough(Door door, String direction, int row, int column) {
-        // A missing door, locked or permanently closed door cannot be attempted.
-        if (door == null || door.isLocked() || door.isPermanentlyClosed()) {
-            return false;
-        }
+        if (door == null || door.isLocked() || door.isPermanentlyClosed()) return false;
 
-        // Calculate the neighboring room this door leads to.
         int updatedRow = row;
         int updatedColumn = column;
 
@@ -476,24 +377,13 @@ public class MazeView extends JPanel {
             case "west" -> updatedColumn--;
         }
 
-        // The player can only travel through the door if the neighboring
-        // room is inside the maze boundaries.
         return updatedRow >= 0 && updatedRow < maze.getRows()
                 && updatedColumn >= 0 && updatedColumn < maze.getCols();
     }
 
     private void movePlayer(int newRow, int newCol) {
-        int rowDiff = newRow - playerRow;
-        int colDiff = newCol - playerCol;
-
         playerRow = newRow;
         playerCol = newCol;
-
-        int stepX = scaled(770);
-        int stepY = scaled(500);
-
-        targetCamX += colDiff * stepX;
-        targetCamY += rowDiff * stepY;
 
         Room currentRoom = maze.getRoom(playerRow, playerCol);
         currentRoom.setVisited(true);
@@ -570,43 +460,47 @@ public class MazeView extends JPanel {
     }
 
     private void setupButtons() {
-        JButton upB = new JButton("↑");
-        JButton downB = new JButton("↓");
-        JButton leftB = new JButton("←");
-        JButton rightB = new JButton("→");
+        // =====================================================
+        // SCROLL BUTTONS - commented out, camera now auto-tracks player
+        // =====================================================
+//        JButton upB = new JButton("↑");
+//        JButton downB = new JButton("↓");
+//        JButton leftB = new JButton("←");
+//        JButton rightB = new JButton("→");
+//
+//        upB.setBounds(1100, 500, 60, 60);
+//        downB.setBounds(1100, 620, 60, 60);
+//        leftB.setBounds(1040, 560, 60, 60);
+//        rightB.setBounds(1160, 560, 60, 60);
+//
+//        add(upB);
+//        add(downB);
+//        add(leftB);
+//        add(rightB);
+//
+//        upB.addMouseListener(new MouseAdapter() {
+//            public void mousePressed(MouseEvent e) { up = true; }
+//            public void mouseReleased(MouseEvent e) { up = false; }
+//        });
+//
+//        downB.addMouseListener(new MouseAdapter() {
+//            public void mousePressed(MouseEvent e) { down = true; }
+//            public void mouseReleased(MouseEvent e) { down = false; }
+//        });
+//
+//        leftB.addMouseListener(new MouseAdapter() {
+//            public void mousePressed(MouseEvent e) { left = true; }
+//            public void mouseReleased(MouseEvent e) { left = false; }
+//        });
+//
+//        rightB.addMouseListener(new MouseAdapter() {
+//            public void mousePressed(MouseEvent e) { right = true; }
+//            public void mouseReleased(MouseEvent e) { right = false; }
+//        });
+
         JButton hintButton = new JButton("Hint");
-
-        upB.setBounds(1100, 500, 60, 60);
-        downB.setBounds(1100, 620, 60, 60);
-        leftB.setBounds(1040, 560, 60, 60);
-        rightB.setBounds(1160, 560, 60, 60);
         hintButton.setBounds(50, 120, 100, 40);
-
-        add(upB);
-        add(downB);
-        add(leftB);
-        add(rightB);
         add(hintButton);
-
-        upB.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) { up = true; }
-            public void mouseReleased(MouseEvent e) { up = false; }
-        });
-
-        downB.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) { down = true; }
-            public void mouseReleased(MouseEvent e) { down = false; }
-        });
-
-        leftB.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) { left = true; }
-            public void mouseReleased(MouseEvent e) { left = false; }
-        });
-
-        rightB.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) { right = true; }
-            public void mouseReleased(MouseEvent e) { right = false; }
-        });
 
         JButton moveNorth = new JButton("N");
         JButton moveSouth = new JButton("S");
@@ -634,27 +528,18 @@ public class MazeView extends JPanel {
         int stepX = scaled(770);
         int stepY = scaled(500);
 
-        if (up) {
-            targetCamY -= stepY;
-            up = false;
-        }
+        int centerRow = (maze.getRows() + 1) / 2;
+        int centerCol = (maze.getCols() + 1) / 2;
 
-        if (down) {
-            targetCamY += stepY;
-            down = false;
-        }
+        // Calculate where the player is in world space
+        float px = stepX * (centerCol - (renderCol + 1));
+        float py = stepY * (centerRow - (renderRow + 1));
 
-        if (left) {
-            targetCamX -= stepX;
-            left = false;
-        }
+        // Set camera target to keep player centered on screen
+        targetCamX = -(scaled(450) + px) + scaled(385);
+        targetCamY = -py + scaled(250);
 
-        if (right) {
-            targetCamX += stepX;
-            right = false;
-        }
-
-        float smooth = 0.02f;
+        float smooth = 0.08f;
 
         camX += (targetCamX - camX) * smooth;
         camY += (targetCamY - camY) * smooth;
@@ -844,7 +729,7 @@ public class MazeView extends JPanel {
         renderCol = startCol;
 
         targetCamX = 0;
-        targetCamY = 400;
+        targetCamY = 0;
 
         camX = targetCamX;
         camY = targetCamY;
@@ -951,8 +836,6 @@ public class MazeView extends JPanel {
     }
 
     public void resetGame() {
-        scale = 1.0f;
-
         // reset rooms
         for (int r = 0; r < maze.getRows(); r++) {
             for (int c = 0; c < maze.getCols(); c++) {
@@ -979,7 +862,7 @@ public class MazeView extends JPanel {
 
         // reset camera
         camX = 0;
-        camY = 400;
+        camY = 0;
         targetCamX = camX;
         targetCamY = camY;
 
