@@ -43,11 +43,11 @@ public class LeaderboardView {
 
         JScrollPane scrollPane = new JScrollPane(table);
 
-        JDialog dialog = new JDialog(MainGUI.window, "Leaderboard", true);
+        JDialog dialog = new JDialog(MainGUI.getWindow(), "Leaderboard", true);
         dialog.setSize(600, 400);
         dialog.setLayout(new BorderLayout());
         dialog.add(scrollPane, BorderLayout.CENTER);
-        dialog.setLocationRelativeTo(MainGUI.window);
+        dialog.setLocationRelativeTo(MainGUI.getWindow());
         dialog.setVisible(true);
     }
 

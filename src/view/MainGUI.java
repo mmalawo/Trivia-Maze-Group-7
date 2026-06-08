@@ -18,7 +18,7 @@ public class MainGUI {
         startApplication();
         //testMaze();
     }
-    public static JFrame window;
+    private static JFrame window;
 
     public static JPanel currentView;
     public static JPanel previousView;
@@ -43,6 +43,11 @@ public class MainGUI {
 
     public static InstructionsView instructionsView;
 
+    public static JFrame getWindow() {
+        return window;
+    }
+
+
     public static void startApplication() {
 
         // Initialize window
@@ -54,7 +59,7 @@ public class MainGUI {
         window.setUndecorated(false);
         window.setExtendedState(JFrame.NORMAL);
         window.setSize(1280, 720);
-        window.setTitle("Trivia Maze - Main Menu");
+        window.setTitle("Garden Trivia Maze - Version 2.7");
 
         soundManager = new SoundManager();
         String[] songs = {

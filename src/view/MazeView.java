@@ -20,9 +20,9 @@ public class MazeView extends JPanel {
     public static ImageIcon hedgeTest = new ImageIcon("src/images/Hedge900-675.png");
     public static ImageIcon shadyHedge = new ImageIcon("src/images/ShadyHedge.png");
 
-    public static ImageIcon lockedDoor = new ImageIcon("src/images/UnlockedHedge.png");
+
     public static ImageIcon unlockedDoor = new ImageIcon("src/images/UnlockedHedge.png");
-    public static ImageIcon permanentlyLockedDoor = new ImageIcon("src/images/UnlockedHedge.png"); // swap image later
+
 
     // Unlocked doors (open path)
     public static ImageIcon eastDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
@@ -191,7 +191,7 @@ public class MazeView extends JPanel {
         // Only block perimeter moves if it's NOT the exit door
         if (!isValidMove(direction) && !isExitDoor) {
             JOptionPane.showMessageDialog(
-                    MainGUI.window,
+                    MainGUI.getWindow(),
                     "That door leads nowhere! Try a different door.",
                     "Dead End",
                     JOptionPane.WARNING_MESSAGE
@@ -216,7 +216,7 @@ public class MazeView extends JPanel {
         // Permanently closed - no more attempts allowed
         if (door.isPermanentlyClosed()) {
             JOptionPane.showMessageDialog(
-                    MainGUI.window,
+                    MainGUI.getWindow(),
                     "This door is permanently locked!",
                     "Blocked",
                     JOptionPane.ERROR_MESSAGE
@@ -255,7 +255,7 @@ public class MazeView extends JPanel {
                     movePlayer(newRow, newCol);
 
                     JOptionPane.showMessageDialog(
-                            MainGUI.window,
+                            MainGUI.getWindow(),
                             "Correct! Door unlocked!",
                             "Result",
                             JOptionPane.INFORMATION_MESSAGE
@@ -268,7 +268,7 @@ public class MazeView extends JPanel {
                             : "Wrong! " + door.getAttemptsRemaining() + " attempt(s) remaining.";
 
                     JOptionPane.showMessageDialog(
-                            MainGUI.window,
+                            MainGUI.getWindow(),
                             attemptsMsg,
                             "Result",
                             JOptionPane.ERROR_MESSAGE
@@ -859,7 +859,7 @@ public class MazeView extends JPanel {
         }
 
         JOptionPane.showMessageDialog(
-                MainGUI.window,
+                MainGUI.getWindow(),
                 hint.toString(),
                 "Hint",
                 JOptionPane.INFORMATION_MESSAGE
@@ -877,7 +877,7 @@ public class MazeView extends JPanel {
         leaderboardDAO.saveScore(MainGUI.player);
 
         JOptionPane.showMessageDialog(
-                MainGUI.window,
+                MainGUI.getWindow(),
                 "You reached the exit!\nTime: " +
                         formatTime(MainGUI.player.getRecordTime()) +
                         "\nCorrect answers: " + MainGUI.player.getCorrectScore() +
@@ -900,7 +900,7 @@ public class MazeView extends JPanel {
         Object[] options = {"Main Menu", "Exit Game"};
 
         int choice = JOptionPane.showOptionDialog(
-                MainGUI.window,
+                MainGUI.getWindow(),
                 message,
                 "Game Over",
                 JOptionPane.YES_NO_OPTION,
