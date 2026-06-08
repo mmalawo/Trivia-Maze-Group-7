@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.*;  // Action Listener and events
 
 import static view.MainGUI.settingsView;
-import static view.MainGUI.window;
+import static view.MainGUI.*;
 
 
 public class GameMenuView extends JPanel {

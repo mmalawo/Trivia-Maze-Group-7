@@ -29,19 +29,19 @@ public class SettingsController {
         settingsMenu.addFullscreenListener(e -> {
             boolean fullscreen = settingsMenu.isFullscreenSelected();
 
-            MainGUI.window.dispose();
+            MainGUI.getWindow().dispose();
 
             if (fullscreen) {
-                MainGUI.window.setUndecorated(true);
-                MainGUI.window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                MainGUI.getWindow().setUndecorated(true);
+                MainGUI.getWindow().setExtendedState(JFrame.MAXIMIZED_BOTH);
             } else {
-                MainGUI.window.setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
-                MainGUI.window.setUndecorated(false);
-                MainGUI.window.setExtendedState(JFrame.NORMAL);
-                MainGUI.window.pack();
-                MainGUI.window.setLocationRelativeTo(null);
+                MainGUI.getWindow().setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
+                MainGUI.getWindow().setUndecorated(false);
+                MainGUI.getWindow().setExtendedState(JFrame.NORMAL);
+                MainGUI.getWindow().pack();
+                MainGUI.getWindow().setLocationRelativeTo(null);
             }
-            MainGUI.window.setVisible(true);
+            MainGUI.getWindow().setVisible(true);
         });
 
         settingsMenu.addDarkModeListener(e -> {

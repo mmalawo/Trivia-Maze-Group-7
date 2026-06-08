@@ -9,7 +9,7 @@ public class TriviaPopup extends JDialog {
     private String playerAnswer = "";
 
     public TriviaPopup(Question question) {
-        super(MainGUI.window, true);
+        super(MainGUI.getWindow(), true);
         setTitle("Trivia Question");
         setSize(700, 450);
         setLocationRelativeTo(null);
