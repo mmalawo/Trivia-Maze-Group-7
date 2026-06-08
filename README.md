@@ -32,3 +32,8 @@ Link to Repo: https://github.com/mmalawo/Trivia-Maze-Group-7/tree/main
 That problem was discovered while creating visual door rendering.
 - More discussion is needed on how we plan to move the character visually.
 - Need to make it so any screen size can play the game. Right now the maze doesn't center itself properly (since we're starting in the middle).
+
+**Iteration Six:**
+- Makani: Implemented randomized exit door placement on the maze perimeter each new game. Fixed exit door logic so it triggers a trivia question instead of treating the entire room as the exit. Added win condition when the exit door trivia is answered correctly and lose condition when all 3 attempts are failed. Added a "That door leads nowhere!" popup for non-exit perimeter doors. Updated camera to automatically track and center on the player butterfly, removing manual scroll buttons and zoom in/out.
+- Angelina: Added pixel art for night mode, updated MazeView with timer display, added butterfly flap animation, fixed trivia question bugs, cleaned up button display and help category in the menu bar, and general code cleanup.
+- Tifanie: Implemented game over logic when the player permanently locks all accessible pathways to the exit. Fixed loadGame feature to handle when no existing save files are found. Revised leaderboard functionality.
