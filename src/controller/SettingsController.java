@@ -7,7 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * SettingsController handles user interactions on the SettingsView.
+ * Controls interactions between the settings view and the application.
+ *
+ * <p>This controller manages fullscreen mode, dark mode,
+ * audio volume adjustments, and navigation back to the
+ * previous screen.</p>
  */
 public class SettingsController {
     private final AppController myApp;
@@ -16,6 +20,14 @@ public class SettingsController {
     private final double myScreenWidth;
     private final double myScreenHeight;
 
+    /**
+     * Constructs a controller for the settings screen and
+     * registers all required event listeners.
+     *
+     * @param theApp the main application controller
+     * @param theSettingsMenu the settings view managed by this controller
+     * @param theSoundManager the sound manager used for volume control
+     */
     public SettingsController(final AppController theApp,
                               final SettingsView theSettingsMenu,
                               final SoundManager theSoundManager) {
@@ -30,6 +42,13 @@ public class SettingsController {
         addListeners();
     }
 
+    /**
+     * Registers all event listeners for the settings view.
+     *
+     * <p>Listeners handle fullscreen mode, dark mode,
+     * volume changes, and navigation back to the
+     * previous screen.</p>
+     */
     private void addListeners() {
         mySettingsMenu.addFullscreenListener(e -> {
             boolean fullscreen = mySettingsMenu.isFullscreenSelected();

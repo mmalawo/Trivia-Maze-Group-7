@@ -10,6 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Provides access to trivia questions stored in the database.
+ *
+ * <p>This class manages a shuffled pool of questions for the current
+ * game session, tracks correctly answered questions to prevent
+ * repetition, and retrieves questions as needed.</p>
+ */
 public class QuestionDAO {
 
     private final DatabaseManager myDB;
@@ -21,6 +28,9 @@ public class QuestionDAO {
     // Tracks questions that were correctly answered so they don't repeat
     private static final Set<String> correctlyAnswered = new HashSet<>();
 
+    /**
+     * Constructs a QuestionDAO and initializes access to the database.
+     */
     public QuestionDAO() {
         myDB = DatabaseManager.getInstance();
     }

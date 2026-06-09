@@ -5,12 +5,23 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Manages the application's SQLite database connection and schema.
+ *
+ * <p>This singleton class is responsible for establishing the database
+ * connection, creating required tables, populating trivia questions,
+ * and providing access to the database throughout the application.</p>
+ */
 public class DatabaseManager {
 
     private static volatile DatabaseManager myInstance;
     private Connection myConnection;
     private static final String DB_URL = "jdbc:sqlite:trivia.db";
 
+    /**
+     * Constructs the database manager, establishes the database connection,
+     * creates required tables, and populates initial data.
+     */
     private DatabaseManager() {
         connect();
         createTable();
@@ -18,6 +29,11 @@ public class DatabaseManager {
         createLeaderboardTable();
     }
 
+    /**
+     * Returns the singleton instance of the database manager.
+     *
+     * @return the shared DatabaseManager instance
+     */
     public static DatabaseManager getInstance() {
         if (myInstance == null) {
             synchronized (DatabaseManager.class) {
@@ -29,6 +45,9 @@ public class DatabaseManager {
         return myInstance;
     }
 
+    /**
+     * Establishes a connection to the SQLite database.
+     */
     private void connect() {
         try {
             myConnection = DriverManager.getConnection(DB_URL);
@@ -38,6 +57,9 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Creates the questions table if it does not already exist.
+     */
     private void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS questions (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -352,6 +374,9 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Creates the leaderboard table if it does not already exist.
+     */
     private void createLeaderboardTable() {
         String sql = "CREATE TABLE IF NOT EXISTS leaderboard (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -369,10 +394,18 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Returns the active database connection.
+     *
+     * @return the database connection
+     */
     public Connection getConnection() {
         return myConnection;
     }
 
+    /**
+     * Closes the database connection if it is currently open.
+     */
     public void closeConnection() {
         try {
             if (myConnection != null && !myConnection.isClosed()) {
@@ -384,6 +417,12 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Runs a simple database test that verifies the connection,
+     * displays stored questions, and reports the total question count.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         System.out.println("Testing database...");
         DatabaseManager db = DatabaseManager.getInstance();

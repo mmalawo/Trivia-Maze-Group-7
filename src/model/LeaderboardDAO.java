@@ -4,13 +4,32 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides database access for leaderboard operations.
+ *
+ * <p>This class is responsible for storing player scores,
+ * retrieving the top leaderboard entries, and managing
+ * leaderboard data in the database.</p>
+ */
 public class LeaderboardDAO {
     private final DatabaseManager myDB;
 
+    /**
+     * Constructs a LeaderboardDAO and initializes access
+     * to the database manager.
+     */
     public LeaderboardDAO() {
         myDB = DatabaseManager.getInstance();
     }
 
+    /**
+     * Saves a player's game results to the leaderboard.
+     *
+     * <p>If the player does not have a name, the name
+     * "Anonymous" is used instead.</p>
+     *
+     * @param player the player whose score should be saved
+     */
     public void saveScore(Player player) {
         String sql = "INSERT INTO leaderboard " +
                 "(player_name, time_seconds, correct_score, incorrect_score) " +
@@ -37,6 +56,14 @@ public class LeaderboardDAO {
         }
     }
 
+    /**
+     * Retrieves the top leaderboard scores ordered by
+     * completion time in ascending order.
+     *
+     * <p>The result is limited to the ten fastest entries.</p>
+     *
+     * @return a list containing the top leaderboard entries
+     */
     public List<LeaderboardEntry> getTopScores() {
         List<LeaderboardEntry> scores = new ArrayList<>();
 
@@ -64,6 +91,9 @@ public class LeaderboardDAO {
         return scores;
     }
 
+    /**
+     * Removes all entries from the leaderboard table.
+     */
     public void clearLeaderboard() {
         String sql = "DELETE FROM leaderboard";
 

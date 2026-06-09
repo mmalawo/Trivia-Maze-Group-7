@@ -29,6 +29,13 @@ public class AppController {
 
     private boolean myHasSaved;
 
+    /**
+     * Constructs the application controller and initializes
+     * the application's views, controllers, sound system,
+     * and starting game state.
+     *
+     * @param theWindow the main application window
+     */
     public AppController(final JFrame theWindow) {
         myWindow = theWindow;
         myPanelHistory = new Stack<>();
@@ -47,6 +54,9 @@ public class AppController {
         switchView(myMenuView);
     }
 
+    /**
+     * Creates and initializes all application views.
+     */
     private void createViews() {
         myMenuView = new GameMenuView();
         mySettingsView = new SettingsView();
@@ -56,12 +66,23 @@ public class AppController {
         myWindow.setJMenuBar(createMenuBar());
     }
 
+    /**
+     * Creates and initializes all application controllers.
+     */
     private void createControllers() {
         new MenuController(this, myMenuView);
         new PlayerController(this, mySetupView, myInstructionsView);
         new SettingsController(this, mySettingsView, mySoundManager);
     }
 
+    /**
+     * Switches the displayed view to the specified panel.
+     *
+     * <p>The current panel is stored in the navigation history
+     * so the user can return to it later.</p>
+     *
+     * @param thePanel the panel to display
+     */
     public void switchView(final JPanel thePanel) {
         if (thePanel == myMenuView) {
             myMenuView.refreshResumeButton();
@@ -78,6 +99,9 @@ public class AppController {
         thePanel.requestFocusInWindow();
     }
 
+    /**
+     * Returns to the previously displayed view, if one exists.
+     */
     public void goBack() {
         if (!myPanelHistory.isEmpty()) {
             JPanel previousPanel = myPanelHistory.pop();
@@ -88,6 +112,10 @@ public class AppController {
         }
     }
 
+    /**
+     * Creates a new game by generating a maze, creating a player,
+     * resetting saved-game state, and preparing gameplay controllers.
+     */
     public void startNewGame() {
         stopTimerDisplayLoop();
 
@@ -110,31 +138,52 @@ public class AppController {
         System.out.println("Started a new game.");
     }
 
+    /**
+     * Displays the player setup screen.
+     */
     public void showPlayerSetup() {
         startNewGame();
         switchView(mySetupView);
     }
 
+    /**
+     * Displays the settings screen.
+     */
     public void showSettings() {
         switchView(mySettingsView);
     }
 
+    /**
+     * Displays the game instructions screen.
+     */
     public void showInstructions() {
         myInstructionsView.setPlayerName(myPlayer.getName());
         switchView(myInstructionsView);
     }
 
+    /**
+     * Starts gameplay and begins updating the game timer display.
+     */
     public void startGameplay() {
         myPlayer.startTimer();
         switchView(myMazeView);
         startTimerDisplayLoop();
     }
 
+    /**
+     * Returns the user to the main menu after a game has ended.
+     */
     public void returnToMainMenuAfterGame() {
         startNewGame();
         switchView(myMenuView);
     }
 
+    /**
+     * Returns the user to the main menu from a menu-bar action.
+     *
+     * <p>If the current game contains unsaved progress,
+     * the user is prompted for confirmation.</p>
+     */
     public void returnToMainMenuFromMenuItem() {
         if (myHasSaved) {
             switchView(myMenuView);
@@ -155,6 +204,9 @@ public class AppController {
         }
     }
 
+    /**
+     * Saves the current game state to disk.
+     */
     public void saveGame() {
         if (myPlayer == null || myMaze == null) {
             return;
@@ -165,6 +217,12 @@ public class AppController {
         myHasSaved = true;
     }
 
+    /**
+     * Loads a previously saved game.
+     *
+     * @return {@code true} if a saved game was successfully loaded;
+     *         {@code false} otherwise
+     */
     public boolean loadGame() {
         Memento loaded = SaveManager.loadGame();
 
@@ -190,24 +248,51 @@ public class AppController {
         return true;
     }
 
+    /**
+     * Marks the current game as having unsaved changes.
+     */
     public void markGameNoLongerSaved() {
         myHasSaved = false;
     }
 
+    /**
+     * Returns the current player.
+     *
+     * @return the active player
+     */
     public Player getPlayer() {
         return myPlayer;
     }
 
+    /**
+     * Returns the settings view.
+     *
+     * @return the settings view
+     */
     public SettingsView getSettingsView() {
         return mySettingsView;
     }
 
+    /**
+     * Returns the player setup view.
+     *
+     * @return the player setup view
+     */
     public PlayerSetupView getPlayerSetupView() { return mySetupView; }
 
+    /**
+     * Returns the application's main window.
+     *
+     * @return the main application window
+     */
     public JFrame getWindow() {
         return myWindow;
     }
 
+    /**
+     * Starts the timer update loop used to refresh
+     * the displayed game timer.
+     */
     private void startTimerDisplayLoop() {
         stopTimerDisplayLoop();
 
@@ -219,6 +304,9 @@ public class AppController {
         myTimerDisplayLoop.start();
     }
 
+    /**
+     * Stops the timer update loop if it is running.
+     */
     private void stopTimerDisplayLoop() {
         if (myTimerDisplayLoop != null) {
             myTimerDisplayLoop.stop();
@@ -226,6 +314,12 @@ public class AppController {
         }
     }
 
+    /**
+     * Creates and configures the application's menu bar,
+     * including game and help menu actions.
+     *
+     * @return the configured menu bar
+     */
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 

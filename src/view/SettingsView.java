@@ -10,6 +10,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * SettingsView provides the user interface for configuring
+ * application settings such as fullscreen mode, volume,
+ * and day/night mode preferences.
+ */
 public class SettingsView extends JPanel {
     //private SettingsView settingsView;
     //private JPanel settingsPanel;
@@ -27,6 +32,11 @@ public class SettingsView extends JPanel {
 
     private Image background;
 
+    /**
+     * Constructs the settings screen and initializes all UI components,
+     * including controls for fullscreen mode, volume, dark mode,
+     * and navigation back to the main menu.
+     */
     public SettingsView() {
         setLayout(null);
 
@@ -97,6 +107,11 @@ public class SettingsView extends JPanel {
 
     }
 
+    /**
+     * Paints the settings screen background and decorative UI elements.
+     *
+     * @param g the graphics context used for rendering
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -119,36 +134,79 @@ public class SettingsView extends JPanel {
 
 
 
-
+    /**
+     * Adds a listener to the Back button.
+     *
+     * @param theListener the listener to invoke when the button is clicked
+     */
     public void addBackListener(ActionListener theListener) {
         backToMenu.addActionListener(theListener);
     }
 
-
+    /**
+     * Adds a listener to the fullscreen toggle button.
+     *
+     * @param theListener the listener to invoke when the button state changes
+     */
     public void addFullscreenListener(ActionListener theListener) {
         screenButton.addActionListener(theListener);
     }
 
+    /**
+     * Adds a listener to the volume slider.
+     *
+     * @param theListener the listener to invoke when the slider value changes
+     */
     public void addVolumeListener(ChangeListener theListener) {
         volumeSlider.addChangeListener(theListener);
     }
 
+    /**
+     * Adds a listener to the day/night mode checkbox.
+     *
+     * @param theListener the listener to invoke when the checkbox is clicked
+     */
     public void addDarkModeListener(ActionListener theListener) {
         darkModeCheck.addActionListener(theListener);
     }
 
+    /**
+     * Determines whether fullscreen mode is currently selected.
+     *
+     * @return true if fullscreen mode is enabled; false otherwise
+     */
     public boolean isFullscreenSelected() {
         return screenButton.isSelected();
     }
 
+    /**
+     * Determines whether dark mode is currently selected.
+     *
+     * @return true if dark mode is enabled; false otherwise
+     */
     public boolean isDarkModeSelected() {
         return darkModeCheck.isSelected();
     }
 
+    /**
+     * Returns the current volume slider value.
+     *
+     * @return the volume level between 0 and 100
+     */
     public int getVolumeValue() {
         return volumeSlider.getValue();
     }
 
+    /**
+     * Updates the application's visual assets and backgrounds
+     * to match the selected theme mode.
+     *
+     * <p>This method updates images used by the settings screen,
+     * game menu, player setup screen, and maze view before
+     * repainting the interface.</p>
+     *
+     * @param darkMode true to apply the dark theme; false to apply the light theme
+     */
     public void setDarkMode(boolean darkMode) {
         // Settings Screen Background
         if(darkMode) {
@@ -211,28 +269,9 @@ public class SettingsView extends JPanel {
         }
 
 
-
-        //settingsPanel.setBackground(Color.WHITE);
-
         setDoubleBuffered(true);
         repaint();
 
-
-        //settingsPanel.setLayout(null);
-
-
-
-
-        /*Color background = darkMode ? Color.DARK_GRAY : Color.WHITE;
-        Color foreground = darkMode ? Color.WHITE : Color.BLACK;
-
-        settingsPanel.setBackground(background);
-
-        for (Component component : settingsPanel.getComponents()) {
-            component.setBackground(background);
-            component.setForeground(foreground);
-        } */
-        //settingsPanel.repaint();
     }
 
 

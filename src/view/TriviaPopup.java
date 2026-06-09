@@ -4,10 +4,27 @@ import model.Question;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A modal dialog that displays a trivia question and collects
+ * the player's answer. The dialog supports multiple-choice,
+ * true/false, and text-entry question types.
+ */
 public class TriviaPopup extends JDialog {
 
     private String playerAnswer = "";
 
+    /**
+     * Constructs a trivia question dialog and displays the appropriate
+     * answer input controls based on the question type.
+     *
+     * <p>For multiple-choice questions, answer buttons are generated
+     * from the available options. For true/false questions, True and
+     * False buttons are displayed. For other question types, a text
+     * field is provided for answer entry.</p>
+     *
+     * @param owner the parent window that owns this dialog
+     * @param question the trivia question to display
+     */
     public TriviaPopup(Window owner, Question question) {
         super(owner, ModalityType.APPLICATION_MODAL);
         setTitle("Trivia Question");
@@ -91,6 +108,12 @@ public class TriviaPopup extends JDialog {
         }
     }
 
+    /**
+     * Returns the answer submitted by the player.
+     *
+     * @return the player's selected or entered answer; an empty string
+     *         if no answer has been provided
+     */
     public String getPlayerAnswer() {
         return playerAnswer;
     }

@@ -12,6 +12,14 @@ public class PlayerController {
     private final PlayerSetupView mySetupView;
     private final InstructionsView myInstructionsView;
 
+    /**
+     * Constructs a PlayerController and connects the setup
+     * and instructions views to the application.
+     *
+     * @param theApp the main application controller
+     * @param theSetupView the player setup view
+     * @param theInstructionsView the instructions view
+     */
     public PlayerController(final AppController theApp,
                             final PlayerSetupView theSetupView,
                             final InstructionsView theInstructionsView) {
@@ -21,6 +29,13 @@ public class PlayerController {
         addListeners();
     }
 
+    /**
+     * Registers all event listeners for the player setup
+     * and instructions screens.
+     *
+     * <p>Listeners handle navigation, player name entry,
+     * avatar selection, and starting gameplay.</p>
+     */
     private void addListeners() {
         mySetupView.addBackListener(e -> myApp.goBack());
 

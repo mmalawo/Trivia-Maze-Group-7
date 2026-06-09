@@ -10,6 +10,11 @@ import java.awt.event.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+/**
+ * PlayerSetupView provides the interface for player customization
+ * before the game begins. Players can enter a name, select an avatar,
+ * and navigate between the menu and game setup screens.
+ */
 public class PlayerSetupView extends JPanel{
     private final JPanel playerPanel;
     public static Image setupViewBackground;
@@ -34,6 +39,11 @@ public class PlayerSetupView extends JPanel{
     double screenWidth = screenSize.getWidth();
     double screenHeight = screenSize.getHeight();
 
+    /**
+     * Constructs the player setup screen and initializes all UI components,
+     * including avatar selection controls, name input field, navigation buttons,
+     * and character animation.
+     */
     public PlayerSetupView() {
         setLayout(null);
         setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
@@ -175,14 +185,21 @@ public class PlayerSetupView extends JPanel{
         });
     }
 
+    /**
+     * Returns the panel used to display the player's avatar.
+     *
+     * @return the player panel
+     */
     public JPanel getPlayerPanel(){
         return playerPanel;
     }
 
-    /*public void addFullscreenListener(ActionListener theListener) {
-        screenButton.addActionListener(theListener);
-    } */
 
+    /**
+     * Paints the player setup background and decorative UI elements.
+     *
+     * @param g the graphics context used for rendering
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -197,21 +214,44 @@ public class PlayerSetupView extends JPanel{
         g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/19.2)),(int)(screenHeight/2 + (screenHeight/5.68)), 200, 50, 20,20);
     }
 
+    /**
+     * Retrieves the name entered by the player.
+     *
+     * @return the trimmed player name entered in the text field
+     */
     public String getEnteredName() {
         return namePrompt.getText().trim();
     }
 
+    /**
+     * Advances the avatar selection to the next available character.
+     */
     public void nextCharacter() {
         setSlide(slide + 1);
     }
 
+    /**
+     * Moves the avatar selection to the previous available character.
+     */
     public void previousCharacter() {
         setSlide(slide - 1);
     }
 
+    /**
+     * Returns the currently selected avatar slide number.
+     *
+     * @return the current slide number
+     */
     public static int getSlide() {
         return slide;
     }
+
+    /**
+     * Sets the currently selected avatar slide.
+     * Only values between 1 and 3 are accepted.
+     *
+     * @param n the slide number to display
+     */
     public static void setSlide(int n) {
         if (n < 1 || n > 3) {
             return;
@@ -220,16 +260,40 @@ public class PlayerSetupView extends JPanel{
         }
     }
 
+    /**
+     * Adds a listener to the Back button.
+     *
+     * @param theListener the listener to invoke when the button is clicked
+     */
     public void addBackListener(ActionListener theListener) {
         backToMenu.addActionListener(theListener);
     }
+
+    /**
+     * Adds a listener to the Next button used to continue to the game.
+     *
+     * @param theListener the listener to invoke when the button is clicked
+     */
     public void addNextListener(ActionListener theListener) {
         nextToGame.addActionListener(theListener);
     }
+
+    /**
+     * Adds a listener to the Next Avatar button.
+     *
+     * @param theListener the listener to invoke when the button is clicked
+     */
     public void addNextAvatarListener(ActionListener theListener) {
         nextSlide.addActionListener(theListener);
     }
 
+    /**
+     * Updates the displayed character images based on the selected avatar
+     * and current theme mode.
+     *
+     * @param theDarkModeSelected true if dark mode assets should be used;
+     *                            false for standard assets
+     */
     public void updateCharacter(boolean theDarkModeSelected) {
         if(theDarkModeSelected) {
             if (slide == 1) {
@@ -257,10 +321,23 @@ public class PlayerSetupView extends JPanel{
             butterflyIcon.setIcon(character1);
         }
     }
+
+    /**
+     * Adds a listener to the Previous Avatar button.
+     *
+     * @param theListener the listener to invoke when the button is clicked
+     */
     public void addPrevListener(ActionListener theListener) {
         prevSlide.addActionListener(theListener);
     }
 
+    /**
+     * Resets the player setup screen to its default state,
+     * clearing the entered name and restoring the first avatar.
+     *
+     * @param darkMode true if dark mode character assets should be displayed;
+     *                 false otherwise
+     */
     public void reset(boolean darkMode) {
         namePrompt.setText("");
         slide = 1;
