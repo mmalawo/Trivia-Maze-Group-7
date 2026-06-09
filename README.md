@@ -11,29 +11,156 @@ Tifanie Ngo
 Link to Repo: https://github.com/mmalawo/Trivia-Maze-Group-7/tree/main
 
 -----------------------
-**Iteration One:**
-* One issue we encountered was adding a timer that starts when the Play button gets pressed. It was confusing where to add the logic and information, but we ended up putting most of it in GameController and Player.
-* An issue we're still trying to figure out is how to add sound to the game, because we want it to be as immersive as our skill levels can get, with the deadline to keep in mind as well.
-* The biggest trouble we've had, however, was trying to push and pull through git. It made us have to merge through GitHub to see the changes, since we were both editing the same version of the file at the same time, and one of us pushed before the other. It all worked out in the end though (thankfully).
+Requirements
 
-**Iteration Two:**
-* I wasn't able to finish connecting the trivia questions to the Door objects this iteration. I'll be completing that in iteration 3 by creating QuestionDAO.java and linking questions to doors when the maze generates. The database is fully set up and working, it just needs to be connected to the doors! -**Makani**
-* There was an issue where it was creating a new view every time you clicked a button (like play or settings). I added public static variables for the view panels and connected them so that it brings up the same view every time, instead of making a new one. -**Angelina**
-* An achievement made during the 2nd iteration was successfully implement a sound system, with randomized automatic track switching and a working volume slider that can change how loud audio is for the program. -**Tifanie**
-* I was focused primarily on developing and implementing the audio system for in-game music/SFX that time invested on the player logic portion of the project wasn't as prominent as expected, but I'd like to make it a goal for the upcoming iteration now that the main menu has been mostly implemented by now and the group can start working on the contents of the game for basic gameplay. -**Tifanie**
+Java JDK 17 or higher
+IntelliJ IDEA (recommended)
+SQLite JDBC driver (sqlite-jdbc-3.34.0.jar) — included in the lib/ folder
 
-**Iteration Three:**
-- Makani: Created QuestionDAO.java to retrieve random trivia questions from the database. Updated Door.java to assign a Question object to each door on creation. Updated Player.java with room tracking and game-over logic.
-- Tifanie: Implemented InstructionsView screen, added trivia questions to the database, worked on PlayerSetupView and PlayerController.
-- Angelina: Restructured layout with switchPanel() method for cleaner code, added character customization, created MazeView, fixed disappearing MenuBar bug.
+-----------------------
+How to Run
 
-**Iteration Four:**
-- There's a bug found regarding the questions determining if a door stays locked or unlocked (sometimes, you can answer a door that should have been permanently locked; sometimes "unlocked" doors are still marked as "locked" and you have to answer two questions for a permanent door state change)
-That problem was discovered while creating visual door rendering.
-- More discussion is needed on how we plan to move the character visually.
-- Need to make it so any screen size can play the game. Right now the maze doesn't center itself properly (since we're starting in the middle).
+Note: The trivia.db file will be created automatically the first time you run the game. Do not include an existing trivia.db when running fresh — delete it if one already exists.
 
-**Iteration Six:**
-- Makani: Implemented randomized exit door placement on the maze perimeter each new game. Fixed exit door logic so it triggers a trivia question instead of treating the entire room as the exit. Added win condition when the exit door trivia is answered correctly and lose condition when all 3 attempts are failed. Added a "That door leads nowhere!" popup for non-exit perimeter doors. Updated camera to automatically track and center on the player butterfly, removing manual scroll buttons and zoom in/out.
-- Angelina: Added pixel art for night mode, updated MazeView with timer display, added butterfly flap animation, fixed trivia question bugs, cleaned up button display and help category in the menu bar, and general code cleanup.
-- Tifanie: Implemented game over logic when the player permanently locks all accessible pathways to the exit. Fixed loadGame feature to handle when no existing save files are found. Revised leaderboard functionality.
+Open the project in IntelliJ IDEA
+Go to File → Project Structure → Libraries
+Make sure sqlite-jdbc-3.34.0.jar is added as a library (it should already be in lib/)
+Go to Run → Edit Configurations
+Set the Main class to view.MainGUI
+Click Run
+
+-----------------------
+How to Play
+
+Use the N/S/W/E buttons on the right side of the screen to move through the maze
+Click a door to attempt answering a trivia question
+You have 2 attempts per door — fail both and the door is permanently locked
+Use the Hint button to get a directional hint toward the exit
+Find and answer the exit door correctly to win!
+If all accessible doors are permanently locked, the game is over
+
+-----------------------
+Menu Options (File menu)
+
+Save Game — saves your current progress (Ctrl+S)
+Load Game — loads your last saved game (Ctrl+L)
+Main Menu — returns to the main menu (Ctrl+R)
+Exit — exits the game (Ctrl+E)
+Settings — adjust volume and display settings
+Leaderboard — view the top scores
+
+Resume
+If you save and exit to the main menu, a Resume button will appear on the main menu to continue your saved game.
+
+-----------------------
+How to Run Unit Tests
+
+Open the project in IntelliJ IDEA
+Navigate to src/test/model/ in the project panel
+Right-click the test.model package → Run 'All Tests'
+All tests should pass with exit code 0
+
+Test Coverage
+
+DoorTest — door locking, permanent closure, reset behavior
+PlayerTest — score tracking, timer, room tracking, reset
+MazeTest — maze dimensions, room access, entrance/exit setup
+SaveManagerTest — save/load/delete game state
+QuestionFactoryTest — correct question subclass creation
+
+-----------------------
+Project Structure
+src/
+├── controller/       # Controllers (AppController, GameController, etc.)
+├── model/            # Model classes (Maze, Room, Door, Player, etc.)
+├── view/             # View classes (MazeView, GameMenuView, etc.)
+├── test/model/       # Unit tests
+├── images/           # Game images and pixel art
+└── sounds/           # Background music files
+
+-----------------------
+Extra Credit Features
+
+Pixel art graphics — custom day/night mode butterfly characters and maze backgrounds
+Animated butterfly character — flapping animation as the player moves
+Camera tracking — camera automatically follows and centers on the player
+Leaderboard — tracks and displays top scores using SQLite
+Background music — randomized playlist with volume control
+Resume button — dynamically appears on the main menu when a save file exists
+Night mode — dark mode toggle in settings changes the visual theme
+Hint system — directional hints guide the player toward the exit
+Timer restoration — save/load correctly restores the game timer from where it left off
+
+-----------------------
+Iteration History
+
+Iteration One:
+
+Set up Trivia Maze GitHub repository
+Implemented Room, Door, and Maze classes
+Connected Room and Door classes
+Implemented GameController, MainGUI, GameMenuView, PlayerSetupView, SettingsView, Player, MenuController, SettingsController files
+Added timer logic
+
+Iteration Two:
+
+Implemented SoundManager with randomized playlist and volume slider
+Created SQLite trivia question database
+Implemented Java database connection
+Connected trivia questions to Door objects
+Implemented Question model class
+Fixed JPanel/View recreation bug
+Pixel Art work begun
+
+Iteration Three:
+
+Implemented DatabaseManager class
+Implemented QuestionDAO for random question retrieval
+Updated Player model with room tracking and game-over logic
+Implemented InstructionsView, PlayerController
+Restructured layout with cleaner view management
+Added character customization
+Fixed disappearing MenuBar bug
+Structure cleanup
+
+Iteration Four:
+
+Implemented Save Game State feature
+Implemented trivia question popup for door interactions
+Implemented player movement
+Implemented butterfly player tracker
+Implemented zoom feature
+Displayed current room coordinates and door status
+Implemented GenerateMaze and MazeView files
+Dynamic scaling begun
+
+Iteration Five:
+
+Implemented LeaderboardEntry, LeaderboardDAO, LeaderboardView
+Added leaderboard database table support
+Fixed pre-unlocked door bug
+Implemented 3 attempts system with permanent lock
+Fixed question randomization
+Fixed answer checking for multiple choice questions
+Added 10 new trivia questions to the database
+Implemented new question on wrong answer
+Fixed correctly answered questions from repeating
+
+Iteration Six:
+
+Randomized exit door location on maze perimeter each new game
+Exit door requires trivia question to unlock
+Win condition when exit door trivia is answered correctly
+Lose condition when exit door trivia fails all attempts
+Dead end popup for non-exit perimeter doors
+Camera auto-tracks and centers on player butterfly
+Fixed old save file bug
+Pixel art for night mode added
+Timer display added to MazeView
+Butterfly flap animation added
+Fixed trivia question display bugs
+Cleaned up button display and help menu
+Game over logic when player permanently locks all accessible pathways
+Fixed loadGame feature when no save files exist
+Revised leaderboard functionality
+Added more trivia questions to database
