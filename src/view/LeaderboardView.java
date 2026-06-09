@@ -7,7 +7,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * LeaderboardView displays the top scores in a dialog window.
+ * After viewing, the player can return to the main menu.
+ */
 public class LeaderboardView {
+
+    /**
+     * Displays the leaderboard in a modal dialog.
+     * After closing, navigates back to the main menu.
+     */
     public static void showLeaderboard() {
         LeaderboardDAO dao = new LeaderboardDAO();
         List<LeaderboardEntry> scores = dao.getTopScores();
@@ -17,7 +26,6 @@ public class LeaderboardView {
 
         for (int i = 0; i < scores.size(); i++) {
             LeaderboardEntry entry = scores.get(i);
-
             data[i][0] = i + 1;
             data[i][1] = entry.getPlayerName();
             data[i][2] = formatTime(entry.getTimeSeconds());
@@ -32,10 +40,7 @@ public class LeaderboardView {
             }
         };
 
-// Removes the default editor so cells cannot enter edit mode.
         table.setDefaultEditor(Object.class, null);
-
-// Prevents the white selected-cell / focused-cell box from appearing.
         table.setCellSelectionEnabled(false);
         table.setRowSelectionAllowed(false);
         table.setColumnSelectionAllowed(false);
@@ -43,19 +48,45 @@ public class LeaderboardView {
 
         JScrollPane scrollPane = new JScrollPane(table);
 
+        // Main Menu button
+        JButton mainMenuButton = new JButton("Main Menu");
+
         JDialog dialog = new JDialog(MainGUI.getWindow(), "Leaderboard", true);
-        dialog.setSize(600, 400);
+        dialog.setSize(600, 450);
         dialog.setLayout(new BorderLayout());
         dialog.add(scrollPane, BorderLayout.CENTER);
+        dialog.add(mainMenuButton, BorderLayout.SOUTH);
         dialog.setLocationRelativeTo(MainGUI.getWindow());
+
+        // When Main Menu is clicked, close dialog and go to main menu
+        mainMenuButton.addActionListener(e -> {
+            dialog.dispose();
+            MainGUI.startNewGame();
+            MainGUI.switchView(MainGUI.menuView);
+        });
+
+        // If player closes dialog via X button, also go to main menu
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                MainGUI.startNewGame();
+                MainGUI.switchView(MainGUI.menuView);
+            }
+        });
+
         dialog.setVisible(true);
     }
 
-    private static String formatTime(double timeSeconds) {
-        int totalSeconds = (int) Math.round(timeSeconds);
+    /**
+     * Formats a time in seconds into a human-readable string.
+     *
+     * @param theTimeSeconds the time in seconds
+     * @return a formatted string like "2 min 05 sec"
+     */
+    private static String formatTime(double theTimeSeconds) {
+        int totalSeconds = (int) Math.round(theTimeSeconds);
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
-
         return String.format("%d min %02d sec", minutes, seconds);
     }
 }

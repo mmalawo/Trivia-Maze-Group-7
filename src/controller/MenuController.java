@@ -1,9 +1,6 @@
 package controller;
 
-import java.util.*;
-import java.io.*;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 import model.SoundManager;
@@ -12,7 +9,7 @@ import view.*;
 /**
  * MenuController handles user interactions on the main game menu.
  * It listens for button clicks on the GameMenuView and delegates
- * actions such as starting a new game, opening settings, or exiting.
+ * actions such as starting a new game, resuming, opening settings, or exiting.
  */
 public class MenuController {
 
@@ -35,13 +32,31 @@ public class MenuController {
     }
 
     /**
-     * Registers action listeners for the play, exit, and settings buttons
-     * on the main menu view.
+     * Registers action listeners for the play, resume, exit, and settings buttons.
      */
     private void addListeners() {
+
         menu.addPlayListener(e -> {
             MainGUI.startNewGame();
             MainGUI.switchView(MainGUI.setupView);
+        });
+
+        menu.addResumeListener(e -> {
+            boolean loaded = MainGUI.loadGame();
+            if (loaded) {
+                // Resume the timer display loop from where it left off
+                new javax.swing.Timer(1000, evt -> {
+                    double time = MainGUI.player.elapsedTime();
+                    MainGUI.mazeView.updateTimer(time);
+                }).start();
+            } else {
+                JOptionPane.showMessageDialog(
+                        MainGUI.getWindow(),
+                        "No saved game found.",
+                        "Resume",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
         });
 
         menu.addExitListener(e -> {
