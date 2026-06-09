@@ -17,7 +17,7 @@ public class GameMenuView extends JPanel {
     double screenHeight = screenSize.getHeight();
 
     // Background Image
-    private Image backgroundMenuImage;
+    public static Image backgroundMenuImage;
 
     // Button Initialization
     private final JButton exitButton;
@@ -166,13 +166,5 @@ public class GameMenuView extends JPanel {
 
     public void addResumeListener(ActionListener theListener) {
         resumeButton.addActionListener(theListener);
-    }
-
-    public void setDarkMode(boolean theDarkModeSelected) {
-        String path = theDarkModeSelected
-                ? "src/images/Night-Mode1.2.png"
-                : "src/images/Day-Mode1.2.png";
-        backgroundMenuImage = new ImageIcon(path).getImage();
-        repaint();
     }
 }
