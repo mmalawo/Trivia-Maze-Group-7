@@ -260,4 +260,12 @@ public class PlayerSetupView extends JPanel{
     public void addPrevListener(ActionListener theListener) {
         prevSlide.addActionListener(theListener);
     }
+
+    public void reset(boolean darkMode) {
+        namePrompt.setText("");
+        slide = 1;
+        updateCharacter(darkMode);
+        repaint();
+    }
+
 }

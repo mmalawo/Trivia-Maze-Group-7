@@ -103,6 +103,10 @@ public class AppController {
         SaveManager.deleteSaveFile();
         myPanelHistory.clear();
 
+        if(mySetupView != null) {
+            mySetupView.reset(mySettingsView.isDarkModeSelected());
+        }
+
         System.out.println("Started a new game.");
     }
 
@@ -197,6 +201,8 @@ public class AppController {
     public SettingsView getSettingsView() {
         return mySettingsView;
     }
+
+    public PlayerSetupView getPlayerSetupView() { return mySetupView; }
 
     public JFrame getWindow() {
         return myWindow;

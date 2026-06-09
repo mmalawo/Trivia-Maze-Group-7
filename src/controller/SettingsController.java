@@ -52,7 +52,13 @@ public class SettingsController {
         });
 
         mySettingsMenu.addDarkModeListener(e ->
-                mySettingsMenu.setDarkMode(mySettingsMenu.isDarkModeSelected()));
+        {
+            boolean darkMode = mySettingsMenu.isDarkModeSelected();
+            mySettingsMenu.setDarkMode(darkMode);
+            myApp.getPlayerSetupView().updateCharacter(darkMode);
+            myApp.getPlayerSetupView().repaint();
+
+        });
 
         mySettingsMenu.addVolumeListener(e -> {
             int volume = mySettingsMenu.getVolumeValue();
