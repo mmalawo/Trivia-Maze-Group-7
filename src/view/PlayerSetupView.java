@@ -1,9 +1,6 @@
 package view;
 
-import model.Player;
-
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.*;
@@ -12,7 +9,7 @@ import javax.swing.event.DocumentListener;
 
 public class PlayerSetupView extends JPanel{
     private final JPanel playerPanel;
-    public static Image setupViewBackground;
+    private Image setupViewBackground;
     private final JButton backToMenu;
     private final JButton nextToGame;
     private final JTextField namePrompt;
@@ -21,11 +18,11 @@ public class PlayerSetupView extends JPanel{
     private final JButton nextSlide;
     private final JButton prevSlide;
 
-    public static ImageIcon character1;
-    public static ImageIcon character2;
+    private ImageIcon character1;
+    private ImageIcon character2;
 
-
-    public static int slide = 1;
+    private int slide = 1;
+    private boolean darkModeSelected;
     private Timer butterflyAnimation;
     private JLabel butterflyIcon;
 
@@ -209,15 +206,32 @@ public class PlayerSetupView extends JPanel{
         setSlide(slide - 1);
     }
 
-    public static int getSlide() {
+    public int getSlide() {
         return slide;
     }
-    public static void setSlide(int n) {
-        if (n < 1 || n > 3) {
-            return;
-        } else {
+
+    private void setSlide(int n) {
+        if (n >= 1 && n <= 3) {
             slide = n;
         }
+    }
+
+    public ImageIcon getCurrentFlapIcon() {
+        return character1;
+    }
+
+    public ImageIcon getCurrentUnflapIcon() {
+        return character2;
+    }
+
+    public void setDarkMode(boolean theDarkModeSelected) {
+        darkModeSelected = theDarkModeSelected;
+        String backgroundPath = darkModeSelected
+                ? "src/images/Night-PlayerSetup.png"
+                : "src/images/Day-PlayerSetup.png";
+        setupViewBackground = new ImageIcon(backgroundPath).getImage();
+        updateCharacter(darkModeSelected);
+        repaint();
     }
 
     public void addBackListener(ActionListener theListener) {
@@ -261,11 +275,9 @@ public class PlayerSetupView extends JPanel{
         prevSlide.addActionListener(theListener);
     }
 
-    public void reset(boolean darkMode) {
+    public void reset(boolean theDarkModeSelected) {
         namePrompt.setText("");
         slide = 1;
-        updateCharacter(darkMode);
-        repaint();
+        setDarkMode(theDarkModeSelected);
     }
-
 }

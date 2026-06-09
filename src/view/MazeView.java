@@ -19,28 +19,28 @@ public class MazeView extends JPanel {
     private int startCol;
 
     // Background image
-    public static Image mazeGrass;
+    private Image mazeGrass;
 
     // normal hedge and shady hedge icons (rooms)
-    public static ImageIcon hedgeTest = new ImageIcon("src/images/Hedge900-675.png");
-    public static ImageIcon shadyHedge = new ImageIcon("src/images/ShadyHedge.png");
+    private ImageIcon hedgeTest = new ImageIcon("src/images/Hedge900-675.png");
+    private ImageIcon shadyHedge = new ImageIcon("src/images/ShadyHedge.png");
 
-    public static ImageIcon unlockedDoor = new ImageIcon("src/images/UnlockedHedge.png");
+    private ImageIcon unlockedDoor = new ImageIcon("src/images/UnlockedHedge.png");
 
     // Unlocked doors (open path)
-    public static ImageIcon eastDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
-    public static ImageIcon northDoorImage = new ImageIcon("src/images/NorthDoorUnlocked.png");
-    public static ImageIcon southDoorImage = new ImageIcon("src/images/NorthDoorUnlocked.png");
-    public static ImageIcon westDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
+    private ImageIcon eastDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
+    private ImageIcon northDoorImage = new ImageIcon("src/images/NorthDoorUnlocked.png");
+    private ImageIcon southDoorImage = new ImageIcon("src/images/NorthDoorUnlocked.png");
+    private ImageIcon westDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
 
     // Possible pathways (to unlock)
-    public static ImageIcon eastDoorImageLocked = new ImageIcon("src/images/EastDoorLocked.png");
-    public static ImageIcon northDoorImageLocked = new ImageIcon("src/images/NorthDoorLocked.png");
-    public static ImageIcon southDoorImageLocked = new ImageIcon("src/images/SouthDoorLocked.png");
-    public static ImageIcon westDoorImageLocked = new ImageIcon("src/images/WestDoorLocked.png");
+    private ImageIcon eastDoorImageLocked = new ImageIcon("src/images/EastDoorLocked.png");
+    private ImageIcon northDoorImageLocked = new ImageIcon("src/images/NorthDoorLocked.png");
+    private ImageIcon southDoorImageLocked = new ImageIcon("src/images/SouthDoorLocked.png");
+    private ImageIcon westDoorImageLocked = new ImageIcon("src/images/WestDoorLocked.png");
 
-    public static ImageIcon character1;
-    public static ImageIcon character2;
+    private ImageIcon character1;
+    private ImageIcon character2;
 
     private final Maze myMaze;
     private final Player myPlayer;
@@ -70,7 +70,7 @@ public class MazeView extends JPanel {
     private static final double BASE_WIDTH = 1536.0;
     private static final double BASE_HEIGHT = 1024.0;
 
-    public static JLabel timerLabel;
+    private JLabel timerLabel;
 
     public MazeView(Maze theMaze, Player thePlayer, GameController theController) {
         this.myMaze = theMaze;
@@ -115,6 +115,8 @@ public class MazeView extends JPanel {
 
         ImageIcon background = new ImageIcon("src/images/DayGrass.png");
         mazeGrass = background.getImage();
+        character1 = new ImageIcon("src/images/MagentaFlap.png");
+        character2 = new ImageIcon("src/images/MagentaUnflap.png");
 
         playerPanel = new JPanel();
         playerPanel.setOpaque(false);
@@ -388,10 +390,7 @@ public class MazeView extends JPanel {
         int playerScreenX = (int)(panelWidth / 2 - (scaled(450) + px) - camX) + scaled(385);
         int playerScreenY = (int)(panelHeight / 2 - py - camY) + scaled(250);
 
-        ImageIcon butterfly = butterflyToggle
-                ? PlayerSetupView.character2
-                : PlayerSetupView.character1;
-
+        ImageIcon butterfly = butterflyToggle ? character2 : character1;
         drawSprite(g, butterfly, playerScreenX, playerScreenY, 150, 150);
 
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -529,6 +528,31 @@ public class MazeView extends JPanel {
         repaint();
     }
 
+
+    public void setPlayerSprites(ImageIcon theFlapIcon, ImageIcon theUnflapIcon) {
+        if (theFlapIcon != null && theUnflapIcon != null) {
+            character1 = theFlapIcon;
+            character2 = theUnflapIcon;
+            repaint();
+        }
+    }
+
+    public void setDarkMode(boolean theDarkModeSelected) {
+        if (theDarkModeSelected) {
+            mazeGrass = new ImageIcon("src/images/NightGrass.png").getImage();
+            hedgeTest = new ImageIcon("src/images/NightHedge.png");
+            northDoorImage = new ImageIcon("src/images/NightNorthDoorUnlocked.png");
+            eastDoorImage = new ImageIcon("src/images/NightEastDoorUnlocked.png");
+            westDoorImage = new ImageIcon("src/images/NightWestUnlockedHedge.png");
+        } else {
+            mazeGrass = new ImageIcon("src/images/DayGrass.png").getImage();
+            hedgeTest = new ImageIcon("src/images/Hedge900-675.png");
+            northDoorImage = new ImageIcon("src/images/NorthDoorUnlocked.png");
+            eastDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
+            westDoorImage = new ImageIcon("src/images/UnlockedHedge.png");
+        }
+        repaint();
+    }
     // =====================================================
     // TIMER
     // =====================================================
