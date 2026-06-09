@@ -1,57 +1,30 @@
 package controller;
 
-import javax.swing.*;
-import java.awt.event.*;
+import view.GameMenuView;
 
-import model.SoundManager;
-import view.*;
+import javax.swing.*;
 
 /**
  * MenuController handles user interactions on the main game menu.
- * It listens for button clicks on the GameMenuView and delegates
- * actions such as starting a new game, resuming, opening settings, or exiting.
+ * It delegates application navigation to AppController instead of using MainGUI globals.
  */
 public class MenuController {
+    private final AppController myApp;
+    private final GameMenuView myMenu;
 
-    /** The main menu view this controller manages. */
-    private GameMenuView menu;
-
-    /** The settings view to switch to when settings is clicked. */
-    private SettingsView settingsView;
-
-    /**
-     * Constructs a MenuController and registers listeners on the given views.
-     *
-     * @param theMenu         the main game menu view
-     * @param theSettingsView the settings view
-     */
-    public MenuController(GameMenuView theMenu, SettingsView theSettingsView) {
-        this.menu = theMenu;
-        this.settingsView = theSettingsView;
+    public MenuController(final AppController theApp, final GameMenuView theMenu) {
+        myApp = theApp;
+        myMenu = theMenu;
         addListeners();
     }
 
-    /**
-     * Registers action listeners for the play, resume, exit, and settings buttons.
-     */
     private void addListeners() {
+        myMenu.addPlayListener(e -> myApp.showPlayerSetup());
 
-        menu.addPlayListener(e -> {
-            MainGUI.startNewGame();
-            MainGUI.switchView(MainGUI.setupView);
-        });
-
-        menu.addResumeListener(e -> {
-            boolean loaded = MainGUI.loadGame();
-            if (loaded) {
-                // Resume the timer display loop from where it left off
-                new javax.swing.Timer(1000, evt -> {
-                    double time = MainGUI.player.elapsedTime();
-                    MainGUI.mazeView.updateTimer(time);
-                }).start();
-            } else {
+        myMenu.addResumeListener(e -> {
+            if (!myApp.loadGame()) {
                 JOptionPane.showMessageDialog(
-                        MainGUI.getWindow(),
+                        myApp.getWindow(),
                         "No saved game found.",
                         "Resume",
                         JOptionPane.WARNING_MESSAGE
@@ -59,13 +32,11 @@ public class MenuController {
             }
         });
 
-        menu.addExitListener(e -> {
+        myMenu.addExitListener(e -> {
             System.out.println("Application Closed.");
             System.exit(0);
         });
 
-        menu.addSettingsListener(e -> {
-            MainGUI.switchView(MainGUI.settingsView);
-        });
+        myMenu.addSettingsListener(e -> myApp.showSettings());
     }
 }

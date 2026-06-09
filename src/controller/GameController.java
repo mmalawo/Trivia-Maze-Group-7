@@ -14,33 +14,25 @@ public class GameController {
 
     private final Maze myMaze;
     private final Player myPlayer;
+    private final JFrame myWindow;
+    private final AppController myApp;
     private MazeView myMazeView;
-    private GameMenuView myMenu;
 
     private boolean myGameFinished = false;
-
-    /**
-     * Constructor for game menu setup (called before maze is created).
-     *
-     * @param theMenu   the game menu view
-     * @param thePlayer the player model
-     */
-    public GameController(GameMenuView theMenu, Player thePlayer) {
-        this.myMenu = theMenu;
-        this.myPlayer = thePlayer;
-        this.myMaze = null;
-        addMenuListeners();
-    }
 
     /**
      * Constructor used for active gameplay with maze and player references.
      *
      * @param theMaze   the maze model
      * @param thePlayer the player model
+     * @param theWindow the application window used as dialog owner
+     * @param theApp    the app controller used for app-level navigation
      */
-    public GameController(Maze theMaze, Player thePlayer) {
+    public GameController(Maze theMaze, Player thePlayer, JFrame theWindow, AppController theApp) {
         this.myMaze = theMaze;
         this.myPlayer = thePlayer;
+        this.myWindow = theWindow;
+        this.myApp = theApp;
     }
 
     /**
@@ -59,16 +51,6 @@ public class GameController {
         myGameFinished = false;
     }
 
-    private void addMenuListeners() {
-        if (myMenu != null) {
-            myMenu.addPlayListener(e -> System.out.println("Game in progress..."));
-        }
-    }
-
-    public static void restartGame() {
-        MainGUI.startNewGame();
-        System.out.println("Game restarted.");
-    }
 
     // =====================================================
     // MOVEMENT
@@ -98,7 +80,7 @@ public class GameController {
 
         if (!isValidMove(theDirection, playerRow, playerCol) && !isExitDoor) {
             JOptionPane.showMessageDialog(
-                    MainGUI.getWindow(),
+                    myWindow,
                     "That door leads nowhere! Try a different door.",
                     "Dead End",
                     JOptionPane.WARNING_MESSAGE
@@ -122,7 +104,7 @@ public class GameController {
 
         if (door.isPermanentlyClosed()) {
             JOptionPane.showMessageDialog(
-                    MainGUI.getWindow(),
+                    myWindow,
                     "This door is permanently locked!",
                     "Blocked",
                     JOptionPane.ERROR_MESSAGE
@@ -159,7 +141,7 @@ public class GameController {
 
         if (q == null) return;
 
-        TriviaPopup popup = new TriviaPopup(q);
+        TriviaPopup popup = new TriviaPopup(myWindow, q);
         popup.setVisible(true);
 
         String playerAnswer = popup.getPlayerAnswer();
@@ -177,7 +159,7 @@ public class GameController {
             myMazeView.movePlayer(theNewRow, theNewCol);
 
             JOptionPane.showMessageDialog(
-                    MainGUI.getWindow(),
+                    myWindow,
                     "Correct! Door unlocked!",
                     "Result",
                     JOptionPane.INFORMATION_MESSAGE
@@ -190,7 +172,7 @@ public class GameController {
                     : "Wrong! " + theDoor.getAttemptsRemaining() + " attempt(s) remaining.";
 
             JOptionPane.showMessageDialog(
-                    MainGUI.getWindow(),
+                    myWindow,
                     attemptsMsg,
                     "Result",
                     JOptionPane.ERROR_MESSAGE
@@ -363,13 +345,13 @@ public class GameController {
 
         // Delete save file — game is complete, Resume should no longer show
         SaveManager.deleteSaveFile();
-        MainGUI.hasSaved = false;
+        myApp.markGameNoLongerSaved();
 
         LeaderboardDAO leaderboardDAO = new LeaderboardDAO();
         leaderboardDAO.saveScore(myPlayer);
 
         JOptionPane.showMessageDialog(
-                MainGUI.getWindow(),
+                myWindow,
                 "You reached the exit!\nTime: " +
                         formatTime(myPlayer.getRecordTime()) +
                         "\nCorrect answers: " + myPlayer.getCorrectScore() +
@@ -379,7 +361,7 @@ public class GameController {
                 JOptionPane.INFORMATION_MESSAGE
         );
 
-        LeaderboardView.showLeaderboard();
+        LeaderboardView.showLeaderboard(myWindow);
     }
 
     /**
@@ -396,12 +378,12 @@ public class GameController {
 
         // Delete save file — game is over, Resume should no longer show
         SaveManager.deleteSaveFile();
-        MainGUI.hasSaved = false;
+        myApp.markGameNoLongerSaved();
 
         Object[] options = {"Main Menu", "Exit Game"};
 
         int choice = JOptionPane.showOptionDialog(
-                MainGUI.getWindow(),
+                myWindow,
                 theMessage,
                 "Game Over",
                 JOptionPane.YES_NO_OPTION,
@@ -412,8 +394,7 @@ public class GameController {
         );
 
         if (choice == JOptionPane.YES_OPTION) {
-            MainGUI.startNewGame();
-            MainGUI.switchView(MainGUI.menuView);
+            myApp.returnToMainMenuAfterGame();
         } else {
             System.exit(0);
         }
@@ -456,7 +437,7 @@ public class GameController {
         }
 
         JOptionPane.showMessageDialog(
-                MainGUI.getWindow(),
+                myWindow,
                 hint.toString(),
                 "Hint",
                 JOptionPane.INFORMATION_MESSAGE

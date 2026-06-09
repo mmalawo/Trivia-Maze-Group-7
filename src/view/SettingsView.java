@@ -195,7 +195,7 @@ public class SettingsView extends JPanel {
             MazeView.westDoorImage = new ImageIcon("src/images/NightWestUnlockedHedge.png");
 
 
-            MainGUI.setupView.updateCharacter();
+            // Character preview updates when the setup view controller changes avatars.
         } else {
             ImageIcon dayGrass = new ImageIcon("src/images/DayGrass.png");
             MazeView.mazeGrass = dayGrass.getImage();
@@ -207,7 +207,7 @@ public class SettingsView extends JPanel {
 
             MazeView.northDoorImage = new ImageIcon("src/images/NorthDoorUnlocked.png");
 
-            MainGUI.setupView.updateCharacter();
+            // Character preview updates when the setup view controller changes avatars.
         }
 
 

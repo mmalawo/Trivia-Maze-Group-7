@@ -15,7 +15,7 @@ public class PlayerSetupView extends JPanel{
     public static Image setupViewBackground;
     private final JButton backToMenu;
     private final JButton nextToGame;
-    public final JTextField namePrompt;
+    private final JTextField namePrompt;
     private final JLabel nameLabel;
 
     private final JButton nextSlide;
@@ -86,10 +86,7 @@ public class PlayerSetupView extends JPanel{
         namePrompt.getDocument().addDocumentListener(new DocumentListener() {
 
             private void updateName() {
-                String name = namePrompt.getText();
-                MainGUI.player.setName(name);
-
-                System.out.println(MainGUI.player.getName());
+                System.out.println(namePrompt.getText());
             }
 
             @Override
@@ -124,7 +121,7 @@ public class PlayerSetupView extends JPanel{
         butterflyIcon.setBounds((int)(screenWidth/2 - (screenWidth/9.6)),(int)(screenHeight/2-(screenHeight/2.7)),400,400);
 
 
-        updateCharacter();
+        updateCharacter(false);
         add(butterflyIcon);
         Timer butterflyAnimation = new Timer(300, new ActionListener() {
             private boolean toggle = false;
@@ -200,6 +197,18 @@ public class PlayerSetupView extends JPanel{
         g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/19.2)),(int)(screenHeight/2 + (screenHeight/5.68)), 200, 50, 20,20);
     }
 
+    public String getEnteredName() {
+        return namePrompt.getText().trim();
+    }
+
+    public void nextCharacter() {
+        setSlide(slide + 1);
+    }
+
+    public void previousCharacter() {
+        setSlide(slide - 1);
+    }
+
     public static int getSlide() {
         return slide;
     }
@@ -221,8 +230,8 @@ public class PlayerSetupView extends JPanel{
         nextSlide.addActionListener(theListener);
     }
 
-    public void updateCharacter() {
-        if(MainGUI.settingsView.isDarkModeSelected()) {
+    public void updateCharacter(boolean theDarkModeSelected) {
+        if(theDarkModeSelected) {
             if (slide == 1) {
                 character1 = new ImageIcon("src/images/NightMagentaFlap.png");
                 character2 = new ImageIcon("src/images/NightMagentaUnflap.png");

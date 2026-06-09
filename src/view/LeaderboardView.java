@@ -9,15 +9,15 @@ import java.util.List;
 
 /**
  * LeaderboardView displays the top scores in a dialog window.
- * After viewing, the player can return to the main menu.
+ * It does not control app navigation; controllers decide what happens after it closes.
  */
 public class LeaderboardView {
 
-    /**
-     * Displays the leaderboard in a modal dialog.
-     * After closing, navigates back to the main menu.
-     */
     public static void showLeaderboard() {
+        showLeaderboard(null);
+    }
+
+    public static void showLeaderboard(Component theOwner) {
         LeaderboardDAO dao = new LeaderboardDAO();
         List<LeaderboardEntry> scores = dao.getTopScores();
 
@@ -47,42 +47,24 @@ public class LeaderboardView {
         table.setFocusable(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
+        JButton closeButton = new JButton("Close");
 
-        // Main Menu button
-        JButton mainMenuButton = new JButton("Main Menu");
-
-        JDialog dialog = new JDialog(MainGUI.getWindow(), "Leaderboard", true);
+        JDialog dialog = new JDialog(
+                SwingUtilities.getWindowAncestor(theOwner),
+                "Leaderboard",
+                Dialog.ModalityType.APPLICATION_MODAL
+        );
         dialog.setSize(600, 450);
         dialog.setLayout(new BorderLayout());
         dialog.add(scrollPane, BorderLayout.CENTER);
-        dialog.add(mainMenuButton, BorderLayout.SOUTH);
-        dialog.setLocationRelativeTo(MainGUI.getWindow());
+        dialog.add(closeButton, BorderLayout.SOUTH);
+        dialog.setLocationRelativeTo(theOwner);
 
-        // When Main Menu is clicked, close dialog and go to main menu
-        mainMenuButton.addActionListener(e -> {
-            dialog.dispose();
-            MainGUI.startNewGame();
-            MainGUI.switchView(MainGUI.menuView);
-        });
-
-        // If player closes dialog via X button, also go to main menu
-        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                MainGUI.startNewGame();
-                MainGUI.switchView(MainGUI.menuView);
-            }
-        });
+        closeButton.addActionListener(e -> dialog.dispose());
 
         dialog.setVisible(true);
     }
 
-    /**
-     * Formats a time in seconds into a human-readable string.
-     *
-     * @param theTimeSeconds the time in seconds
-     * @return a formatted string like "2 min 05 sec"
-     */
     private static String formatTime(double theTimeSeconds) {
         int totalSeconds = (int) Math.round(theTimeSeconds);
         int minutes = totalSeconds / 60;

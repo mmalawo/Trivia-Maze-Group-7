@@ -43,6 +43,7 @@ public class MazeView extends JPanel {
     public static ImageIcon character2;
 
     private final Maze myMaze;
+    private final Player myPlayer;
     private GameController myController;
 
     private float camX;
@@ -71,12 +72,13 @@ public class MazeView extends JPanel {
 
     public static JLabel timerLabel;
 
-    public MazeView(Maze theMaze, GameController theController) {
+    public MazeView(Maze theMaze, Player thePlayer, GameController theController) {
         this.myMaze = theMaze;
+        this.myPlayer = thePlayer;
         this.myController = theController;
 
         // Find player starting position
-        int[] startPos = myMaze.findRoom(MainGUI.player.getCurrentRoom());
+        int[] startPos = myMaze.findRoom(myPlayer.getCurrentRoom());
         playerRow = startPos[0];
         playerCol = startPos[1];
 
@@ -163,7 +165,7 @@ public class MazeView extends JPanel {
         Room currentRoom = myMaze.getRoom(playerRow, playerCol);
         currentRoom.setVisited(true);
 
-        MainGUI.player.setCurrentRoom(currentRoom);
+        myPlayer.setCurrentRoom(currentRoom);
 
         coordLabel.setText(getRoomInfo());
 
