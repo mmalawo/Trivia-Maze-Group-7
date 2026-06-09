@@ -51,8 +51,11 @@ public class SettingsController {
             window.setVisible(true);
         });
 
-        mySettingsMenu.addDarkModeListener(e ->
-                mySettingsMenu.setDarkMode(mySettingsMenu.isDarkModeSelected()));
+        mySettingsMenu.addDarkModeListener(e -> {
+            boolean darkModeSelected = mySettingsMenu.isDarkModeSelected();
+            mySettingsMenu.setDarkMode(darkModeSelected);
+            myApp.applyDarkMode(darkModeSelected);
+        });
 
         mySettingsMenu.addVolumeListener(e -> {
             int volume = mySettingsMenu.getVolumeValue();

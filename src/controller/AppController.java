@@ -35,7 +35,7 @@ public class AppController {
 
         mySoundManager = new SoundManager();
         String[] songs = {
-                "src/sounds/HELL IN HEAVEN.wav",
+                "src/sounds/peaceful violin music.wav",
                 "src/sounds/we makin it outta unova with this one.wav"
         };
         mySoundManager.loadPlaylist(songs);
@@ -99,6 +99,13 @@ public class AppController {
         myMazeView = new MazeView(myMaze, myPlayer, myGameController);
         myGameController.setMazeView(myMazeView);
 
+        boolean darkModeSelected = mySettingsView != null && mySettingsView.isDarkModeSelected();
+        myMazeView.setDarkMode(darkModeSelected);
+
+        if (mySetupView != null) {
+            mySetupView.reset(darkModeSelected);
+        }
+
         myHasSaved = false;
         SaveManager.deleteSaveFile();
         myPanelHistory.clear();
@@ -121,6 +128,10 @@ public class AppController {
     }
 
     public void startGameplay() {
+        myMazeView.setPlayerSprites(
+                mySetupView.getCurrentFlapIcon(),
+                mySetupView.getCurrentUnflapIcon()
+        );
         myPlayer.startTimer();
         switchView(myMazeView);
         startTimerDisplayLoop();
@@ -196,6 +207,14 @@ public class AppController {
 
     public SettingsView getSettingsView() {
         return mySettingsView;
+    }
+
+    public void applyDarkMode(boolean theDarkModeSelected) {
+        myMenuView.setDarkMode(theDarkModeSelected);
+        mySetupView.setDarkMode(theDarkModeSelected);
+        if (myMazeView != null) {
+            myMazeView.setDarkMode(theDarkModeSelected);
+        }
     }
 
     public JFrame getWindow() {

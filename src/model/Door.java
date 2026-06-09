@@ -68,7 +68,7 @@ public class Door implements Serializable {
     public boolean attemptAnswer(String theAnswer) {
         if (isPermanentlyClosed) return false;
 
-        if (myQuestion != null && theAnswer.toUpperCase().startsWith(myQuestion.getCorrectAnswer().toUpperCase())) {
+        if (myQuestion != null && isCorrectAnswer(theAnswer)) {
             isLocked = false;
             return true;
         }
@@ -88,6 +88,21 @@ public class Door implements Serializable {
         }
 
         return false;
+    }
+
+    private boolean isCorrectAnswer(String theAnswer) {
+        if (theAnswer == null || myQuestion == null || myQuestion.getCorrectAnswer() == null) {
+            return false;
+        }
+
+        String playerAnswer = theAnswer.trim().toUpperCase();
+        String correctAnswer = myQuestion.getCorrectAnswer().trim().toUpperCase();
+
+        if (myQuestion instanceof ShortAnswerQuestion) {
+            return playerAnswer.equals(correctAnswer);
+        }
+
+        return playerAnswer.startsWith(correctAnswer);
     }
 
     public void reset() {
