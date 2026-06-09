@@ -8,7 +8,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-
+/**
+ * Represents the main menu view of the game.
+ * Displays the background image and menu buttons for
+ * playing, resuming, accessing settings, and exiting the game.
+ */
 public class GameMenuView extends JPanel {
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -34,6 +38,10 @@ public class GameMenuView extends JPanel {
     private int settingsY;
     private int exitY;
 
+    /**
+     * Constructs the game menu view and initializes all menu buttons,
+     * layout settings, and background image.
+     */
     public GameMenuView() {
         this.setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
 
@@ -152,18 +160,39 @@ public class GameMenuView extends JPanel {
         g2.fillRoundRect(button.getX(), button.getY(), button.getWidth(), button.getHeight(), 20, 20);
     }
 
+    /**
+     * Adds a listener to the Exit Game button.
+     *
+     * @param theListener the listener to add
+     */
     public void addExitListener(ActionListener theListener) {
         exitButton.addActionListener(theListener);
     }
 
+    /**
+     * Adds a listener to the Settings button.
+     *
+     * @param theListener the listener to add
+     */
     public void addSettingsListener(ActionListener theListener) {
         settingsButton.addActionListener(theListener);
     }
 
+
+    /**
+     * Adds a listener to the Play Game button.
+     *
+     * @param theListener the listener to add
+     */
     public void addPlayListener(ActionListener theListener) {
         playButton.addActionListener(theListener);
     }
 
+    /**
+     * Adds a listener to the Resume button.
+     *
+     * @param theListener the listener to add
+     */
     public void addResumeListener(ActionListener theListener) {
         resumeButton.addActionListener(theListener);
     }

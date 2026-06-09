@@ -4,8 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Utility class responsible for generating a new maze for the game.
+ *
+ * <p>The generated maze contains interconnected rooms, a central
+ * entrance, and a randomly selected exit door located on the
+ * perimeter of the maze.</p>
+ */
 public class GenerateMaze {
 
+    /**
+     * Generates and initializes a new maze.
+     *
+     * <p>This method creates all rooms, links shared doors between
+     * adjacent rooms, sets the entrance at the center of the maze,
+     * randomly selects an exit door along the maze perimeter, and
+     * resets the question pool for a new game.</p>
+     *
+     * @return a fully initialized maze
+     */
     public static Maze generateMaze() {
         // Reset question pool so each new game gets a fresh random set of questions
         QuestionDAO.resetUsedQuestions();

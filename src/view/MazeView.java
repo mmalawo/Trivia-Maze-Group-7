@@ -72,6 +72,15 @@ public class MazeView extends JPanel {
 
     private JLabel timerLabel;
 
+
+    /**
+     * Constructs a maze view and initializes rendering, animations,
+     * camera settings, UI components, and player positioning.
+     *
+     * @param theMaze the maze being displayed
+     * @param thePlayer the player navigating the maze
+     * @param theController the controller handling game actions
+     */
     public MazeView(Maze theMaze, Player thePlayer, GameController theController) {
         this.myMaze = theMaze;
         this.myPlayer = thePlayer;
@@ -177,13 +186,21 @@ public class MazeView extends JPanel {
     // =====================================================
     // ANIMATION
     // =====================================================
-
+    /**
+     * Smoothly updates the rendered player position to create
+     * movement animation between maze rooms.
+     */
     private void updatePlayerAnimation() {
         float speed = 0.02f;
         renderRow += (playerRow - renderRow) * speed;
         renderCol += (playerCol - renderCol) * speed;
     }
 
+    /**
+     * Returns the panel used to represent the player.
+     *
+     * @return the player panel
+     */
     public JPanel getPlayerPanel() {
         return playerPanel;
     }
@@ -192,16 +209,35 @@ public class MazeView extends JPanel {
     // SCALING
     // =====================================================
 
+    /**
+     * Calculates the UI scale factor based on the current window size
+     * relative to the original design resolution.
+     *
+     * @return the current UI scale factor
+     */
     private double getUIScale() {
         double scaleX = getWidth() / BASE_WIDTH;
         double scaleY = getHeight() / BASE_HEIGHT;
         return Math.min(scaleX, scaleY);
     }
 
+    /**
+     * Calculates the world rendering scale used for rooms,
+     * doors, and player sprites.
+     *
+     * @return the world scale factor
+     */
     private double getWorldScale() {
         return getUIScale() * scale;
     }
 
+    /**
+     * Scales a coordinate or dimension value according to
+     * the current world scale.
+     *
+     * @param value the value to scale
+     * @return the scaled value as an integer
+     */
     private int scaled(double value) {
         return (int)(value * getWorldScale());
     }
@@ -210,6 +246,12 @@ public class MazeView extends JPanel {
     // ROOM INFO
     // =====================================================
 
+    /**
+     * Builds a string containing the current room coordinates
+     * and door status information.
+     *
+     * @return formatted room information string
+     */
     private String getRoomInfo() {
         Room r = myMaze.getRoom(playerRow, playerCol);
         return "(" + playerCol + "," + playerRow + ") | " +
@@ -223,6 +265,10 @@ public class MazeView extends JPanel {
     // BUTTONS
     // =====================================================
 
+    /**
+     * Creates and configures the movement and hint buttons
+     * displayed on the maze screen.
+     */
     private void setupButtons() {
         JButton hintButton = new JButton("Hint");
         hintButton.setBounds(50, 120, 100, 40);
@@ -306,6 +352,10 @@ public class MazeView extends JPanel {
     // CAMERA
     // =====================================================
 
+    /**
+     * Updates the camera position to smoothly follow the player
+     * as they move through the maze.
+     */
     private void updateCamera() {
         int stepX = scaled(770);
         int stepY = scaled(500);
@@ -329,6 +379,12 @@ public class MazeView extends JPanel {
     // PAINTING
     // =====================================================
 
+    /**
+     * Renders the maze background, rooms, doors, player,
+     * and interface elements.
+     *
+     * @param g the graphics context used for drawing
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -404,6 +460,16 @@ public class MazeView extends JPanel {
         g2.dispose();
     }
 
+    /**
+     * Draws a sprite image at the specified screen position.
+     *
+     * @param g the graphics context
+     * @param sprite the sprite image to draw
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param windowWidth the sprite width before scaling
+     * @param windowHeight the sprite height before scaling
+     */
     private void drawSprite(Graphics g, ImageIcon sprite, int x, int y,
                             int windowWidth, int windowHeight) {
         int spriteWidth = scaled(windowWidth);
@@ -411,6 +477,17 @@ public class MazeView extends JPanel {
         g.drawImage(sprite.getImage(), x, y, spriteWidth, spriteHeight, this);
     }
 
+    /**
+     * Draws a door image based on its direction and current state.
+     *
+     * @param g2 the graphics context
+     * @param door the door to render
+     * @param direction the door direction (north, south, east, west)
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param w the door width
+     * @param h the door height
+     */
     private void drawDoor(Graphics2D g2, Door door, String direction,
                           int x, int y, int w, int h) {
         ImageIcon doorIcon;
@@ -431,6 +508,26 @@ public class MazeView extends JPanel {
         g2.drawImage(doorIcon.getImage(), x, y, w, h, this);
     }
 
+    /**
+     * Draws a room and its associated doors at the correct
+     * screen position.
+     *
+     * @param g the graphics context
+     * @param g2 the graphics2D context
+     * @param room the room to draw
+     * @param rowIndex the room row index
+     * @param colIndex the room column index
+     * @param panelWidth the panel width
+     * @param panelHeight the panel height
+     * @param stepX horizontal room spacing
+     * @param stepY vertical room spacing
+     * @param centerRow maze center row
+     * @param centerCol maze center column
+     * @param roomW room width
+     * @param roomH room height
+     * @param doorWidth door width
+     * @param doorHeight door height
+     */
     private void drawRoom(Graphics g, Graphics2D g2, Room room,
                           int rowIndex, int colIndex,
                           int panelWidth, int panelHeight,
@@ -471,6 +568,10 @@ public class MazeView extends JPanel {
     // RESET METHODS
     // =====================================================
 
+    /**
+     * Marks all rooms as unvisited except for the player's
+     * current room and refreshes the display.
+     */
     public void resetVisitedRooms() {
         for (int r = 0; r < myMaze.getRows(); r++) {
             for (int c = 0; c < myMaze.getCols(); c++) {
@@ -481,6 +582,10 @@ public class MazeView extends JPanel {
         repaint();
     }
 
+    /**
+     * Returns the player to the starting room and resets
+     * camera and animation positions.
+     */
     public void resetPlayer() {
         playerRow = startRow;
         playerCol = startCol;
@@ -493,6 +598,9 @@ public class MazeView extends JPanel {
         repaint();
     }
 
+    /**
+     * Restores all maze doors to their initial state.
+     */
     public void resetDoors() {
         for (int r = 0; r < myMaze.getRows(); r++) {
             for (int c = 0; c < myMaze.getCols(); c++) {
@@ -505,6 +613,10 @@ public class MazeView extends JPanel {
         }
     }
 
+    /**
+     * Fully resets the maze, player position, room visitation
+     * state, doors, and camera settings.
+     */
     public void resetGame() {
         for (int r = 0; r < myMaze.getRows(); r++) {
             for (int c = 0; c < myMaze.getCols(); c++) {
@@ -557,6 +669,9 @@ public class MazeView extends JPanel {
     // TIMER
     // =====================================================
 
+    /**
+     * Creates and displays the game timer label.
+     */
     public void addTimer() {
         timerLabel = new JLabel("Time: 0");
         timerLabel.setBounds(50, 50, 200, 40);
@@ -565,6 +680,11 @@ public class MazeView extends JPanel {
         this.add(timerLabel);
     }
 
+    /**
+     * Updates the timer display using the elapsed game time.
+     *
+     * @param time the elapsed time in seconds
+     */
     public void updateTimer(double time) {
         int totalSeconds = (int) time;
         int hours = totalSeconds / 3600;

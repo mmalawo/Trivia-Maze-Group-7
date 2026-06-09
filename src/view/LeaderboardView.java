@@ -13,10 +13,20 @@ import java.util.List;
  */
 public class LeaderboardView {
 
+    /**
+     * Displays the leaderboard dialog with no specific owner component.
+     * The dialog will be centered on the screen.
+     */
     public static void showLeaderboard() {
         showLeaderboard(null);
     }
 
+    /**
+     * Displays the leaderboard dialog showing the top recorded scores.
+     * The dialog is positioned relative to the specified owner component.
+     *
+     * @param theOwner the component relative to which the dialog is displayed.
+     */
     public static void showLeaderboard(Component theOwner) {
         LeaderboardDAO dao = new LeaderboardDAO();
         List<LeaderboardEntry> scores = dao.getTopScores();
@@ -65,6 +75,13 @@ public class LeaderboardView {
         dialog.setVisible(true);
     }
 
+    /**
+     * Converts a time value in seconds into a formatted string
+     * showing minutes and seconds.
+     *
+     * @param theTimeSeconds the elapsed time in seconds
+     * @return a formatted time string in the form "X min YY sec"
+     */
     private static String formatTime(double theTimeSeconds) {
         int totalSeconds = (int) Math.round(theTimeSeconds);
         int minutes = totalSeconds / 60;
