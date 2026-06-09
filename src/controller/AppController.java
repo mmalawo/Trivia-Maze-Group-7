@@ -42,7 +42,7 @@ public class AppController {
 
         mySoundManager = new SoundManager();
         String[] songs = {
-                "src/sounds/HELL IN HEAVEN.wav",
+                "src/sounds/peaceful violin music.wav",
                 "src/sounds/we makin it outta unova with this one.wav"
         };
         mySoundManager.loadPlaylist(songs);
@@ -131,8 +131,11 @@ public class AppController {
         SaveManager.deleteSaveFile();
         myPanelHistory.clear();
 
-        if(mySetupView != null) {
-            mySetupView.reset(mySettingsView.isDarkModeSelected());
+        boolean darkModeSelected = mySettingsView != null && mySettingsView.isDarkModeSelected();
+        myMazeView.setDarkMode(darkModeSelected);
+
+        if (mySetupView != null) {
+            mySetupView.reset(darkModeSelected);
         }
 
         System.out.println("Started a new game.");
@@ -165,6 +168,10 @@ public class AppController {
      * Starts gameplay and begins updating the game timer display.
      */
     public void startGameplay() {
+        myMazeView.setPlayerSprites(
+                mySetupView.getCurrentFlapIcon(),
+                mySetupView.getCurrentUnflapIcon()
+        );
         myPlayer.startTimer();
         switchView(myMazeView);
         startTimerDisplayLoop();
@@ -273,12 +280,31 @@ public class AppController {
         return mySettingsView;
     }
 
+  /**
+   * Returns the player setup view.
+   *
+   * @return the player setup view
+   */
+    public PlayerSetupView getPlayerSetupView() {
+        return mySetupView;
+    }
+
     /**
-     * Returns the player setup view.
+     * Applies the selected dark mode setting to all applicable views.
      *
-     * @return the player setup view
-     */
-    public PlayerSetupView getPlayerSetupView() { return mySetupView; }
+     * <p>Updates the main menu, player setup screen, and maze view
+    * (if it has been created) to use either the dark or light theme.</p>
+     *
+    * @param theDarkModeSelected {@code true} to enable dark mode;
+    *                            {@code false} to enable light mode
+    */
+    public void applyDarkMode(final boolean theDarkModeSelected) {
+        myMenuView.setDarkMode(theDarkModeSelected);
+        mySetupView.setDarkMode(theDarkModeSelected);
+        if (myMazeView != null) {
+            myMazeView.setDarkMode(theDarkModeSelected);
+        }
+    }
 
     /**
      * Returns the application's main window.

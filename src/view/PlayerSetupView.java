@@ -1,9 +1,6 @@
 package view;
 
-import model.Player;
-
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.*;
@@ -17,7 +14,7 @@ import javax.swing.event.DocumentListener;
  */
 public class PlayerSetupView extends JPanel{
     private final JPanel playerPanel;
-    public static Image setupViewBackground;
+    private Image setupViewBackground;
     private final JButton backToMenu;
     private final JButton nextToGame;
     private final JTextField namePrompt;
@@ -26,11 +23,11 @@ public class PlayerSetupView extends JPanel{
     private final JButton nextSlide;
     private final JButton prevSlide;
 
-    public static ImageIcon character1;
-    public static ImageIcon character2;
+    private ImageIcon character1;
+    private ImageIcon character2;
 
-
-    public static int slide = 1;
+    private int slide = 1;
+    private boolean darkModeSelected;
     private Timer butterflyAnimation;
     private JLabel butterflyIcon;
 
@@ -237,34 +234,69 @@ public class PlayerSetupView extends JPanel{
         setSlide(slide - 1);
     }
 
-    /**
-     * Returns the currently selected avatar slide number.
-     *
-     * @return the current slide number
-     */
-    public static int getSlide() {
+  /**
+   * Returns the currently selected avatar slide number.
+   *
+   * @return the current slide number
+   */
+    public int getSlide() {
         return slide;
     }
 
-    /**
-     * Sets the currently selected avatar slide.
-     * Only values between 1 and 3 are accepted.
-     *
-     * @param n the slide number to display
-     */
-    public static void setSlide(int n) {
-        if (n < 1 || n > 3) {
-            return;
-        } else {
+  /**
+   * Sets the current avatar slide number if it is within
+   * the valid range of available slides.
+   *
+   * @param n the slide number to select
+   */
+    private void setSlide(int n) {
+        if (n >= 1 && n <= 3) {
             slide = n;
         }
     }
+  
+   /**
+    * Returns the currently displayed butterfly flap animation icon.
+    *
+    * @return the flap animation icon
+    */
+    public ImageIcon getCurrentFlapIcon() {
+        return character1;
+    }
 
-    /**
-     * Adds a listener to the Back button.
-     *
-     * @param theListener the listener to invoke when the button is clicked
-     */
+   /**
+    * Returns the currently displayed butterfly unflap animation icon.
+    *
+    * @return the unflap animation icon
+    */
+    public ImageIcon getCurrentUnflapIcon() {
+        return character2;
+    }
+
+   /**
+    * Applies the selected theme to the player setup screen.
+    *
+    * <p>Updates the background image, refreshes the character
+    * preview images, and repaints the view.</p>
+    *
+    * @param theDarkModeSelected {@code true} to enable dark mode;
+    *                            {@code false} to enable light mode
+    */
+    public void setDarkMode(boolean theDarkModeSelected) {
+        darkModeSelected = theDarkModeSelected;
+        String backgroundPath = darkModeSelected
+                ? "src/images/Night-PlayerSetup.png"
+                : "src/images/Day-PlayerSetup.png";
+        setupViewBackground = new ImageIcon(backgroundPath).getImage();
+        updateCharacter(darkModeSelected);
+        repaint();
+    }
+    
+   /**
+    * Registers a listener for the Back button.
+    *
+    * @param theListener the listener to invoke when the Back button is clicked
+    */
     public void addBackListener(ActionListener theListener) {
         backToMenu.addActionListener(theListener);
     }
@@ -322,27 +354,27 @@ public class PlayerSetupView extends JPanel{
         }
     }
 
-    /**
-     * Adds a listener to the Previous Avatar button.
-     *
-     * @param theListener the listener to invoke when the button is clicked
-     */
+   /**
+    * Adds a listener to the Previous Avatar button.
+    *
+    * @param theListener the listener to invoke when the button is clicked
+    */
     public void addPrevListener(ActionListener theListener) {
         prevSlide.addActionListener(theListener);
     }
-
-    /**
-     * Resets the player setup screen to its default state,
-     * clearing the entered name and restoring the first avatar.
-     *
-     * @param darkMode true if dark mode character assets should be displayed;
-     *                 false otherwise
-     */
-    public void reset(boolean darkMode) {
+   /**
+    * Resets the player setup screen to its default state.
+    *
+    * <p>Clears the entered player name, resets the avatar
+    * selection to the first slide, and applies the specified
+    * theme.</p>
+    *
+    * @param theDarkModeSelected {@code true} to apply dark mode;
+    *                            {@code false} to apply light mode
+    */
+    public void reset(boolean theDarkModeSelected) {
         namePrompt.setText("");
         slide = 1;
-        updateCharacter(darkMode);
-        repaint();
+        setDarkMode(theDarkModeSelected);
     }
-
 }
