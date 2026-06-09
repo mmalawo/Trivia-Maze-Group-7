@@ -2,7 +2,6 @@
 A trivia-based maze game built in Java
 
 Members:
------------------------
 Angelina Christianson
 Makani Malawo
 Tifanie Ngo
@@ -17,7 +16,7 @@ Java JDK 17 or higher
 
 IntelliJ IDEA (recommended)
 
-SQLite JDBC driver (sqlite-jdbc-3.34.0.jar) — included in the lib/ folder
+SQLite JDBC driver (sqlite-jdbc-3.53.1.0.jar) — included in the lib/ folder
 
 -----------------------
 **How to Run**
@@ -230,7 +229,7 @@ _Iteration Five:_
 
 - Fixed pre-unlocked door bug
 
-- Implemented 3 attempts system with permanent lock
+- Implemented 3 attempts system with permanent lock (initially - now 2 attempts)
 
 - Fixed question randomization
 
@@ -277,3 +276,45 @@ _Iteration Six:_
 - Added more trivia questions to database
 
 -----------------------
+## Software Architecture
+
+The project follows the Model-View-Controller (MVC) design pattern.
+
+### Model
+- Maze
+- Room
+- Door
+- Player
+- Question hierarchy
+- DatabaseManager
+- SaveManager
+
+### View
+- MainGUI
+- MazeView
+- GameMenuView
+- PlayerSetupView
+- InstructionsView
+- SettingsView
+- LeaderboardView
+
+### Controller
+- AppController
+- GameController
+- MenuController
+- PlayerController
+- SettingsController
+
+Controllers handle user input, update model state, and refresh the appropriate views.
+
+-----------------------
+### Design Patterns
+
+Factory Pattern:
+- QuestionFactory creates the appropriate Question subclass
+    - MultipleChoiceQuestion
+    - TrueFalseQuestion
+    - ShortAnswerQuestion
+
+Memento Pattern:
+- SaveManager and Memento support game state serialization and restoration.
