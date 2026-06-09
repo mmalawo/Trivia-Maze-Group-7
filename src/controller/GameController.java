@@ -51,7 +51,6 @@ public class GameController {
         myGameFinished = false;
     }
 
-
     // =====================================================
     // MOVEMENT
     // =====================================================
@@ -85,6 +84,10 @@ public class GameController {
                     "Dead End",
                     JOptionPane.WARNING_MESSAGE
             );
+            // Mark door as permanently closed so it disappears visually
+            if (potentialDoor != null) {
+                potentialDoor.setPermanentlyClosed(true);
+            }
             return;
         }
 
@@ -335,6 +338,7 @@ public class GameController {
 
     /**
      * Triggers the win condition when the player correctly answers the exit door.
+     * Shows win popup, then leaderboard, then "Main Menu / Exit Game" popup.
      */
     public void finishGame() {
         if (myGameFinished) return;
@@ -350,6 +354,7 @@ public class GameController {
         LeaderboardDAO leaderboardDAO = new LeaderboardDAO();
         leaderboardDAO.saveScore(myPlayer);
 
+        // Show win popup
         JOptionPane.showMessageDialog(
                 myWindow,
                 "You reached the exit!\nTime: " +
@@ -361,7 +366,27 @@ public class GameController {
                 JOptionPane.INFORMATION_MESSAGE
         );
 
+        // Show leaderboard — code continues after dialog closes
         LeaderboardView.showLeaderboard(myWindow);
+
+        // After leaderboard closes, show Main Menu / Exit Game popup
+        Object[] options = {"Main Menu", "Exit Game"};
+        int choice = JOptionPane.showOptionDialog(
+                myWindow,
+                "What would you like to do next?",
+                "Game Complete",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (choice == JOptionPane.YES_OPTION) {
+            myApp.returnToMainMenuAfterGame();
+        } else {
+            System.exit(0);
+        }
     }
 
     /**
