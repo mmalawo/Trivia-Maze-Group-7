@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Trivia-Maze-Group-7:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Trivia_Maze_Group_7_jar</output-path>
+    <root id="archive" name="Trivia-Maze-Group-7.jar">
+      <element id="module-output" name="Trivia-Maze-Group-7" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/lib/sqlite-jdbc-3.53.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
