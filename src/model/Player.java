@@ -12,6 +12,7 @@ public class Player implements Serializable {
     private int myIncorrectScore;
     private long startTime;
     private Room myCurrentRoom;
+    // attempts allowed for current room/door (for question prompts)
     private int myRemainingAttempts;
 
     public String getName() {
