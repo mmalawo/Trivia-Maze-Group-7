@@ -11,7 +11,7 @@ import java.awt.*;
  */
 public class TriviaPopup extends JDialog {
 
-    private String playerAnswer = "";
+    private String myPlayerAnswer = "";
 
     /**
      * Constructs a trivia question dialog and displays the appropriate
@@ -22,11 +22,11 @@ public class TriviaPopup extends JDialog {
      * False buttons are displayed. For other question types, a text
      * field is provided for answer entry.</p>
      *
-     * @param owner the parent window that owns this dialog
-     * @param question the trivia question to display
+     * @param theOwner the parent window that owns this dialog
+     * @param theQuestion the trivia question to display
      */
-    public TriviaPopup(Window owner, Question question) {
-        super(owner, ModalityType.APPLICATION_MODAL);
+    public TriviaPopup(final Window theOwner, final Question theQuestion) {
+        super(theOwner, ModalityType.APPLICATION_MODAL);
         setTitle("Trivia Question");
         setSize(700, 450);
         setLocationRelativeTo(null);
@@ -35,28 +35,28 @@ public class TriviaPopup extends JDialog {
         setResizable(true);
         setAlwaysOnTop(true);
 
-        JLabel questionLabel = new JLabel("<html><p style='width:620px'>" + question.getQuestionText() + "</p></html>");
+        JLabel questionLabel = new JLabel("<html><p style='width:620px'>" + theQuestion.getQuestionText() + "</p></html>");
         questionLabel.setFont(new Font("Arial", Font.BOLD, 16));
         questionLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         add(questionLabel, BorderLayout.NORTH);
 
-        String type = question.getQuestionType();
+        String type = theQuestion.getQuestionType();
 
         if (type.equalsIgnoreCase("multiple choice")) {
             JPanel answersPanel = new JPanel(new GridLayout(2, 2, 10, 10));
             answersPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
             String[] options = {
-                    question.getOptionA(),
-                    question.getOptionB(),
-                    question.getOptionC(),
-                    question.getOptionD()
+                    theQuestion.getOptionA(),
+                    theQuestion.getOptionB(),
+                    theQuestion.getOptionC(),
+                    theQuestion.getOptionD()
             };
             for (String option : options) {
                 if (option != null) {
                     JButton btn = new JButton(option);
                     final String captured = option; // explicitly capture for lambda
                     btn.addActionListener(e -> {
-                        playerAnswer = captured;
+                        myPlayerAnswer = captured;
                         dispose();
                     });
                     answersPanel.add(btn);
@@ -71,7 +71,7 @@ public class TriviaPopup extends JDialog {
                 JButton btn = new JButton(option);
                 final String captured = option; // explicitly capture for lambda
                 btn.addActionListener(e -> {
-                    playerAnswer = captured;
+                    myPlayerAnswer = captured;
                     dispose();
                 });
                 answersPanel.add(btn);
@@ -95,7 +95,7 @@ public class TriviaPopup extends JDialog {
             submitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
             submitBtn.setMaximumSize(new Dimension(200, 40));
             submitBtn.addActionListener(e -> {
-                playerAnswer = textField.getText().trim();
+                myPlayerAnswer = textField.getText().trim();
                 dispose();
             });
 
@@ -115,6 +115,6 @@ public class TriviaPopup extends JDialog {
      *         if no answer has been provided
      */
     public String getPlayerAnswer() {
-        return playerAnswer;
+        return myPlayerAnswer;
     }
 }

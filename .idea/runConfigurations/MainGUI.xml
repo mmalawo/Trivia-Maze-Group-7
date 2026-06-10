@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MainGUI" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="view.MainGUI" />
+    <module name="Trivia-Maze-Group-7" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

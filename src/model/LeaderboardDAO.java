@@ -7,30 +7,31 @@ import java.util.List;
 /**
  * Provides database access for leaderboard operations.
  *
- * <p>This class is responsible for storing player scores,
- * retrieving the top leaderboard entries, and managing
- * leaderboard data in the database.</p>
+ * <p>This data access object handles saving player scores, retrieving
+ * the top leaderboard entries, and clearing leaderboard data from the
+ * database.</p>
  */
 public class LeaderboardDAO {
     private final DatabaseManager myDB;
 
     /**
-     * Constructs a LeaderboardDAO and initializes access
-     * to the database manager.
+     * Constructs a leaderboard data access object.
+     *
+     * <p>This initializes access to the shared database manager.</p>
      */
     public LeaderboardDAO() {
         myDB = DatabaseManager.getInstance();
     }
 
     /**
-     * Saves a player's game results to the leaderboard.
+     * Saves a player's game results to the leaderboard table.
      *
-     * <p>If the player does not have a name, the name
-     * "Anonymous" is used instead.</p>
+     * <p>If the player does not have a name, {@code "Anonymous"} is used
+     * as the stored player name.</p>
      *
-     * @param player the player whose score should be saved
+     * @param thePlayer the player whose score should be saved
      */
-    public void saveScore(Player player) {
+    public void saveScore(final Player thePlayer) {
         String sql = "INSERT INTO leaderboard " +
                 "(player_name, time_seconds, correct_score, incorrect_score) " +
                 "VALUES (?, ?, ?, ?)";
@@ -38,15 +39,15 @@ public class LeaderboardDAO {
         try {
             PreparedStatement stmt = myDB.getConnection().prepareStatement(sql);
 
-            String name = player.getName();
+            String name = thePlayer.getName();
             if (name == null || name.isBlank()) {
                 name = "Anonymous";
             }
 
             stmt.setString(1, name);
-            stmt.setDouble(2, player.getRecordTime());
-            stmt.setInt(3, player.getCorrectScore());
-            stmt.setInt(4, player.getIncorrectScore());
+            stmt.setDouble(2, thePlayer.getRecordTime());
+            stmt.setInt(3, thePlayer.getCorrectScore());
+            stmt.setInt(4, thePlayer.getIncorrectScore());
 
             stmt.executeUpdate();
 
@@ -57,8 +58,7 @@ public class LeaderboardDAO {
     }
 
     /**
-     * Retrieves the top leaderboard scores ordered by
-     * completion time in ascending order.
+     * Retrieves the top leaderboard scores ordered by fastest completion time.
      *
      * <p>The result is limited to the ten fastest entries.</p>
      *
@@ -89,21 +89,5 @@ public class LeaderboardDAO {
         }
 
         return scores;
-    }
-
-    /**
-     * Removes all entries from the leaderboard table.
-     */
-    public void clearLeaderboard() {
-        String sql = "DELETE FROM leaderboard";
-
-        try {
-            Statement stmt = myDB.getConnection().createStatement();
-            stmt.executeUpdate(sql);
-
-            System.out.println("Leaderboard cleared.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }

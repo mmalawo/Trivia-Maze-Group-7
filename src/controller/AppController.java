@@ -7,9 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Stack;
 
-/**
- * AppController owns application-level navigation and the currently active model objects.
- * This replaces the old MainGUI public static globals so the program follows MVC more cleanly.
+/** Controls application-level navigation, view switching, and shared game state.
+ *  <p>This controller owns the main application window, manages the active
+ *  player and maze objects, coordinates view transitions, and handles actions
+ *  such as starting, saving, loading, and resetting games.</p>
  */
 public class AppController {
     private final JFrame myWindow;
@@ -30,9 +31,11 @@ public class AppController {
     private boolean myHasSaved;
 
     /**
-     * Constructs the application controller and initializes
-     * the application's views, controllers, sound system,
-     * and starting game state.
+     * Constructs the application controller.
+     *
+     * <p>This initializes the sound system, creates the main views, starts the
+     * initial game state, creates supporting controllers, and displays the main
+     * menu.</p>
      *
      * @param theWindow the main application window
      */
@@ -113,8 +116,11 @@ public class AppController {
     }
 
     /**
-     * Creates a new game by generating a maze, creating a player,
-     * resetting saved-game state, and preparing gameplay controllers.
+     * Starts a new game.
+     *
+     * <p>This stops the timer display loop, generates a new maze, creates a new
+     * player, resets saved-game state, deletes any existing save file, clears the
+     * navigation history, and prepares the maze view and game controller.</p>
      */
     public void startNewGame() {
         stopTimerDisplayLoop();
@@ -138,11 +144,10 @@ public class AppController {
             mySetupView.reset(darkModeSelected);
         }
 
-        System.out.println("Started a new game.");
     }
 
     /**
-     * Displays the player setup screen.
+     * Displays the player setup screen after resetting the game.
      */
     public void showPlayerSetup() {
         startNewGame();
@@ -150,7 +155,7 @@ public class AppController {
     }
 
     /**
-     * Displays the settings screen.
+     * Starts gameplay using the selected player sprites and begins updating the game timer display.
      */
     public void showSettings() {
         switchView(mySettingsView);
@@ -179,6 +184,8 @@ public class AppController {
 
     /**
      * Returns the user to the main menu after a game has ended.
+     *
+     * <p>This resets the game state before displaying the main menu.</p>
      */
     public void returnToMainMenuAfterGame() {
         startNewGame();
@@ -189,7 +196,7 @@ public class AppController {
      * Returns the user to the main menu from a menu-bar action.
      *
      * <p>If the current game contains unsaved progress,
-     * the user is prompted for confirmation.</p>
+     * the user is prompted for confirmation before game state is reset.</p>
      */
     public void returnToMainMenuFromMenuItem() {
         if (myHasSaved) {
@@ -213,6 +220,8 @@ public class AppController {
 
     /**
      * Saves the current game state to disk.
+     *
+     * <p>If the player or maze has not been initialized, no save is performed.</p>
      */
     public void saveGame() {
         if (myPlayer == null || myMaze == null) {
@@ -226,6 +235,9 @@ public class AppController {
 
     /**
      * Loads a previously saved game.
+     *
+     * <p>If a saved game exists, this restores the player and maze, rebuilds the
+     * gameplay controller and maze view, resumes the timer, and displays the maze.</p>
      *
      * @return {@code true} if a saved game was successfully loaded;
      *         {@code false} otherwise
@@ -280,15 +292,6 @@ public class AppController {
         return mySettingsView;
     }
 
-  /**
-   * Returns the player setup view.
-   *
-   * @return the player setup view
-   */
-    public PlayerSetupView getPlayerSetupView() {
-        return mySetupView;
-    }
-
     /**
      * Applies the selected dark mode setting to all applicable views.
      *
@@ -316,8 +319,8 @@ public class AppController {
     }
 
     /**
-     * Starts the timer update loop used to refresh
-     * the displayed game timer.
+     * Starts the timer display loop used to refresh
+     * the game timer once per second.
      */
     private void startTimerDisplayLoop() {
         stopTimerDisplayLoop();
@@ -341,8 +344,11 @@ public class AppController {
     }
 
     /**
-     * Creates and configures the application's menu bar,
-     * including game and help menu actions.
+     * Creates and configures the application's menu bar.
+     *
+     * <p>The menu bar includes actions for returning to the main menu, saving,
+     * loading, exiting, opening settings, viewing the leaderboard, and displaying
+     * help dialogs.</p>
      *
      * @return the configured menu bar
      */
@@ -425,7 +431,7 @@ public class AppController {
                 "About the game:\n\n"
                         + "Created by: Angelina Christianson, Makani Malawo, and Tifanie Ngo\n"
                         + "Course: TCSS 360\n"
-                        + "Version: 2.7\n\n"
+                        + "Version: 1.0\n\n"
                         + "This game is a garden style trivia maze game where you go through\n"
                         + "doors by answering trivia questions correctly.\n",
                 "About",
@@ -436,7 +442,7 @@ public class AppController {
                 myWindow,
                 "How to Play:\n\n"
                         + "Use the buttons on the right side of the screen to traverse through the maze.\n"
-                        + "You have 3 tries per door to get it right. If you fail all 3 tries, the door locks permanently.\n"
+                        + "You have 2 tries per door to get it right. If you fail both tries, the door locks permanently.\n"
                         + "Use the hint button if you can't find the exit!\n\n",
                 "Instructions",
                 JOptionPane.INFORMATION_MESSAGE

@@ -1,29 +1,31 @@
 package model;
 
 /**
- * Represents a single entry in the leaderboard.
- * Each entry stores a player's name, completion time,
- * and trivia performance statistics.
+ * Represents a single leaderboard entry.
+ *
+ * <p>Each entry stores a player's name, completion time, number of correct
+ * answers, and number of incorrect answers.</p>
  */
 public class LeaderboardEntry {
-    private final String playerName;
-    private final double timeSeconds;
-    private final int correctScore;
-    private final int incorrectScore;
+    private final String myPlayerName;
+    private final double myTimeSeconds;
+    private final int myCorrectScore;
+    private final int myIncorrectScore;
 
     /**
      * Constructs a leaderboard entry with the specified player data.
      *
-     * @param playerName the name of the player
-     * @param timeSeconds the completion time in seconds
-     * @param correctScore the number of correctly answered questions
-     * @param incorrectScore the number of incorrectly answered questions
+     * @param thePlayerName the name of the player
+     * @param theTimeSeconds the completion time in seconds
+     * @param theCorrectScore the number of correctly answered questions
+     * @param theIncorrectScore the number of incorrectly answered questions
      */
-    public LeaderboardEntry(String playerName, double timeSeconds, int correctScore, int incorrectScore) {
-        this.playerName = playerName;
-        this.timeSeconds = timeSeconds;
-        this.correctScore = correctScore;
-        this.incorrectScore = incorrectScore;
+    public LeaderboardEntry(final String thePlayerName, final double theTimeSeconds,
+                            final int theCorrectScore, final int theIncorrectScore) {
+        this.myPlayerName = thePlayerName;
+        this.myTimeSeconds = theTimeSeconds;
+        this.myCorrectScore = theCorrectScore;
+        this.myIncorrectScore = theIncorrectScore;
     }
 
     /**
@@ -32,16 +34,16 @@ public class LeaderboardEntry {
      * @return the player name
      */
     public String getPlayerName() {
-        return playerName;
+        return myPlayerName;
     }
 
     /**
      * Returns the player's completion time in seconds.
      *
-     * @return the completion time
+     * @return the completion time in seconds
      */
     public double getTimeSeconds() {
-        return timeSeconds;
+        return myTimeSeconds;
     }
 
     /**
@@ -50,7 +52,7 @@ public class LeaderboardEntry {
      * @return the correct answer count
      */
     public int getCorrectScore() {
-        return correctScore;
+        return myCorrectScore;
     }
 
     /**
@@ -59,6 +61,6 @@ public class LeaderboardEntry {
      * @return the incorrect answer count
      */
     public int getIncorrectScore() {
-        return incorrectScore;
+        return myIncorrectScore;
     }
 }

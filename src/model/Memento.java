@@ -18,12 +18,12 @@ public class Memento implements Serializable {
     /**
      * Constructs a memento containing the specified player and maze state.
      *
-     * @param player the player state to save
-     * @param maze the maze state to save
+     * @param thePlayer the player state to save
+     * @param theMaze the maze state to save
      */
-    public Memento(Player player, Maze maze) {
-        this.player = player;
-        this.maze = maze;
+    public Memento(final Player thePlayer, final Maze theMaze) {
+        this.player = thePlayer;
+        this.maze = theMaze;
     }
 
     /**

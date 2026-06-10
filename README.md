@@ -23,18 +23,15 @@ SQLite JDBC driver (sqlite-jdbc-3.53.1.0.jar) — included in the lib/ folder
 
 _Note: The trivia.db file will be created automatically the first time you run the game. Do not include an existing trivia.db when running fresh — delete it if one already exists._
 
+The software should be runnable just by downloading the zip file and running it via the IntelliJ IDEA IDE. If not,
+do the following below:
 
-Open the project in IntelliJ IDEA
-
-Go to File → Project Structure → Libraries
-
-Make sure sqlite-jdbc-3.34.0.jar is added as a library (it should already be in lib/)
-
-Go to Run → Edit Configurations
-
-Set the Main class to view.MainGUI
-
-Click Run
+- Open the project in IntelliJ IDEA
+- Go to File → Project Structure → Libraries
+- Make sure sqlite-jdbc-3.53.1.0.jar is added as a library (it should already be in lib/)
+- Go to Run → Edit Configurations
+- Set the Main class to view.MainGUI
+- Click Run
 
 -----------------------
 **Database**

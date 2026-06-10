@@ -6,9 +6,11 @@ import view.*;
 import javax.swing.*;
 
 /**
- * GameController handles all game logic for the Trivia Maze game.
- * It manages player movement, trivia question handling, win/lose conditions,
- * and pathway checking — keeping this logic out of MazeView (MVC separation).
+ * Controls gameplay logic for the Trivia Maze game.
+ *
+ * <p>This controller manages player movement, trivia question attempts,
+ * win and lose conditions, pathway checking, hints, and communication
+ * between the maze model and maze view.</p>
  */
 public class GameController {
 
@@ -28,7 +30,7 @@ public class GameController {
      * @param theWindow the application window used as dialog owner
      * @param theApp    the app controller used for app-level navigation
      */
-    public GameController(Maze theMaze, Player thePlayer, JFrame theWindow, AppController theApp) {
+    public GameController(final Maze theMaze, final Player thePlayer, final JFrame theWindow, final AppController theApp) {
         this.myMaze = theMaze;
         this.myPlayer = thePlayer;
         this.myWindow = theWindow;
@@ -36,19 +38,15 @@ public class GameController {
     }
 
     /**
-     * Sets the MazeView reference after construction to avoid circular dependency.
+     * Sets the maze view after construction.
      *
-     * @param theMazeView the maze view
+     * <p>This avoids requiring the maze view before the controller has been
+     * fully created.</p>
+     *
+     * @param theMazeView the maze view controlled by this controller
      */
-    public void setMazeView(MazeView theMazeView) {
+    public void setMazeView(final MazeView theMazeView) {
         this.myMazeView = theMazeView;
-    }
-
-    /**
-     * Resets the game finished flag for a new game.
-     */
-    public void resetGameFinished() {
-        myGameFinished = false;
     }
 
     // =====================================================
@@ -56,12 +54,17 @@ public class GameController {
     // =====================================================
 
     /**
-     * Handles a move attempt in the given direction.
-     * Called by MazeView buttons.
+     * Handles a player move attempt in the specified direction.
      *
-     * @param theDirection the direction to move ("north", "south", "east", "west")
+     * <p>This checks whether the move is valid, determines whether the door
+     * can be entered, handles locked or permanently closed doors, and starts
+     * a trivia attempt when necessary.</p>
+     *
+     * @param theDirection the direction to move; expected values are
+     *                     {@code "north"}, {@code "south"},
+     *                     {@code "east"}, or {@code "west"}
      */
-    public void handleMove(String theDirection) {
+    public void handleMove(final String theDirection) {
         int playerRow = myMazeView.getPlayerRow();
         int playerCol = myMazeView.getPlayerCol();
 
@@ -128,18 +131,24 @@ public class GameController {
     }
 
     /**
-     * Handles the trivia question popup and result for a door attempt.
+     * Handles the trivia question attempt for a selected door.
      *
-     * @param theDoor       the door being attempted
-     * @param theIsExitDoor whether this door is the exit door
-     * @param theNewRow     the row the player would move to
-     * @param theNewCol     the column the player would move to
-     * @param thePlayerRow  the player's current row
-     * @param thePlayerCol  the player's current column
+     * <p>This displays the trivia popup, checks the player's answer, updates
+     * the player's score, unlocks or permanently locks the door as needed,
+     * moves the player after a correct answer, and checks for win or lose
+     * conditions.</p>
+     *
+     * @param theDoor the door being attempted
+     * @param theIsExitDoor {@code true} if the attempted door is the exit door;
+     *                      {@code false} otherwise
+     * @param theNewRow the row the player moves to after a correct answer
+     * @param theNewCol the column the player moves to after a correct answer
+     * @param thePlayerRow the player's current row before the attempt
+     * @param thePlayerCol the player's current column before the attempt
      */
-    private void handleTriviaAttempt(Door theDoor, boolean theIsExitDoor,
-                                     int theNewRow, int theNewCol,
-                                     int thePlayerRow, int thePlayerCol) {
+    private void handleTriviaAttempt(final Door theDoor, final boolean theIsExitDoor,
+                                     final int theNewRow, final int theNewCol,
+                                     final int thePlayerRow, final int thePlayerCol) {
         Question q = theDoor.getQuestion();
 
         if (q == null) return;
@@ -181,8 +190,6 @@ public class GameController {
                     JOptionPane.ERROR_MESSAGE
             );
 
-            System.out.println("Wrong! Staying in room [" + thePlayerRow + "][" + thePlayerCol + "]");
-
             if (theIsExitDoor && theDoor.isPermanentlyClosed()) {
                 loseGame("You failed to unlock the exit!\nGame Over.");
                 return;
@@ -199,14 +206,16 @@ public class GameController {
     // =====================================================
 
     /**
-     * Checks if movement in the given direction is within maze bounds.
+     * Determines whether movement in the specified direction stays within
+     * the maze boundaries.
      *
      * @param theDirection the direction to check
-     * @param theRow       the player's current row
-     * @param theCol       the player's current column
-     * @return true if the move is within bounds
+     * @param theRow the player's current row
+     * @param theCol the player's current column
+     * @return {@code true} if the move stays within the maze boundaries;
+     *         {@code false} otherwise
      */
-    private boolean isValidMove(String theDirection, int theRow, int theCol) {
+    private boolean isValidMove(final String theDirection, final int theRow, final int theCol) {
         return switch (theDirection) {
             case "north" -> theRow > 0;
             case "south" -> theRow < myMaze.getRows() - 1;
@@ -221,27 +230,34 @@ public class GameController {
     // =====================================================
 
     /**
-     * Checks if the player still has at least one reachable door to attempt.
+     * Determines whether the player still has at least one reachable door
+     * that can be attempted.
      *
      * @param thePlayerRow the player's current row
      * @param thePlayerCol the player's current column
-     * @return true if at least one reachable door exists
+     * @return {@code true} if at least one reachable attemptable door exists;
+     *         {@code false} otherwise
      */
-    public boolean checkForPossiblePathways(int thePlayerRow, int thePlayerCol) {
+    public boolean checkForPossiblePathways(final int thePlayerRow, final int thePlayerCol) {
         boolean[][] visitedRooms = new boolean[myMaze.getRows()][myMaze.getCols()];
         return hasAttemptableDoor(thePlayerRow, thePlayerCol, visitedRooms);
     }
 
     /**
-     * Recursively checks whether the player still has at least one reachable door
-     * that can be attempted.
+     /**
+     * Recursively searches reachable rooms for at least one door that can
+     * still be attempted.
      *
-     * @param theRow          the row to check
-     * @param theColumn       the column to check
-     * @param theVisitedRooms tracks which rooms have been visited
-     * @return true if an attemptable door exists
+     * <p>This method avoids revisiting rooms by tracking visited locations
+     * in the provided two-dimensional array.</p>
+     *
+     * @param theRow the row currently being checked
+     * @param theColumn the column currently being checked
+     * @param theVisitedRooms tracks which rooms have already been checked
+     * @return {@code true} if an attemptable door is found;
+     *         {@code false} otherwise
      */
-    private boolean hasAttemptableDoor(int theRow, int theColumn, boolean[][] theVisitedRooms) {
+    private boolean hasAttemptableDoor(final int theRow, final int theColumn, final boolean[][] theVisitedRooms) {
         if (theRow < 0 || theRow >= myMaze.getRows()
                 || theColumn < 0 || theColumn >= myMaze.getCols()) {
             return false;
@@ -277,14 +293,18 @@ public class GameController {
     /**
      * Determines whether a specific door can still be attempted by the player.
      *
-     * @param theDoor      the door to check
-     * @param theDirection the direction of the door
-     * @param theRow       the room's row
-     * @param theColumn    the room's column
-     * @return true if the door can be attempted
+     * <p>A door is attemptable if it exists, is not permanently closed, and
+     * either leads to the exit or is a locked door within the maze boundaries.</p>
+     *
+     * @param theDoor the door to check
+     * @param theDirection the direction of the door from the current room
+     * @param theRow the current room's row
+     * @param theColumn the current room's column
+     * @return {@code true} if the door can still be attempted;
+     *         {@code false} otherwise
      */
-    private boolean isAttemptableDoor(Door theDoor, String theDirection,
-                                      int theRow, int theColumn) {
+    private boolean isAttemptableDoor(final Door theDoor, final String theDirection,
+                                      final int theRow, final int theColumn) {
         if (theDoor == null || theDoor.isPermanentlyClosed()) return false;
 
         if (theDoor == myMaze.getExitDoor()) return true;
@@ -306,16 +326,22 @@ public class GameController {
     }
 
     /**
-     * Determines whether the player can travel through a door into a neighboring room.
+     * Determines whether the player can travel through a door into a
+     * neighboring room.
      *
-     * @param theDoor      the door to check
-     * @param theDirection the direction of the door
-     * @param theRow       the room's row
-     * @param theColumn    the room's column
-     * @return true if the player can pass through
+     * <p>The player can travel through a door only if the door exists, is
+     * unlocked, is not permanently closed, and leads to a room within the maze
+     * boundaries.</p>
+     *
+     * @param theDoor the door to check
+     * @param theDirection the direction of the door from the current room
+     * @param theRow the current room's row
+     * @param theColumn the current room's column
+     * @return {@code true} if the player can travel through the door;
+     *         {@code false} otherwise
      */
-    private boolean canTravelThrough(Door theDoor, String theDirection,
-                                     int theRow, int theColumn) {
+    private boolean canTravelThrough(final Door theDoor, final String theDirection,
+                                     final int theRow, final int theColumn) {
         if (theDoor == null || theDoor.isLocked() || theDoor.isPermanentlyClosed()) return false;
 
         int updatedRow = theRow;
@@ -337,8 +363,11 @@ public class GameController {
     // =====================================================
 
     /**
-     * Triggers the win condition when the player correctly answers the exit door.
-     * Shows win popup, then leaderboard, then "Main Menu / Exit Game" popup.
+     * Finishes the game after the player successfully unlocks the exit door.
+     *
+     * <p>This stops the timer, deletes the saved game file, records the player's
+     * score on the leaderboard, displays the win message and leaderboard, and
+     * prompts the player to return to the main menu or exit the game.</p>
      */
     public void finishGame() {
         if (myGameFinished) return;
@@ -389,12 +418,16 @@ public class GameController {
         }
     }
 
-    /**
-     * Triggers the lose condition with a given message.
+     /**
+     * Ends the game with a loss using the specified message.
+     *
+     * <p>This stops the timer, deletes the saved game file, marks the game as
+     * no longer saved, and prompts the player to return to the main menu or
+     * exit the game.</p>
      *
      * @param theMessage the message to display to the player
      */
-    public void loseGame(String theMessage) {
+    public void loseGame(final String theMessage) {
         if (myGameFinished) return;
 
         myGameFinished = true;
@@ -430,12 +463,12 @@ public class GameController {
     // =====================================================
 
     /**
-     * Shows a hint pointing toward the exit room.
+     * Displays a directional hint that points the player toward the exit room.
      *
      * @param thePlayerRow the player's current row
      * @param thePlayerCol the player's current column
      */
-    public void showHint(int thePlayerRow, int thePlayerCol) {
+    public void showHint(final int thePlayerRow, final int thePlayerCol) {
         int[] exitPos = myMaze.findRoom(myMaze.getExit());
 
         int exitRow = exitPos[0];
@@ -474,12 +507,12 @@ public class GameController {
     // =====================================================
 
     /**
-     * Formats a time in seconds into a human-readable string.
+     * Formats a time value in seconds as minutes and seconds.
      *
-     * @param theTimeSeconds the time in seconds
-     * @return a formatted string like "2 min 05 sec"
+     * @param theTimeSeconds the time value in seconds
+     * @return a formatted time string in the form {@code "2 min 05 sec"}
      */
-    private String formatTime(double theTimeSeconds) {
+    private String formatTime(final double theTimeSeconds) {
         int totalSeconds = (int) Math.round(theTimeSeconds);
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;

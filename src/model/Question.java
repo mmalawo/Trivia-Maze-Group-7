@@ -3,48 +3,48 @@ package model;
 import java.io.Serializable;
 
 /**
- * This class represents a single trivia question in the Trivia Maze game.
- * It can hold three types of questions: multiple choice, true/false, and short answer.
- * Think of this like a flashcard object that stores everything about one question.
+ * Represents a trivia question in the Trivia Maze game.
+ *
+ * <p>This abstract class stores the shared data used by all question types,
+ * including the question text, answer options, correct answer, and question
+ * type. Specific question types, such as multiple choice, true/false, and
+ * short answer, extend this class.</p>
  */
 public abstract class Question implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // The actual question being asked, e.g. "What is the capital of France?"
-    private String myQuestionText;
+    /** The text of the trivia question. */
+    private final String myQuestionText;
 
-    // These are the answer choices for MULTIPLE CHOICE questions only.
-    // For true/false: optionA = "True", optionB = "False", C and D will be null.
-    // For short answer: all options will be null since the player types their answer.
-    private String myOptionA;
-    private String myOptionB;
-    private String myOptionC;
-    private String myOptionD;
+    /** The first answer option, if applicable. */
+    private final String myOptionA;
 
-    // The correct answer to the question.
-    // For multiple choice: this would be "A", "B", "C", or "D"
-    // For true/false: this would be "True" or "False"
-    // For short answer: this would be the expected answer string e.g. "Paris"
-    private String myCorrectAnswer;
+    /** The second answer option, if applicable. */
+    private final String myOptionB;
 
-    // Tells us what kind of question this is.
-    // Can only be one of three values: "multiple choice", "true/false", or "short answer"
-    // This is important because the GUI will use this to decide how to display the question
-    // (4 buttons for multiple choice, 2 buttons for true/false, text box for short answer)
-    private String myQuestionType;
+    /** The third answer option, if applicable. */
+    private final String myOptionC;
+
+    /** The fourth answer option, if applicable. */
+    private final String myOptionD;
+
+    /** The correct answer for the question. */
+    private final String myCorrectAnswer;
+
+    /** The type of trivia question. */
+    private final String myQuestionType;
 
     /**
-     * This is the constructor - it creates a new Question object with all its information.
-     * When we pull a question from the SQLite database, we'll use this constructor
-     * to turn that raw data into a Question object the rest of the code can use.
+     * Constructs a question with the specified text, answer options,
+     * correct answer, and question type.
      *
-     * @param theQuestionText the text of the question being asked
-     * @param theOptionA      first answer choice (or "True" for true/false, null for short answer)
-     * @param theOptionB      second answer choice (or "False" for true/false, null for short answer)
-     * @param theOptionC      third answer choice (null if not multiple choice)
-     * @param theOptionD      fourth answer choice (null if not multiple choice)
-     * @param theCorrectAnswer the correct answer to the question
-     * @param theQuestionType  the type of question: "multiple choice", "true/false", or "short answer"
+     * @param theQuestionText the text of the question
+     * @param theOptionA the first answer option, or {@code null} if not used
+     * @param theOptionB the second answer option, or {@code null} if not used
+     * @param theOptionC the third answer option, or {@code null} if not used
+     * @param theOptionD the fourth answer option, or {@code null} if not used
+     * @param theCorrectAnswer the correct answer for the question
+     * @param theQuestionType the type of question
      */
     public Question(final String theQuestionText,
                     final String theOptionA,
@@ -69,34 +69,62 @@ public abstract class Question implements Serializable {
     // We don't have setters because a question shouldn't change once created.
     // -----------------------------------------------------------------------
 
-    /** @return the full text of the question */
+    /**
+     * Returns the text of the question.
+     *
+     * @return the question text
+     */
     public String getQuestionText() { return myQuestionText; }
 
-    /** @return option A (or "True" for true/false, null for short answer) */
+    /**
+     * Returns the first answer option.
+     *
+     * @return the first answer option, or {@code null} if not used
+     */
     public String getOptionA() { return myOptionA; }
 
-    /** @return option B (or "False" for true/false, null for short answer) */
+    /**
+     * Returns the second answer option.
+     *
+     * @return the second answer option, or {@code null} if not used
+     */
     public String getOptionB() { return myOptionB; }
 
-    /** @return option C (null if not a multiple choice question) */
+    /**
+     * Returns the third answer option.
+     *
+     * @return the third answer option, or {@code null} if not used
+     */
     public String getOptionC() { return myOptionC; }
 
-    /** @return option D (null if not a multiple choice question) */
+    /**
+     * Returns the fourth answer option.
+     *
+     * @return the fourth answer option, or {@code null} if not used
+     */
     public String getOptionD() { return myOptionD; }
 
-    /** @return the correct answer to this question */
+    /**
+     * Returns the correct answer for this question.
+     *
+     * @return the correct answer
+     */
     public String getCorrectAnswer() { return myCorrectAnswer; }
 
-    /** @return the question type: "multiple choice", "true/false", or "short answer" */
+    /**
+     * Returns the type of this question.
+     *
+     * @return the question type
+     */
     public String getQuestionType() { return myQuestionType; }
 
     /**
-     * toString() gives us a readable summary of the question.
-     * This is useful for debugging - if we print a Question object,
-     * we'll see the type, question text, and correct answer instead of
-     * a memory address like "model.Question@1a2b3c".
+     * Returns a string representation of this question.
      *
-     * @return a formatted string showing key question info
+     * <p>The returned string includes the question type, question text,
+     * and correct answer for debugging purposes.</p>
+     *
+     * @return a string representation of this question
      */
     @Override
     public String toString() {

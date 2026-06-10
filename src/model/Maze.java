@@ -5,31 +5,30 @@ import java.io.Serializable;
 /**
  * Represents the maze used in the game.
  *
- * <p>A maze consists of a two-dimensional grid of rooms,
- * an entrance room, an exit room, and an exit door that
- * allows the player to complete the maze.</p>
+ * <p>A maze contains a two-dimensional grid of rooms, an entrance room,
+ * an exit room, an exit door, and the direction of the exit door.</p>
  */
 public class Maze implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Room[][] rooms;
-    private int rows;
-    private int cols;
-    private Room entrance;
-    private Room exitRoom;
-    private Door exitDoor;
-    private String exitDoorDirection;
+    private final Room[][] myRooms;
+    private final int myRows;
+    private final int myCols;
+    private Room myEntrance;
+    private Room myExitRoom;
+    private Door myExitDoor;
+    private String myExitDoorDirection;
 
     /**
-     * Constructs a maze with the specified dimensions.
+     * Constructs a maze with the specified number of rows and columns.
      *
-     * @param rows the number of rows in the maze
-     * @param cols the number of columns in the maze
+     * @param theRows the number of rows in the maze
+     * @param theColumns the number of columns in the maze
      */
-    public Maze(int rows, int cols) {
-        this.rows = rows;
-        this.cols = cols;
-        this.rooms = new Room[rows][cols];
+    public Maze(final int theRows, final int theColumns) {
+        this.myRows = theRows;
+        this.myCols = theColumns;
+        this.myRooms = new Room[theRows][theColumns];
     }
 
 
@@ -45,22 +44,14 @@ public class Maze implements Serializable {
     //  GETTERS
     // --------------------------
     /**
-     * Returns the two-dimensional array of rooms that make up the maze.
-     * @return the room grid
-     */
-    public Room[][] getRooms() {
-        return rooms;
-    }
-
-    /**
      * Returns the room at the specified row and column.
      *
-     * @param r the row index
-     * @param c the column index
+     * @param theRow the row index
+     * @param theColumn the column index
      * @return the room at the specified location
      */
-    public Room getRoom(int r, int c) {
-        return rooms[r][c];
+    public Room getRoom(final int theRow, final int theColumn) {
+        return myRooms[theRow][theColumn];
     }
 
     /**
@@ -69,7 +60,7 @@ public class Maze implements Serializable {
      * @return the entrance room
      */
     public Room getEntrance() {
-        return entrance;
+        return myEntrance;
     }
 
     /**
@@ -78,7 +69,7 @@ public class Maze implements Serializable {
      * @return the exit room
      */
     public Room getExit() {
-        return exitRoom;
+        return myExitRoom;
     }
 
     /**
@@ -87,7 +78,7 @@ public class Maze implements Serializable {
      * @return the exit door
      */
     public Door getExitDoor() {
-        return exitDoor;
+        return myExitDoor;
     }
 
     /**
@@ -96,7 +87,7 @@ public class Maze implements Serializable {
      * @return the exit door direction
      */
     public String getExitDoorDirection() {
-        return exitDoorDirection;
+        return myExitDoorDirection;
     }
 
     /**
@@ -105,7 +96,7 @@ public class Maze implements Serializable {
      * @return the row count
      */
     public int getRows() {
-        return rows;
+        return myRows;
     }
 
     /**
@@ -114,7 +105,7 @@ public class Maze implements Serializable {
      * @return the column count
      */
     public int getCols() {
-        return cols;
+        return myCols;
     }
 
     // --------------------------
@@ -122,71 +113,70 @@ public class Maze implements Serializable {
     // --------------------------
 
     /**
-     * Stores a room at the specified location in the maze.
+     * Stores a room at the specified row and column in the maze.
      *
-     * @param r the row index
-     * @param c the column index
-     * @param room the room to store
+     * @param theRow the row index
+     * @param theColumn the column index
+     * @param theRoom the room to store
      */
-    public void setRooms(int r, int c, Room room) {
-        rooms[r][c] = room;
+    public void setRooms(final int theRow, final int theColumn, final Room theRoom) {
+        myRooms[theRow][theColumn] = theRoom;
     }
 
     /**
      * Sets the entrance room of the maze.
      *
-     * @param entrance the entrance room
+     * @param theEntrance the entrance room
      */
-    public void setEntrance(Room entrance) {
-        this.entrance = entrance;
+    public void setEntrance(final Room theEntrance) {
+        this.myEntrance = theEntrance;
     }
 
     /**
      * Sets the exit room of the maze.
      *
-     * @param exitRoom the exit room
+     * @param theExitRoom the exit room
      */
-    public void setExitRoom(Room exitRoom) {
-        this.exitRoom = exitRoom;
+    public void setExitRoom(final Room theExitRoom) {
+        this.myExitRoom = theExitRoom;
     }
 
     /**
      * Sets the exit door of the maze.
      *
-     * @param exitDoor the exit door
+     * @param theExitDoor the exit door
      */
-    public void setExitDoor(Door exitDoor) {
-        this.exitDoor = exitDoor;
+    public void setExitDoor(final Door theExitDoor) {
+        this.myExitDoor = theExitDoor;
     }
 
     /**
      * Sets the direction of the exit door.
      *
-     * @param exitDoorDirection the exit door direction
+     * @param theExitDoorDirection the exit door direction
      */
-    public void setExitDoorDirection(String exitDoorDirection) {
-        this.exitDoorDirection = exitDoorDirection;
+    public void setExitDoorDirection(final String theExitDoorDirection) {
+        this.myExitDoorDirection = theExitDoorDirection;
     }
 
 
 
 // ===================================================================================================================
 
-
-
-
-
     /**
-     * Finds the coordinates of a room within the maze.
+     * Finds the coordinates of the specified room within the maze.
      *
-     * @param target the room to locate
-     * @return an array containing the row and column of the room,
-     *         or {@code null} if the room is not found
+     * <p>The returned array contains two values: the row index at position
+     * {@code 0} and the column index at position {@code 1}.</p>
+     *
+     * @param theTarget the room to locate
+     * @return an array containing the row and column of the room;
+     *         {@code null} if the room is not found
      */
-    public int[] findRoom(Room target) {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                if (rooms[r][c] == target) {
+    public int[] findRoom(final Room theTarget) {
+        for (int r = 0; r < myRows; r++) {
+            for (int c = 0; c < myCols; c++) {
+                if (myRooms[r][c] == theTarget) {
                     return new int[]{r, c};
                 }
             }

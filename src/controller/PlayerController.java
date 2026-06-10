@@ -1,11 +1,15 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import view.InstructionsView;
 import view.PlayerSetupView;
 
 /**
- * PlayerController handles setup-screen input and starting gameplay.
- * The view supplies input; the controller updates the model through AppController.
+ * Controls the player setup and instructions flow before gameplay begins.
+ *
+ * <p>This controller connects the setup and instructions views to the
+ * application controller. It handles player name entry, avatar selection,
+ * navigation, and starting the game.</p>
  */
 public class PlayerController {
     private final AppController myApp;
@@ -40,7 +44,19 @@ public class PlayerController {
         mySetupView.addBackListener(e -> myApp.goBack());
 
         mySetupView.addNextListener(e -> {
-            myApp.getPlayer().setName(mySetupView.getEnteredName());
+            final String enteredName = mySetupView.getEnteredName();
+
+            if (enteredName.isBlank()) {
+                JOptionPane.showMessageDialog(
+                        myApp.getWindow(),
+                        "Please enter a player name before continuing.",
+                        "Missing Player Name",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            myApp.getPlayer().setName(enteredName);
             myApp.showInstructions();
         });
 
@@ -55,7 +71,6 @@ public class PlayerController {
         });
 
         myInstructionsView.addStartGameListener(e -> {
-            System.out.println("Game starting...");
             myApp.startGameplay();
         });
     }

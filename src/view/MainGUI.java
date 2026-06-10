@@ -5,8 +5,11 @@ import controller.AppController;
 import javax.swing.*;
 
 /**
- * MainGUI is now only the application entry point / window shell.
- * It does not store global model, view, or controller state.
+ * Provides the main entry point and application window shell.
+ *
+ * <p>This class creates the main Swing window and initializes the
+ * application controller. It does not directly manage model, view,
+ * or controller state beyond launching the application.</p>
  */
 public class MainGUI {
 
@@ -20,8 +23,10 @@ public class MainGUI {
     }
 
     /**
-     * Creates and configures the main application window, initializes
-     * the application controller, and makes the window visible.
+     * Creates and displays the main application window.
+     *
+     * <p>This method configures the main frame, initializes the application
+     * controller, centers the window, and makes it visible.</p>
      */
     private static void startApplication() {
         JFrame window = new JFrame("Garden Trivia Maze - Version 2.7");

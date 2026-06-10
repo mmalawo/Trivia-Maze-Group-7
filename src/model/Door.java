@@ -4,58 +4,67 @@ import java.io.Serializable;
 
 /**
  * Represents a door in the maze.
- * Each door is locked and requires the player to answer
- * a trivia question correctly to pass through.
- * Players have 2 attempts before the door is permanently locked.
- * Each wrong answer fetches a new question for the next attempt.
- * Questions are assigned lazily (on first access) to avoid wasting
- * questions on doors that get replaced during maze generation.
+ *
+ * <p>Each door begins locked and requires the player to answer a trivia
+ * question correctly before passing through. Questions are assigned lazily
+ * when the player first attempts the door so unused doors do not consume
+ * questions from the question pool.</p>
+ *
+ * <p>If the player answers incorrectly, the door loses one attempt and
+ * receives a new question if attempts remain. After all attempts are used,
+ * the door becomes permanently closed.</p>
  */
 public class Door implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private boolean isLocked;
     private boolean isPermanentlyClosed;
-    private int attemptsRemaining;
+    private int myAttemptsRemaining;
     private Question myQuestion;
 
     /**
-     * Constructor - creates a locked door.
-     * Question is NOT assigned here — it is assigned lazily
-     * the first time the player tries to open this door.
+     * Constructs a locked door with no assigned question.
+     *
+     * <p>The question is assigned lazily when the player first attempts to
+     * open the door.</p>
      */
     public Door() {
         this.isLocked = true;
         this.isPermanentlyClosed = false;
-        this.attemptsRemaining = 2;
+        this.myAttemptsRemaining = 2;
         this.myQuestion = null;
     }
 
     /**
-     * Returns whether the door is locked.
+     * Returns whether this door is currently locked.
      *
-     * @return true if the door is locked
+     * @return {@code true} if the door is locked;
+     *         {@code false} otherwise
      */
     public boolean isLocked() {
         return isLocked;
     }
 
     /**
-     * Returns whether the door is permanently closed.
+     * Returns whether this door is permanently closed.
      *
-     * @return true if the door is permanently closed
+     * @return {@code true} if the door is permanently closed;
+     *         {@code false} otherwise
      */
     public boolean isPermanentlyClosed() {
         return isPermanentlyClosed;
     }
 
     /**
-     * Sets whether the door is permanently closed.
-     * Used to visually hide perimeter non-exit doors after the player clicks them.
+     * Sets whether this door is permanently closed.
      *
-     * @param theClosed true to permanently close the door
+     * <p>This is used when a door can no longer be attempted, including
+     * perimeter doors that do not lead to valid rooms.</p>
+     *
+     * @param theClosed {@code true} to permanently close the door;
+     *                  {@code false} to reopen it
      */
-    public void setPermanentlyClosed(boolean theClosed) {
+    public void setPermanentlyClosed(final boolean theClosed) {
         isPermanentlyClosed = theClosed;
     }
 
@@ -65,22 +74,24 @@ public class Door implements Serializable {
      * @return the number of attempts remaining
      */
     public int getAttemptsRemaining() {
-        return attemptsRemaining;
+        return myAttemptsRemaining;
     }
 
     /**
-     * Sets the locked state of the door.
+     * Sets whether this door is locked.
      *
-     * @param locked true to lock the door
+     * @param theLocked {@code true} to lock the door;
+     *                  {@code false} to unlock it
      */
-    public void setLocked(boolean locked) {
-        isLocked = locked;
+    public void setLocked(final boolean theLocked) {
+        isLocked = theLocked;
     }
 
     /**
-     * Returns the Question object assigned to this door.
-     * Lazily assigns a question on first access so questions are only
-     * pulled from the pool when a player actually clicks the door.
+     * Returns the question assigned to this door.
+     *
+     * <p>If no question has been assigned yet, a random question is retrieved
+     * from the question database and stored for this door.</p>
      *
      * @return the question assigned to this door
      */
@@ -93,14 +104,18 @@ public class Door implements Serializable {
     }
 
     /**
-     * Checks if the player's answer matches the correct answer.
-     * Uses startsWith so full option text like "B) Christian Bale" matches correct answer "B".
-     * Marks current question as used before fetching a new one on wrong answers.
+     * Attempts to unlock this door using the player's answer.
      *
-     * @param theAnswer the player's answer
-     * @return true if the answer is correct
+     * <p>If the answer is correct, the door is unlocked. If the answer is
+     * incorrect, the remaining attempt count decreases. When attempts remain,
+     * the current question is marked as used and replaced with a new random
+     * question. If no attempts remain, the door becomes permanently closed.</p>
+     *
+     * @param theAnswer the player's submitted answer
+     * @return {@code true} if the answer is correct and the door is unlocked;
+     *         {@code false} otherwise
      */
-    public boolean attemptAnswer(String theAnswer) {
+    public boolean attemptAnswer(final String theAnswer) {
         if (isPermanentlyClosed) return false;
 
         if (myQuestion != null && isCorrectAnswer(theAnswer)) {
@@ -108,9 +123,9 @@ public class Door implements Serializable {
             return true;
         }
 
-        attemptsRemaining--;
+        myAttemptsRemaining--;
 
-        if (attemptsRemaining <= 0) {
+        if (myAttemptsRemaining <= 0) {
             // Mark last question as used so it won't appear on other doors
             QuestionDAO.markAsCorrectlyAnswered(myQuestion);
             isPermanentlyClosed = true;
@@ -125,7 +140,18 @@ public class Door implements Serializable {
         return false;
     }
 
-    private boolean isCorrectAnswer(String theAnswer) {
+    /**
+     * Determines whether the submitted answer matches the door's correct answer.
+     *
+     * <p>Short-answer questions require an exact case-insensitive match after
+     * trimming whitespace. Other question types allow answers such as
+     * {@code "B) Christian Bale"} to match a correct answer of {@code "B"}.</p>
+     *
+     * @param theAnswer the player's submitted answer
+     * @return {@code true} if the submitted answer is correct;
+     *         {@code false} otherwise
+     */
+    private boolean isCorrectAnswer(final String theAnswer) {
         if (theAnswer == null || myQuestion == null || myQuestion.getCorrectAnswer() == null) {
             return false;
         }
@@ -141,12 +167,15 @@ public class Door implements Serializable {
     }
 
     /**
-     * Resets the door to its initial locked state.
+     * Resets this door to its initial locked state.
+     *
+     * <p>This clears the assigned question, restores the attempt count, unlocks
+     * any permanent closure, and locks the door again.</p>
      */
     public void reset() {
         this.isLocked = true;
         this.isPermanentlyClosed = false;
-        this.attemptsRemaining = 2;
+        this.myAttemptsRemaining = 2;
         this.myQuestion = null;
     }
 }

@@ -21,23 +21,30 @@ public class QuestionDAO {
 
     private final DatabaseManager myDB;
 
-    // Shuffled pool of all questions for the current game
+    /** The shuffled pool of questions for the current game session. */
     private static List<Question> questionPool = new ArrayList<>();
+
+    /** The current index in the shuffled question pool. */
     private static int poolIndex = 0;
 
-    // Tracks questions that were correctly answered so they don't repeat
+    /** Tracks questions that were correctly answered so they don't repeat */
     private static final Set<String> correctlyAnswered = new HashSet<>();
 
     /**
-     * Constructs a QuestionDAO and initializes access to the database.
+     * Constructs a question data access object.
+     *
+     * <p>This initializes access to the shared database manager.</p>
      */
     public QuestionDAO() {
         myDB = DatabaseManager.getInstance();
     }
 
     /**
-     * Loads all questions from the database, shuffles them randomly,
-     * and resets the index. Call this at the start of each new game.
+     * Resets the question pool for a new game session.
+     *
+     * <p>This clears the current question pool, resets the pool index, clears
+     * the tracked used questions, loads all questions from the database, and
+     * shuffles them randomly.</p>
      */
     public static void resetUsedQuestions() {
         questionPool = new ArrayList<>();
@@ -61,22 +68,27 @@ public class QuestionDAO {
     }
 
     /**
-     * Marks a question as correctly answered so it won't be given out again.
+     * Marks a question as used so it will not be selected again during the
+     * current question cycle.
      *
-     * @param question the question that was correctly answered
+     * @param theQuestion the question to mark as used
      */
-    public static void markAsCorrectlyAnswered(Question question) {
-        if (question != null) {
-            correctlyAnswered.add(question.getQuestionText());
+    public static void markAsCorrectlyAnswered(final Question theQuestion) {
+        if (theQuestion != null) {
+            correctlyAnswered.add(theQuestion.getQuestionText());
         }
     }
 
     /**
-     * Returns the next question from the pre-shuffled pool that hasn't
-     * been correctly answered yet.
-     * If the pool runs out, reshuffles and starts over.
+     * Returns the next available question from the shuffled question pool.
      *
-     * @return a Question object, or null if pool is empty
+     * <p>If the question pool is empty, it is reloaded from the database. This
+     * method skips questions that have already been marked as used. If every
+     * question has been used, the used-question tracking is cleared, the pool
+     * is reshuffled, and selection begins again.</p>
+     *
+     * @return the next available question;
+     *         {@code null} if no questions are available
      */
     public Question getRandomQuestion() {
         if (questionPool.isEmpty()) {

@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 /**
  * Represents a player in the Trivia Maze game.
- * Tracks the player's name, score, timer, and current room.
+ *
+ * <p>This class tracks the player's name, score, timer information,
+ * current room, and remaining attempts.</p>
  */
 public class Player implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -47,7 +49,7 @@ public class Player implements Serializable {
      *
      * @param theName the name to set
      */
-    public void setName(String theName) {
+    public void setName(final String theName) {
         this.myPlayerName = theName;
     }
 
@@ -65,7 +67,7 @@ public class Player implements Serializable {
      *
      * @param theCorrectScore the correct score to set
      */
-    public void setCorrectScore(int theCorrectScore) {
+    public void setCorrectScore(final int theCorrectScore) {
         this.myCorrectScore = theCorrectScore;
     }
 
@@ -90,7 +92,7 @@ public class Player implements Serializable {
      *
      * @param theIncorrectScore the incorrect score to set
      */
-    public void setIncorrectScore(int theIncorrectScore) {
+    public void setIncorrectScore(final int theIncorrectScore) {
         this.myIncorrectScore = theIncorrectScore;
     }
 
@@ -125,15 +127,6 @@ public class Player implements Serializable {
     }
 
     /**
-     * Returns the current elapsed time in seconds.
-     *
-     * @return current elapsed time in seconds
-     */
-    public double getCurrentTime() {
-        return (System.currentTimeMillis() - myStartTime) / 1000.0;
-    }
-
-    /**
      * Returns the recorded completion time in seconds.
      *
      * @return the record time in seconds
@@ -147,13 +140,15 @@ public class Player implements Serializable {
      *
      * @param theRecordTime the record time to set in seconds
      */
-    public void setRecordTime(double theRecordTime) {
+    public void setRecordTime(final double theRecordTime) {
         this.myRecordTime = theRecordTime;
     }
 
     /**
-     * Saves the current elapsed time so it can be restored after loading a saved game.
-     * Should be called immediately before serializing the game state.
+     * Saves the current elapsed time.
+     *
+     * <p>This should be called before serializing the game state so the timer
+     * can be restored correctly when the saved game is loaded.</p>
      */
     public void saveElapsedTime() {
         mySavedElapsedTime = elapsedTime();
@@ -161,8 +156,9 @@ public class Player implements Serializable {
 
     /**
      * Resumes the timer from the saved elapsed time.
-     * Should be called immediately after loading a saved game so the timer
-     * continues from where it left off.
+     *
+     * <p>This should be called after loading a saved game so the timer continues
+     * from where it left off.</p>
      */
     public void resumeTimer() {
         myStartTime = (long)(System.currentTimeMillis() - (mySavedElapsedTime * 1000));
@@ -204,7 +200,7 @@ public class Player implements Serializable {
      *
      * @param theRoom the room to set as current
      */
-    public void setCurrentRoom(Room theRoom) {
+    public void setCurrentRoom(final Room theRoom) {
         myCurrentRoom = theRoom;
     }
 
@@ -222,7 +218,7 @@ public class Player implements Serializable {
      *
      * @param theAttempts the number of attempts to set
      */
-    public void setRemainingAttempts(int theAttempts) {
+    public void setRemainingAttempts(final int theAttempts) {
         myRemainingAttempts = theAttempts;
     }
 

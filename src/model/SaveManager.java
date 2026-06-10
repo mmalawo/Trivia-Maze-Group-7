@@ -3,7 +3,10 @@ package model;
 import java.io.*;
 
 /**
- * Manages saving and loading game state using Java serialization.
+ * Utility class for saving and loading game state using Java serialization.
+ *
+ * <p>This class writes and reads {@link Memento} objects to and from a
+ * save file on disk.</p>
  */
 public class SaveManager {
 
@@ -11,11 +14,17 @@ public class SaveManager {
     private static final String SAVE_FILE = "savegame.dat";
 
     /**
+     * Prevents instantiation of this utility class.
+     */
+    private SaveManager() {
+    }
+
+    /**
      * Saves the given Memento object to disk.
      *
      * @param theMemento the memento containing the game state to save
      */
-    public static void saveGame(Memento theMemento) {
+    public static void saveGame(final Memento theMemento) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
             out.writeObject(theMemento);
             System.out.println("Game saved!");

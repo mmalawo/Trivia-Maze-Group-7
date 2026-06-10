@@ -8,10 +8,19 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * LeaderboardView displays the top scores in a dialog window.
- * It does not control app navigation; controllers decide what happens after it closes.
+ * Displays leaderboard scores in a dialog window.
+ *
+ * <p>This view retrieves leaderboard data, formats it in a table, and displays
+ * it in a modal dialog. It does not control application navigation; controllers
+ * decide what happens after the dialog closes.</p>
  */
 public class LeaderboardView {
+
+    /**
+     * Prevents instantiation of this utility class.
+     */
+    private LeaderboardView() {
+    }
 
     /**
      * Displays the leaderboard dialog with no specific owner component.
@@ -22,12 +31,15 @@ public class LeaderboardView {
     }
 
     /**
-     * Displays the leaderboard dialog showing the top recorded scores.
-     * The dialog is positioned relative to the specified owner component.
+     * Displays the leaderboard dialog relative to the specified owner component.
      *
-     * @param theOwner the component relative to which the dialog is displayed.
+     * <p>The dialog shows the top recorded scores, including rank, player name,
+     * completion time, correct score, and incorrect score.</p>
+     *
+     * @param theOwner the component relative to which the dialog is displayed;
+     *                 may be {@code null}
      */
-    public static void showLeaderboard(Component theOwner) {
+    public static void showLeaderboard(final Component theOwner) {
         LeaderboardDAO dao = new LeaderboardDAO();
         List<LeaderboardEntry> scores = dao.getTopScores();
 
@@ -82,7 +94,7 @@ public class LeaderboardView {
      * @param theTimeSeconds the elapsed time in seconds
      * @return a formatted time string in the form "X min YY sec"
      */
-    private static String formatTime(double theTimeSeconds) {
+    private static String formatTime(final double theTimeSeconds) {
         int totalSeconds = (int) Math.round(theTimeSeconds);
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;

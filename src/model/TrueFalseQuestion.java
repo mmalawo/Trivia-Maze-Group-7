@@ -2,8 +2,9 @@ package model;
 
 /**
  * Represents a true/false trivia question.
- * This question type provides "True" and "False" as the only
- * answer options and stores the correct answer.
+ *
+ * <p>This question type provides {@code "True"} and {@code "False"} as
+ * the answer options and stores one of them as the correct answer.</p>
  */
 public class TrueFalseQuestion extends Question {
 
@@ -12,7 +13,8 @@ public class TrueFalseQuestion extends Question {
      * and correct answer.
      *
      * @param theQuestionText the text of the question
-     * @param theCorrectAnswer the correct answer, typically "True" or "False"
+     * @param theCorrectAnswer the correct answer for the question,
+     *                         typically {@code "True"} or {@code "False"}
      */
     public TrueFalseQuestion(final String theQuestionText,
                              final String theCorrectAnswer) {

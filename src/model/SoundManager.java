@@ -14,9 +14,6 @@ import java.util.Random;
  *
  * Songs are automatically switched when a track finishes playing,
  * while preserving the user's currently selected volume level.
- *
- * @author Tifanie Ngo
- * @version May 2026
  */
 public class SoundManager {
     private Clip myClip;
@@ -26,7 +23,7 @@ public class SoundManager {
     private int myCurrAudio = 0;
     private int myCurrVolume = 50;
 
-    private final Random random = new Random();
+    private final Random myRandom = new Random();
 
     private float myTargetGain;
 
@@ -36,7 +33,7 @@ public class SoundManager {
      *
      * @param theAudio array containing file paths for audio tracks
      */
-    public void loadPlaylist(String[] theAudio) {
+    public void loadPlaylist(final String[] theAudio) {
         this.myPlaylist = theAudio;
         myCurrAudio = getRandomAudioIndex();
 
@@ -52,7 +49,7 @@ public class SoundManager {
      *
      * @param theIndex index of the audio track within the playlist
      */
-    private void playSound(int theIndex) {
+    private void playSound(final int theIndex) {
         try {
             stop();
 
@@ -104,7 +101,7 @@ public class SoundManager {
         int nextSong;
 
         do {
-            nextSong = random.nextInt(myPlaylist.length);
+            nextSong = myRandom.nextInt(myPlaylist.length);
         } while (nextSong == myCurrAudio);
 
         return nextSong;
@@ -132,7 +129,7 @@ public class SoundManager {
      *
      * @param theVolume desired volume level from 0 to 100
      */
-    public void setVolume(int theVolume) {
+    public void setVolume(final int theVolume) {
         myCurrVolume = theVolume;
 
         if (myVolumeControl == null) return;
@@ -150,7 +147,7 @@ public class SoundManager {
      * @param theVolume slider volume value from 0 to 100
      * @return corresponding decibel gain value
      */
-    private float convertVolumeToGain(int theVolume) {
+    private float convertVolumeToGain(final int theVolume) {
         if (theVolume <= 0) {
             return myVolumeControl.getMinimum();
         }

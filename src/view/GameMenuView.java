@@ -2,83 +2,79 @@ package view;
 
 import model.SaveManager;
 
-import java.util.*;
-import java.io.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 /**
  * Represents the main menu view of the game.
- * Displays the background image and menu buttons for
- * playing, resuming, accessing settings, and exiting the game.
+ *
+ * <p>This view displays the main menu background image and provides buttons
+ * for starting a new game, resuming a saved game, opening settings, and
+ * exiting the application.</p>
  */
 public class GameMenuView extends JPanel {
 
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final Dimension myScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-    double screenWidth = screenSize.getWidth();
-    double screenHeight = screenSize.getHeight();
+    private final double myScreenWidth = myScreenSize.getWidth();
+    private final double myScreenHeight = myScreenSize.getHeight();
 
     // Background Image
-    private Image backgroundMenuImage;
+    private Image myBackgroundMenuImage;
 
     // Button Initialization
-    private final JButton exitButton;
-    private final JButton settingsButton;
-    private final JButton playButton;
-    private final JButton resumeButton;
+    private final JButton myExitButton;
+    private final JButton mySettingsButton;
+    private final JButton myPlayButton;
+    private final JButton myResumeButton;
 
-    int buttonWidth = 400;
-    int buttonHeight = 60;
+    private final int myButtonWidth = 400;
+    private final int myButtonHeight = 60;
 
-    // Y positions for buttons
     private int playY;
-    private int resumeY;
-    private int settingsY;
-    private int exitY;
 
     /**
      * Constructs the game menu view and initializes all menu buttons,
      * layout settings, and background image.
      */
     public GameMenuView() {
-        this.setPreferredSize(new Dimension((int)screenWidth, (int)screenHeight));
+        this.setPreferredSize(new Dimension((int) myScreenWidth, (int) myScreenHeight));
 
         ImageIcon background = new ImageIcon("src/images/Day-Mode1.2.png");
-        backgroundMenuImage = background.getImage();
+        myBackgroundMenuImage = background.getImage();
 
         this.setDoubleBuffered(true);
         this.setLayout(null);
 
-        int buttonX = (int)(screenWidth/2 - (screenWidth/7.68));
-        int spacing = (int)(screenHeight/10.8);
+        int buttonX = (int)(myScreenWidth /2 - (myScreenWidth /7.68));
+        int spacing = (int)(myScreenHeight /10.8);
 
         // Calculate base Y position
-        playY = (int)(screenHeight/2 - spacing);
+        playY = (int)(myScreenHeight /2 - spacing);
 
         // Play button
-        playButton = new JButton("Play Game");
-        playButton.setBounds(buttonX, playY, buttonWidth, buttonHeight);
-        styleButton(playButton);
-        this.add(playButton);
+        myPlayButton = new JButton("Play Game");
+        myPlayButton.setBounds(buttonX, playY, myButtonWidth, myButtonHeight);
+        styleButton(myPlayButton);
+        this.add(myPlayButton);
 
         // Resume button
-        resumeButton = new JButton("Resume");
-        resumeButton.setBounds(buttonX, playY + spacing, buttonWidth, buttonHeight);
-        styleButton(resumeButton);
-        resumeButton.setVisible(false);
-        this.add(resumeButton);
+        myResumeButton = new JButton("Resume");
+        myResumeButton.setBounds(buttonX, playY + spacing, myButtonWidth, myButtonHeight);
+        styleButton(myResumeButton);
+        myResumeButton.setVisible(false);
+        this.add(myResumeButton);
 
         // Settings button
-        settingsButton = new JButton("Settings");
-        styleButton(settingsButton);
-        this.add(settingsButton);
+        mySettingsButton = new JButton("Settings");
+        styleButton(mySettingsButton);
+        this.add(mySettingsButton);
 
         // Exit button
-        exitButton = new JButton("Exit Game");
-        styleButton(exitButton);
-        this.add(exitButton);
+        myExitButton = new JButton("Exit Game");
+        styleButton(myExitButton);
+        this.add(myExitButton);
 
         // Initial layout without resume
         updateButtonLayout(false);
@@ -89,7 +85,7 @@ public class GameMenuView extends JPanel {
      *
      * @param theButton the button to style
      */
-    private void styleButton(JButton theButton) {
+    private void styleButton(final JButton theButton) {
         theButton.setForeground(Color.WHITE);
         theButton.setFocusPainted(false);
         theButton.setBorderPainted(true);
@@ -98,26 +94,26 @@ public class GameMenuView extends JPanel {
     }
 
     /**
-     * Updates button positions based on whether Resume is visible.
+     * Updates button positions based on whether Resume button is visible.
      *
      * @param theShowResume true if resume button should be shown
      */
-    private void updateButtonLayout(boolean theShowResume) {
-        int buttonX = (int)(screenWidth/2 - (screenWidth/7.68));
-        int spacing = (int)(screenHeight/10.8);
-        int baseY = (int)(screenHeight/2 - spacing);
+    private void updateButtonLayout(final boolean theShowResume) {
+        int buttonX = (int)(myScreenWidth /2 - (myScreenWidth /7.68));
+        int spacing = (int)(myScreenHeight /10.8);
+        int baseY = (int)(myScreenHeight /2 - spacing);
 
-        playButton.setBounds(buttonX, baseY, buttonWidth, buttonHeight);
+        myPlayButton.setBounds(buttonX, baseY, myButtonWidth, myButtonHeight);
 
         if (theShowResume) {
-            resumeButton.setBounds(buttonX, baseY + spacing, buttonWidth, buttonHeight);
-            resumeButton.setVisible(true);
-            settingsButton.setBounds(buttonX, baseY + spacing * 2, buttonWidth, buttonHeight);
-            exitButton.setBounds(buttonX, baseY + spacing * 3, buttonWidth, buttonHeight);
+            myResumeButton.setBounds(buttonX, baseY + spacing, myButtonWidth, myButtonHeight);
+            myResumeButton.setVisible(true);
+            mySettingsButton.setBounds(buttonX, baseY + spacing * 2, myButtonWidth, myButtonHeight);
+            myExitButton.setBounds(buttonX, baseY + spacing * 3, myButtonWidth, myButtonHeight);
         } else {
-            resumeButton.setVisible(false);
-            settingsButton.setBounds(buttonX, baseY + spacing, buttonWidth, buttonHeight);
-            exitButton.setBounds(buttonX, baseY + spacing * 2, buttonWidth, buttonHeight);
+            myResumeButton.setVisible(false);
+            mySettingsButton.setBounds(buttonX, baseY + spacing, myButtonWidth, myButtonHeight);
+            myExitButton.setBounds(buttonX, baseY + spacing * 2, myButtonWidth, myButtonHeight);
         }
 
         repaint();
@@ -131,21 +127,26 @@ public class GameMenuView extends JPanel {
         updateButtonLayout(SaveManager.saveFileExists());
     }
 
+    /**
+     * Paints the main menu background and custom button backgrounds.
+     *
+     * @param theGraphics the graphics context used for painting
+     */
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(backgroundMenuImage, 0, 0, getWidth(), getHeight(), this);
+    protected void paintComponent(Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        theGraphics.drawImage(myBackgroundMenuImage, 0, 0, getWidth(), getHeight(), this);
 
-        Graphics2D g2 = (Graphics2D) g.create();
+        Graphics2D g2 = (Graphics2D) theGraphics.create();
         g2.setColor(new Color(0, 0, 0, 80));
 
         // Draw backgrounds only for visible buttons
-        drawButtonBackground(g2, playButton);
-        if (resumeButton.isVisible()) {
-            drawButtonBackground(g2, resumeButton);
+        drawButtonBackground(g2, myPlayButton);
+        if (myResumeButton.isVisible()) {
+            drawButtonBackground(g2, myResumeButton);
         }
-        drawButtonBackground(g2, settingsButton);
-        drawButtonBackground(g2, exitButton);
+        drawButtonBackground(g2, mySettingsButton);
+        drawButtonBackground(g2, myExitButton);
 
         g2.dispose();
     }
@@ -153,11 +154,11 @@ public class GameMenuView extends JPanel {
     /**
      * Draws a rounded rectangle background behind a button.
      *
-     * @param g2     the graphics context
+     * @param theGraphics     the graphics context
      * @param button the button to draw behind
      */
-    private void drawButtonBackground(Graphics2D g2, JButton button) {
-        g2.fillRoundRect(button.getX(), button.getY(), button.getWidth(), button.getHeight(), 20, 20);
+    private void drawButtonBackground(final Graphics2D theGraphics, final JButton button) {
+        theGraphics.fillRoundRect(button.getX(), button.getY(), button.getWidth(), button.getHeight(), 20, 20);
     }
 
     /**
@@ -165,8 +166,8 @@ public class GameMenuView extends JPanel {
      *
      * @param theListener the listener to add
      */
-    public void addExitListener(ActionListener theListener) {
-        exitButton.addActionListener(theListener);
+    public void addExitListener(final ActionListener theListener) {
+        myExitButton.addActionListener(theListener);
     }
 
     /**
@@ -174,8 +175,8 @@ public class GameMenuView extends JPanel {
      *
      * @param theListener the listener to add
      */
-    public void addSettingsListener(ActionListener theListener) {
-        settingsButton.addActionListener(theListener);
+    public void addSettingsListener(final ActionListener theListener) {
+        mySettingsButton.addActionListener(theListener);
     }
 
 
@@ -184,8 +185,8 @@ public class GameMenuView extends JPanel {
      *
      * @param theListener the listener to add
      */
-    public void addPlayListener(ActionListener theListener) {
-        playButton.addActionListener(theListener);
+    public void addPlayListener(final ActionListener theListener) {
+        myPlayButton.addActionListener(theListener);
     }
 
     /**
@@ -193,15 +194,21 @@ public class GameMenuView extends JPanel {
      *
      * @param theListener the listener to add
      */
-    public void addResumeListener(ActionListener theListener) {
-        resumeButton.addActionListener(theListener);
+    public void addResumeListener(final ActionListener theListener) {
+        myResumeButton.addActionListener(theListener);
     }
 
-    public void setDarkMode(boolean theDarkModeSelected) {
+    /**
+     * Updates the menu background image based on the selected theme.
+     *
+     * @param theDarkModeSelected {@code true} to use the dark mode background;
+     *                            {@code false} to use the light mode background
+     */
+    public void setDarkMode(final boolean theDarkModeSelected) {
         String path = theDarkModeSelected
                 ? "src/images/Night-Mode1.2.png"
                 : "src/images/Day-Mode1.2.png";
-        backgroundMenuImage = new ImageIcon(path).getImage();
+        myBackgroundMenuImage = new ImageIcon(path).getImage();
         repaint();
     }
 }

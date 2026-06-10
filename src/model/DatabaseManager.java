@@ -6,21 +6,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Manages the application's SQLite database connection and schema.
+ * Manages the application's SQLite database connection and required tables.
  *
- * <p>This singleton class is responsible for establishing the database
- * connection, creating required tables, populating trivia questions,
- * and providing access to the database throughout the application.</p>
+ * <p>This singleton class establishes the database connection, creates the
+ * questions and leaderboard tables, inserts the initial trivia questions when
+ * needed, and provides shared database access throughout the application.</p>
  */
 public class DatabaseManager {
 
-    private static volatile DatabaseManager myInstance;
+    private static volatile DatabaseManager instance;
     private Connection myConnection;
-    private static final String DB_URL = "jdbc:sqlite:trivia.db";
+    private static String DB_URL = "jdbc:sqlite:trivia.db";
 
     /**
-     * Constructs the database manager, establishes the database connection,
-     * creates required tables, and populates initial data.
+     * Constructs the database manager.
+     *
+     * <p>This establishes the database connection, creates the required tables,
+     * and populates the questions table if it is empty.</p>
      */
     private DatabaseManager() {
         connect();
@@ -30,23 +32,28 @@ public class DatabaseManager {
     }
 
     /**
-     * Returns the singleton instance of the database manager.
+     * Returns the shared singleton instance of the database manager.
      *
-     * @return the shared DatabaseManager instance
+     * <p>If the instance has not been created yet, this method initializes it
+     * using double-checked locking.</p>
+     *
+     * @return the shared {@code DatabaseManager} instance
      */
     public static DatabaseManager getInstance() {
-        if (myInstance == null) {
+        if (instance == null) {
             synchronized (DatabaseManager.class) {
-                if (myInstance == null) {
-                    myInstance = new DatabaseManager();
+                if (instance == null) {
+                    instance = new DatabaseManager();
                 }
             }
         }
-        return myInstance;
+        return instance;
     }
 
     /**
      * Establishes a connection to the SQLite database.
+     *
+     * <p>If the connection fails, an error message is printed to the console.</p>
      */
     private void connect() {
         try {
@@ -59,6 +66,9 @@ public class DatabaseManager {
 
     /**
      * Creates the questions table if it does not already exist.
+     *
+     * <p>The table stores the question text, answer options, correct answer,
+     * and question type for each trivia question.</p>
      */
     private void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS questions (" +
@@ -79,14 +89,19 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Inserts trivia questions into the database.
-     * Currently supports (as of the Sixth Iteration):
-     * - 23 multiple choice questions
-     * - 10 true/false questions
-     * - 6 short answer questions
-     * Total: 39 questions
-     */
+/**
+ * Inserts the initial trivia questions into the questions table.
+ *
+ * <p>If the questions table already contains data, no new questions are
+ * inserted. The inserted questions include multiple choice, true/false,
+ * and short answer questions.</p>
+ *
+ *  Currently supports (as of the Sixth Iteration):
+ *      - 28 multiple choice questions
+ *      - 14 true/false questions
+ *      - 7 short answer questions
+ *   Total: 49 questions
+ */
     private void populateQuestions() {
         try {
             Statement checkStmt = myConnection.createStatement();
@@ -376,6 +391,9 @@ public class DatabaseManager {
 
     /**
      * Creates the leaderboard table if it does not already exist.
+     *
+     * <p>The table stores each player's name, completion time, correct score,
+     * and incorrect score.</p>
      */
     private void createLeaderboardTable() {
         String sql = "CREATE TABLE IF NOT EXISTS leaderboard (" +
@@ -397,14 +415,17 @@ public class DatabaseManager {
     /**
      * Returns the active database connection.
      *
-     * @return the database connection
+     * @return the active SQLite database connection
      */
     public Connection getConnection() {
         return myConnection;
     }
 
     /**
-     * Closes the database connection if it is currently open.
+     * Closes the active database connection if it is currently open.
+     *
+     * <p>If the connection cannot be closed, an error message is printed to
+     * the console.</p>
      */
     public void closeConnection() {
         try {
@@ -418,10 +439,13 @@ public class DatabaseManager {
     }
 
     /**
-     * Runs a simple database test that verifies the connection,
-     * displays stored questions, and reports the total question count.
+     * Runs a simple database test.
      *
-     * @param args command-line arguments (not used)
+     * <p>This verifies the database connection, prints the total number of
+     * stored questions, displays each stored question, and then closes the
+     * database connection.</p>
+     *
+     * @param args command-line arguments; not used
      */
     public static void main(String[] args) {
         System.out.println("Testing database...");

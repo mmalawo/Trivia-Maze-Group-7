@@ -5,8 +5,11 @@ import view.GameMenuView;
 import javax.swing.*;
 
 /**
- * MenuController handles user interactions on the main game menu.
- * It delegates application navigation to AppController instead of using MainGUI globals.
+ * Controls user interactions on the main game menu.
+ *
+ * <p>This controller connects the menu view buttons to application-level
+ * actions, such as starting a new game, resuming a saved game, opening
+ * settings, and exiting the application.</p>
  */
 public class MenuController {
     private final AppController myApp;

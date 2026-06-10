@@ -4,36 +4,30 @@ import java.io.Serializable;
 
 /**
  * Represents a room within the maze.
- * Each room contains up to four doors, tracks whether it has
- * been visited, and stores information about available paths.
+ *
+ * <p>Each room contains doors in the four cardinal directions, tracks
+ * whether it has been visited, and stores path-related information used
+ * by the maze.</p>
  */
 public class Room implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Door northDoor;
-    private Door southDoor;
-    private Door eastDoor;
-    private Door westDoor;
-    private boolean visited;
-    private int doors;
-    private boolean hasLeft;
-    private boolean hasRight;
-    private boolean hasCenter;
+    private Door myNorthDoor;
+    private Door mySouthDoor;
+    private Door myEastDoor;
+    private Door myWestDoor;
+    private boolean myVisited;
 
     /**
      * Constructs a room with four doors initialized in their
      * default state and no visitation or path flags set.
      */
     public Room() {
-        this.northDoor = new Door();
-        this.southDoor = new Door();
-        this.eastDoor = new Door();
-        this.westDoor = new Door();
-        this.visited = false;
-        this.doors = 0;
-        this.hasLeft = false;
-        this.hasRight = false;
-        this.hasCenter = false;
+        this.myNorthDoor = new Door();
+        this.mySouthDoor = new Door();
+        this.myEastDoor = new Door();
+        this.myWestDoor = new Door();
+        this.myVisited = false;
     }
 
 
@@ -49,22 +43,22 @@ public class Room implements Serializable {
     /** Returns the north door of this room.
      * @return the north door
      */
-    public Door getNorthDoor() { return northDoor; }
+    public Door getNorthDoor() { return myNorthDoor; }
 
     /** Returns the south door of this room.
      * @return the south door
      */
-    public Door getSouthDoor() { return southDoor; }
+    public Door getSouthDoor() { return mySouthDoor; }
 
     /** Returns the east door of this room.
      * @return the east door
      */
-    public Door getEastDoor() { return eastDoor; }
+    public Door getEastDoor() { return myEastDoor; }
 
     /** Returns the west door of this room.
      * @return the west door
      */
-    public Door getWestDoor() { return westDoor; }
+    public Door getWestDoor() { return myWestDoor; }
 
 
         // --------------------------------
@@ -72,73 +66,43 @@ public class Room implements Serializable {
         // --------------------------------
 
     /** Sets the north door for this room.
-     * @param door the new north door
+     * @param theDoor the new north door
      */
-    public void setNorthDoor(Door door) { this.northDoor = door; }
+    public void setNorthDoor(final Door theDoor) { this.myNorthDoor = theDoor; }
 
     /** Sets the south door for this room.
-     * @param door the new south door
+     * @param theDoor the new south door
      */
-    public void setSouthDoor(Door door) { this.southDoor = door; }
+    public void setSouthDoor(final Door theDoor) { this.mySouthDoor = theDoor; }
 
     /** Sets the east door for this room.
-     * @param door the new east door
+     * @param theDoor the new east door
      */
-    public void setEastDoor(Door door)  { this.eastDoor = door; }
+    public void setEastDoor(final Door theDoor)  { this.myEastDoor = theDoor; }
 
     /** Sets the west door for this room.
-     * @param door the new west door
+     * @param theDoor the new west door
      */
-    public void setWestDoor(Door door)  { this.westDoor = door; }
+    public void setWestDoor(final Door theDoor)  { this.myWestDoor = theDoor; }
 
 // ==================================================================
 
 
     /**
-     * Determines whether this room has been visited.
+     * Returns whether this room has been visited.
      *
-     * @return true if the room has been visited; false otherwise
+     * @return {@code true} if the room has been visited;
+     *         {@code false} otherwise
      */
-    public boolean isVisited() { return visited; }
+    public boolean isVisited() { return myVisited; }
 
     /**
-     * Updates the visited status of this room.
+     * Sets whether this room has been visited.
      *
-     * @param visited true if the room has been visited; false otherwise
+     * @param theVisited {@code true} if the room has been visited;
+     *                   {@code false} otherwise
      */
-    public void setVisited(boolean visited) { this.visited = visited; }
-
-
-
-    /**
-     * Returns the number of available doors associated with this room.
-     *
-     * @return the number of doors
-     */
-    public int getDoors() { return doors; }
-
-    /**
-     * Determines whether the room has a left path available.
-     *
-     * @return true if a left path exists; false otherwise
-     */
-    public boolean canGoLeft() { return hasLeft; }
-
-    /**
-     * Determines whether the room has a right path available.
-     *
-     * @return true if a right path exists; false otherwise
-     */
-    public boolean canGoRight() { return hasRight; }
-
-    /**
-     * Determines whether the room has a center path available.
-     *
-     * @return true if a center path exists; false otherwise
-     */
-    public boolean canGoCenter() { return hasCenter; }
-
-
+    public void setVisited(final boolean theVisited) { this.myVisited = theVisited; }
 
     /**
      * Returns a string representation of the room including
@@ -148,10 +112,10 @@ public class Room implements Serializable {
      */
     @Override
     public String toString() {
-        return "Room{ north=" + northDoor.isLocked() +
-                ", east=" + eastDoor.isLocked() +
-                ", south=" + southDoor.isLocked() +
-                ", west=" + westDoor.isLocked() +
-                ", visited=" + visited + " }";
+        return "Room{ north=" + myNorthDoor.isLocked() +
+                ", east=" + myEastDoor.isLocked() +
+                ", south=" + mySouthDoor.isLocked() +
+                ", west=" + myWestDoor.isLocked() +
+                ", visited=" + myVisited + " }";
     }
 }

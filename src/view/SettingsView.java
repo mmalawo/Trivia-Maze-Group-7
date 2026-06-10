@@ -4,124 +4,103 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
- * SettingsView provides the user interface for configuring
- * application settings such as fullscreen mode, volume,
- * and day/night mode preferences.
+ * Represents the settings screen for the application.
+ *
+ * <p>This view provides controls for fullscreen mode, audio volume,
+ * day/night mode, and navigation back to the previous screen.</p>
  */
 public class SettingsView extends JPanel {
-    //private SettingsView settingsView;
-    //private JPanel settingsPanel;
-    private JToggleButton screenButton;
-    private JSlider volumeSlider;
-    private JCheckBox darkModeCheck;
-    private JButton backToMenu;
+    private final JToggleButton myScreenButton;
+    private final JSlider myVolumeSlider;
+    private final JCheckBox myDarkModeCheck;
+    private final JButton myBackToMenu;
 
-    private JLabel nightDayMode;
+    private final JLabel myNightDayMode;
 
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final Dimension myScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-    double screenWidth = screenSize.getWidth();
-    double screenHeight = screenSize.getHeight();
+    private final double myScreenWidth = myScreenSize.getWidth();
+    private final double myScreenHeight = myScreenSize.getHeight();
 
-    private Image background;
+    private Image myBackground;
 
     /**
-     * Constructs the settings screen and initializes all UI components,
-     * including controls for fullscreen mode, volume, dark mode,
-     * and navigation back to the main menu.
+     * Constructs the settings view.
+     *
+     * <p>This initializes the background image, fullscreen toggle,
+     * volume slider, day/night mode checkbox, back button, layout settings,
+     * and debugging mouse listener.</p>
      */
     public SettingsView() {
         setLayout(null);
 
         ImageIcon nightSettingsBackground = new ImageIcon("src/images/Day-Settings.png");
-        background = nightSettingsBackground.getImage();
+        myBackground = nightSettingsBackground.getImage();
 
-        screenButton = new JToggleButton("On/Off", false);
-        screenButton.setBounds((int)screenWidth/2-(int)screenWidth/16, (int)(screenHeight/2-screenHeight/(3.72)), 300, 50);
-        screenButton.setForeground(Color.WHITE);
-        screenButton.setFocusPainted(false);
-        screenButton.setBorderPainted(true);
-        screenButton.setContentAreaFilled(false);
-        screenButton.setOpaque(false);
-        add(screenButton);
-
-
-        volumeSlider = new JSlider(0, 100, 50);
-        volumeSlider.setBounds((int)(screenWidth/2 - (screenWidth/16)),(int)(screenHeight/2 - (screenHeight/6.75)), 300, 50);
-        volumeSlider.setForeground(Color.WHITE);
-        volumeSlider.setOpaque(false);
-        add(volumeSlider);
+        myScreenButton = new JToggleButton("On/Off", false);
+        myScreenButton.setBounds((int) myScreenWidth /2-(int) myScreenWidth /16, (int)(myScreenHeight /2- myScreenHeight /(3.72)), 300, 50);
+        myScreenButton.setForeground(Color.WHITE);
+        myScreenButton.setFocusPainted(false);
+        myScreenButton.setBorderPainted(true);
+        myScreenButton.setContentAreaFilled(false);
+        myScreenButton.setOpaque(false);
+        add(myScreenButton);
 
 
-        darkModeCheck = new JCheckBox();
-        darkModeCheck.setBounds((int)(screenWidth/2-(screenWidth/19.2)), (int)(screenHeight/2-(screenHeight/30.857)), 30, 30);
-        darkModeCheck.setForeground(Color.WHITE);
-        darkModeCheck.setFocusPainted(false);
-        darkModeCheck.setBorderPainted(false);
-        darkModeCheck.setContentAreaFilled(false);
-        darkModeCheck.setOpaque(false);
-        add(darkModeCheck);
+        myVolumeSlider = new JSlider(0, 100, 50);
+        myVolumeSlider.setBounds((int)(myScreenWidth /2 - (myScreenWidth /16)),(int)(myScreenHeight /2 - (myScreenHeight /6.75)), 300, 50);
+        myVolumeSlider.setForeground(Color.WHITE);
+        myVolumeSlider.setOpaque(false);
+        add(myVolumeSlider);
 
 
-        nightDayMode = new JLabel("Day/Night Mode");
-        nightDayMode.setBounds((int)(screenWidth/2-(screenWidth/27.43)), (int)(screenHeight/2-(screenHeight/30.857)), 150, 30);
-        nightDayMode.setForeground(Color.WHITE);
-        nightDayMode.setFont(new Font("Arial", Font.BOLD, 12));
-        add(nightDayMode);
+        myDarkModeCheck = new JCheckBox();
+        myDarkModeCheck.setBounds((int)(myScreenWidth /2-(myScreenWidth /19.2)), (int)(myScreenHeight /2-(myScreenHeight /30.857)), 30, 30);
+        myDarkModeCheck.setForeground(Color.WHITE);
+        myDarkModeCheck.setFocusPainted(false);
+        myDarkModeCheck.setBorderPainted(false);
+        myDarkModeCheck.setContentAreaFilled(false);
+        myDarkModeCheck.setOpaque(false);
+        add(myDarkModeCheck);
 
 
-        backToMenu = new JButton("<--Back--");
-        backToMenu.setBounds((int)(screenWidth/2 - (screenWidth/3.69)),(int)(screenHeight/2 - (screenHeight/2.7)), 200, 50);
-        backToMenu.setForeground(Color.WHITE);
-        backToMenu.setFocusPainted(false);
-        backToMenu.setBorderPainted(true);
-        backToMenu.setContentAreaFilled(false);
-        backToMenu.setOpaque(false);
-        add(backToMenu);
+        myNightDayMode = new JLabel("Day/Night Mode");
+        myNightDayMode.setBounds((int)(myScreenWidth /2-(myScreenWidth /27.43)), (int)(myScreenHeight /2-(myScreenHeight /30.857)), 150, 30);
+        myNightDayMode.setForeground(Color.WHITE);
+        myNightDayMode.setFont(new Font("Arial", Font.BOLD, 12));
+        add(myNightDayMode);
 
 
-
-
-
-
-        // TESTING PURPOSES ONLY
-        // Prints coords when clicked
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int x = e.getX();  // X coordinate of click
-                int y = e.getY();  // Y coordinate of click
-                System.out.println("Clicked at: (" + x + ", " + y + ")");
-            }
-        });
-
-
-
-
+        myBackToMenu = new JButton("<--Back--");
+        myBackToMenu.setBounds((int)(myScreenWidth /2 - (myScreenWidth /3.69)),(int)(myScreenHeight /2 - (myScreenHeight /2.7)), 200, 50);
+        myBackToMenu.setForeground(Color.WHITE);
+        myBackToMenu.setFocusPainted(false);
+        myBackToMenu.setBorderPainted(true);
+        myBackToMenu.setContentAreaFilled(false);
+        myBackToMenu.setOpaque(false);
+        add(myBackToMenu);
     }
 
     /**
      * Paints the settings screen background and decorative UI elements.
      *
-     * @param g the graphics context used for rendering
+     * @param theGraphics the graphics context used for painting
      */
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    protected void paintComponent(Graphics theGraphics) {
+        super.paintComponent(theGraphics);
 
-        if (background != null) {
-            g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+        if (myBackground != null) {
+            theGraphics.drawImage(myBackground, 0, 0, getWidth(), getHeight(), this);
 
-            Graphics2D g2 = (Graphics2D) g.create();
+            Graphics2D g2 = (Graphics2D) theGraphics.create();
             g2.setColor(new Color(0, 0, 0, 80));
-            g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/3.69)),(int)(screenHeight/2 - (screenHeight/2.7)), 200, 50, 20,20);
-            g2.fillRoundRect((int)screenWidth/2-(int)screenWidth/16, (int)(screenHeight/2-screenHeight/(3.72)), 300 , 50, 20,20);
-            g2.fillRoundRect((int)(screenWidth/2 - (screenWidth/16)),(int)(screenHeight/2 - (screenHeight/6.75)), 300 , 50, 20,20);
-            g2.fillRoundRect((int)(screenWidth/2-(screenWidth/16)), (int)(screenHeight/2-(screenHeight/24)), 300, 50, 20, 20);
+            g2.fillRoundRect((int)(myScreenWidth /2 - (myScreenWidth /3.69)),(int)(myScreenHeight /2 - (myScreenHeight /2.7)), 200, 50, 20,20);
+            g2.fillRoundRect((int) myScreenWidth /2-(int) myScreenWidth /16, (int)(myScreenHeight /2- myScreenHeight /(3.72)), 300 , 50, 20,20);
+            g2.fillRoundRect((int)(myScreenWidth /2 - (myScreenWidth /16)),(int)(myScreenHeight /2 - (myScreenHeight /6.75)), 300 , 50, 20,20);
+            g2.fillRoundRect((int)(myScreenWidth /2-(myScreenWidth /16)), (int)(myScreenHeight /2-(myScreenHeight /24)), 300, 50, 20, 20);
 
         }
     }
@@ -136,8 +115,8 @@ public class SettingsView extends JPanel {
      *
      * @param theListener the listener to invoke when the button is clicked
      */
-    public void addBackListener(ActionListener theListener) {
-        backToMenu.addActionListener(theListener);
+    public void addBackListener(final ActionListener theListener) {
+        myBackToMenu.addActionListener(theListener);
     }
 
     /**
@@ -145,8 +124,8 @@ public class SettingsView extends JPanel {
      *
      * @param theListener the listener to invoke when the button state changes
      */
-    public void addFullscreenListener(ActionListener theListener) {
-        screenButton.addActionListener(theListener);
+    public void addFullscreenListener(final ActionListener theListener) {
+        myScreenButton.addActionListener(theListener);
     }
 
     /**
@@ -154,8 +133,8 @@ public class SettingsView extends JPanel {
      *
      * @param theListener the listener to invoke when the slider value changes
      */
-    public void addVolumeListener(ChangeListener theListener) {
-        volumeSlider.addChangeListener(theListener);
+    public void addVolumeListener(final ChangeListener theListener) {
+        myVolumeSlider.addChangeListener(theListener);
     }
 
     /**
@@ -163,26 +142,28 @@ public class SettingsView extends JPanel {
      *
      * @param theListener the listener to invoke when the checkbox is clicked
      */
-    public void addDarkModeListener(ActionListener theListener) {
-        darkModeCheck.addActionListener(theListener);
+    public void addDarkModeListener(final ActionListener theListener) {
+        myDarkModeCheck.addActionListener(theListener);
     }
 
     /**
-     * Determines whether fullscreen mode is currently selected.
+     * Returns whether fullscreen mode is selected.
      *
-     * @return true if fullscreen mode is enabled; false otherwise
+     * @return {@code true} if fullscreen mode is selected;
+     *         {@code false} otherwise
      */
     public boolean isFullscreenSelected() {
-        return screenButton.isSelected();
+        return myScreenButton.isSelected();
     }
 
     /**
-     * Determines whether dark mode is currently selected.
+     * Returns whether dark mode is selected.
      *
-     * @return true if dark mode is enabled; false otherwise
+     * @return {@code true} if dark mode is selected;
+     *         {@code false} otherwise
      */
     public boolean isDarkModeSelected() {
-        return darkModeCheck.isSelected();
+        return myDarkModeCheck.isSelected();
     }
 
     /**
@@ -191,24 +172,19 @@ public class SettingsView extends JPanel {
      * @return the volume level between 0 and 100
      */
     public int getVolumeValue() {
-        return volumeSlider.getValue();
+        return myVolumeSlider.getValue();
     }
 
     /**
-     * Updates the application's visual assets and backgrounds
-     * to match the selected theme mode.
+     * Returns the current volume slider value.
      *
-     * <p>This method updates images used by the settings screen,
-     * game menu, player setup screen, and maze view before
-     * repainting the interface.</p>
-     *
-     * @param darkMode true to apply the dark theme; false to apply the light theme
+     * @return the volume level from {@code 0} to {@code 100}
      */
-    public void setDarkMode(boolean darkMode) {
-        String backgroundPath = darkMode
+    public void setDarkMode(final boolean theDarkModeSelected) {
+        String backgroundPath = theDarkModeSelected
                 ? "src/images/Night-Settings.png"
                 : "src/images/Day-Settings.png";
-        background = new ImageIcon(backgroundPath).getImage();
+        myBackground = new ImageIcon(backgroundPath).getImage();
         repaint();
     }
 

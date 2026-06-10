@@ -10,24 +10,26 @@ import java.awt.event.ActionListener;
  * and a button to start the game.
  */
 public class InstructionsView extends JPanel {
-    private final JLabel greetingLabel;
-    private JTextArea instructionsText;
-    private final JButton startGameButton;
+    private final JLabel myGreetingLabel;
+    private final JTextArea myInstructionsText;
+    private final JButton myStartGameButton;
 
     /**
-     * Constructs the instructions view and initializes all UI components,
-     * including the greeting label, instructions text area, and start game button.
+     * Constructs the instructions view.
+     *
+     * <p>This initializes the greeting label, instructions text area,
+     * start game button, layout settings, and preferred screen size.</p>
      */
     public InstructionsView() {
         setLayout(null);
         setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
 
-        greetingLabel = new JLabel();
-        greetingLabel.setBounds(500, 80, 800, 50);
-        greetingLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 32));
-        add(greetingLabel);
+        myGreetingLabel = new JLabel();
+        myGreetingLabel.setBounds(500, 80, 800, 50);
+        myGreetingLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 32));
+        add(myGreetingLabel);
 
-        instructionsText = new JTextArea(
+        myInstructionsText = new JTextArea(
                 "How to Play:\n\n" +
                         "- Use the arrow keys to navigate through the maze.\n" +
                         "- Answer trivia questions to unlock doors.\n" +
@@ -36,25 +38,25 @@ public class InstructionsView extends JPanel {
                         "- If there are no doors left to unlock, it's game over!\n" +
                         "- Try to reach the exit as fast as possible!"
         );
-        instructionsText.setBounds(600, 160, 700, 300);
-        instructionsText.setFont(new Font("Comic Sans MS", Font.PLAIN, 22));
-        instructionsText.setEditable(false);
-        instructionsText.setOpaque(false);
-        add(instructionsText);
+        myInstructionsText.setBounds(600, 160, 700, 300);
+        myInstructionsText.setFont(new Font("Comic Sans MS", Font.PLAIN, 22));
+        myInstructionsText.setEditable(false);
+        myInstructionsText.setOpaque(false);
+        add(myInstructionsText);
 
-        startGameButton = new JButton("Start Game");
-        startGameButton.setBounds(650, 500, 200, 50);
-        add(startGameButton);
+        myStartGameButton = new JButton("Start Game");
+        myStartGameButton.setBounds(650, 500, 200, 50);
+        add(myStartGameButton);
     }
 
     /**
-     * Updates the greeting message to include the player's name.
+     * Updates the greeting message with the player's name.
      *
-     * @param theName the player's name
+     * @param theName the player's name to display in the greeting
      */
-    public void setPlayerName(String theName) {
+    public void setPlayerName(final String theName) {
 
-        greetingLabel.setText("Welcome to the Trivia Maze, " + theName + "!");
+        myGreetingLabel.setText("Welcome to the Trivia Maze, " + theName + "!");
     }
 
     /**
@@ -62,8 +64,8 @@ public class InstructionsView extends JPanel {
      *
      * @param theListener the listener to invoke when the button is clicked
      */
-    public void addStartGameListener(ActionListener theListener) {
-        startGameButton.addActionListener(theListener);
+    public void addStartGameListener(final ActionListener theListener) {
+        myStartGameButton.addActionListener(theListener);
 
     }
 }

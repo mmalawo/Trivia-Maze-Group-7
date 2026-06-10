@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Utility class responsible for generating a new maze for the game.
+ * Utility class responsible for generating maze instances for the game.
  *
- * <p>The generated maze contains interconnected rooms, a central
- * entrance, and a randomly selected exit door located on the
- * perimeter of the maze.</p>
+ * <p>This class creates a fully initialized maze with rooms, shared doors
+ * between adjacent rooms, a central entrance, and a randomly selected exit
+ * door located on the perimeter of the maze.</p>
  */
 public class GenerateMaze {
 
@@ -109,7 +109,6 @@ public class GenerateMaze {
         maze.setExitDoor(exitDoor);
         maze.setExitDoorDirection(exitDirection);
 
-        System.out.println("Exit door: row=" + exitRow + " col=" + exitCol + " direction=" + exitDirection);
 
         return maze;
     }
